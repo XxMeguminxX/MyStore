@@ -27,12 +27,22 @@
     <input type="email" placeholder="Email aktif" required>
     <label>No HP</label>
     <input type="tel" placeholder="Nomor HP aktif" required pattern="[0-9]+" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+
     <label>Metode Pembayaran</label>
-    <select>
-      <option>Transfer Bank</option>
-      <option>QRIS</option>
-      <option>E-Wallet</option>
-    </select>
+    <div class="payment-methods">
+      @foreach ($channels as $channel)
+        @if ($channel->active)
+          <div class="payment-method">
+            <input type="radio" id="{{ $channel->code }}" name="payment_method" value="{{ $channel->code }}" required>
+            <label for="{{ $channel->code }}">
+              <img src="{{ $channel->icon_url ?? asset('assets/img/default.png') }}" alt="{{ $channel->name }}" class="payment-icon">
+              <span class="payment-name">{{ $channel->name }}</span>
+            </label>
+          </div>
+          @endif
+          @endforeach
+        </div>
+
     <button type="submit" class="btn-checkout">Bayar Sekarang</button>
   </form>
 </div>

@@ -8,5 +8,5 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard',[ DashboardController::class, 'index']);
-Route::get('/beli/{id}',[ DashboardController::class, 'beli']);
+Route::get('/beli/{id}', [App\Http\Controllers\CheckoutController::class, 'beli']);
 Route::get('/checkout/{id}', [App\Http\Controllers\CheckoutController::class, 'show']);

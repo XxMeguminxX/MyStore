@@ -18,7 +18,7 @@
   </div>
   <h1>Produk Digital Saya</h1>
   <div class="product-grid">
-    @foreach ($product as $data)
+    @foreach ($products as $data)
       <div class="product-card">
       <div class="product-id">ID: {{ $data->id }}</div>
       <img class="product-img" src="{{ $data->image }}" alt="Ebook Belajar Laravel">

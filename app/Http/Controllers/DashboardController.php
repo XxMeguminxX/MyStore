@@ -8,18 +8,11 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 class DashboardController extends Controller
 {
-    public function beli(Request $request,$id)
-    {
-        $product = Product::where('id', '=', $id)->first();
-        if ($product==null){
-            return redirect('/dashboard');
-        }
-        return view('checkout',compact('product'));
-    }
+    // Removed beli method, now in CheckoutController
     public function index(Request $request)
     {
-        $product = Product::get();
-        return view('dashboard', compact('product'));
+        $products = Product::get();
+        return view('dashboard', compact('products'));
     }
 }
 

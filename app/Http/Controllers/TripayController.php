@@ -31,11 +31,26 @@ $error = curl_error($curl);
 
 curl_close($curl);
 
-$response = json_decode($response)->data;
+$decoded = json_decode($response);
 
-return $response ? $response : $err;
+if (isset($decoded->data)) {
+    return $decoded->data;
+} else {
+    // Optionally, log $decoded or $error for debugging
+    return [
+        'error' => $error ?: ($decoded->message ?? 'Unknown error'),
+        'response' => $decoded
+    ];
+}
 
 
+    }
 
+    /**
+     * Membuat transaksi ke Tripay
+     */
+    public function createTransaction(Request $request)
+    {
+        return response()->json(['status' => 'ok']);
     }
 }

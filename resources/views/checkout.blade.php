@@ -12,6 +12,9 @@
 </a>
 <div class="checkout-container">
   <h2>Checkout</h2>
+  @if(isset($error) && $error)
+    <div class="alert alert-danger" style="color: red; margin-bottom: 1em;">{{ $error }}</div>
+  @endif
   <div class="checkout-summary">
     <img class="checkout-img" src="{{ $product->image }}" alt="Nama Produk">
     <div class="checkout-info">
@@ -20,18 +23,22 @@
       <div class="checkout-price">RP {{ number_format($product->price,0,'','.') }}</div>
     </div>
   </div>
-  <form class="checkout-form">
+  <form class="checkout-form" id="tripay-checkout-form">
     <label>Nama Lengkap</label>
-    <input type="text" placeholder="Nama Anda" required>
+    <input type="text" name="customer_name" placeholder="Nama Anda" required>
     <label>Email</label>
-    <input type="email" placeholder="Email aktif" required>
+    <input type="email" name="customer_email" placeholder="Email aktif" required>
     <label>No HP</label>
-    <input type="tel" placeholder="Nomor HP aktif" required pattern="[0-9]+" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+    <input type="tel" name="customer_phone" placeholder="Nomor HP aktif" required pattern="[0-9]+" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+
+    <input type="hidden" name="product_sku" value="{{ $product->id }}">
+    <input type="hidden" name="product_name" value="{{ $product->name }}">
+    <input type="hidden" name="amount" value="{{ $product->price }}">
 
     <label>Metode Pembayaran</label>
     <div class="payment-methods">
       @foreach ($channels as $channel)
-        @if ($channel->active)
+        @if (is_object($channel) && $channel->active)
           <div class="payment-method">
             <input type="radio" id="{{ $channel->code }}" name="payment_method" value="{{ $channel->code }}" required>
             <label for="{{ $channel->code }}">
@@ -39,12 +46,44 @@
               <span class="payment-name">{{ $channel->name }}</span>
             </label>
           </div>
-          @endif
-          @endforeach
-        </div>
+        @endif
+      @endforeach
+    </div>
 
     <button type="submit" class="btn-checkout">Bayar Sekarang</button>
   </form>
+  <div id="tripay-error" style="color:red;margin-top:1em;"></div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('tripay-checkout-form');
+  const errorDiv = document.getElementById('tripay-error');
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    errorDiv.textContent = '';
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    try {
+      const response = await fetch('/tripay/transaction', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      const result = await response.json();
+      if (response.ok && result.success && result.data && result.data.payment_url) {
+        window.location.href = result.data.payment_url;
+      } else {
+        errorDiv.textContent = result.error || (result.response && result.response.message) || 'Gagal membuat transaksi.';
+      }
+    } catch (err) {
+      errorDiv.textContent = 'Terjadi kesalahan koneksi.';
+    }
+  });
+});
+</script>
 </body>
 </html>

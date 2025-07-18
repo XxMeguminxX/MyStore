@@ -9,13 +9,20 @@ class CheckoutController extends Controller
     public function beli(Request $request, $id)
     {
         $tripay = new TripayController();
-       $channels = $tripay->getPaymentChannels();
+        $channels = $tripay->getPaymentChannels();
+
+        $error = null;
+        // If Tripay returns an error, set $channels to empty array and pass error message
+        if (is_array($channels) && isset($channels['error'])) {
+            $error = $channels['error'];
+            $channels = [];
+        }
 
         $product = \App\Models\Product::where('id', '=', $id)->first();
         if ($product == null) {
             return redirect('/dashboard');
         }
-        return view('checkout', compact('product', 'channels'));
+        return view('checkout', compact('product', 'channels', 'error'));
     }
 
     public function index()

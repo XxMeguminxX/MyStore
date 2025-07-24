@@ -1,0 +1,89 @@
+/* --- Global & Body --- */
+body {
+    background: #f7f8fa; /* Menyamakan background dengan dashboard */
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Header --- */
+/* Menggunakan style yang sama dengan header-bar dan icon-btn di dashboard */
+.header-bar {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start; /* Mengubah dari flex-end ke flex-start untuk tombol kembali */
+    align-items: center;
+    padding: 18px 32px 0;
+    box-sizing: border-box;
+}
+
+.btn-kembali {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 20px; /* Membuatnya sedikit lebih oval */
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(42,157,143,0.09);
+    color: #2a9d8f;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.18s;
+}
+
+.btn-kembali:hover, .btn-kembali:focus {
+    background: #e0f7f4;
+    color: #21867a;
+    box-shadow: 0 4px 16px rgba(42,157,143,0.13);
+    transform: translateY(-2px) scale(1.04);
+}
+
+/* --- Konten Utama --- */
+.profile-container {
+    max-width: 500px;
+    margin: 20px auto 40px auto;
+    padding: 0 16px;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 30px;
+    color: #222;
+    letter-spacing: 1px;
+}
+
+/* Menyamakan style kartu profil dengan .product-card */
+.profile-content {
+    background: #fff;
+    border-radius: 16px; /* Radius sudut yang sama */
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07); /* Bayangan yang sama */
+    padding: 32px;
+}
+
+.profile-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.profile-item:last-child {
+    margin-bottom: 0;
+}
+
+.profile-label {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.profile-value {
+    font-size: 1.1em;
+    color: #222;
+    font-weight: 600;
+    background: #f7f8fa;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #eef0f2;
+}

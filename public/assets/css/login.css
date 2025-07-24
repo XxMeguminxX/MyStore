@@ -1,0 +1,117 @@
+/* login.css - Disesuaikan agar mirip dengan dashboard.css */
+
+body {
+    /* Menggunakan font yang sama dengan dashboard.css */
+    font-family: 'Segoe UI', Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* Menggunakan background yang sama dengan dashboard.css */
+    background: #f7f8fa;
+    margin: 0;
+    padding: 0;
+}
+
+.login-container {
+    background-color: #fff;
+    /* Menggunakan border-radius dan box-shadow yang mirip dengan product-card di dashboard.css */
+    border-radius: 16px; /* Lebih besar dari sebelumnya untuk konsistensi */
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07); /* Mirip dengan product-card */
+    padding: 32px 20px 28px 20px; /* Padding disesuaikan */
+    width: 100%;
+    max-width: 400px;
+    /* Menambahkan transisi untuk efek hover jika diperlukan di masa depan */
+    transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s cubic-bezier(.4,2,.6,1);
+}
+
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 24px; /* Margin bawah sedikit lebih besar */
+    color: #222; /* Warna teks yang sama dengan judul di dashboard */
+    letter-spacing: 0.5px; /* Menambahkan letter-spacing */
+    font-size: 1.5em; /* Ukuran font sedikit lebih besar */
+    font-weight: 600; /* Tebal font */
+}
+
+.form-group {
+    margin-bottom: 18px; /* Margin bawah sedikit lebih besar */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px; /* Margin bawah label sedikit lebih besar */
+    font-weight: 500; /* Font weight disesuaikan */
+    color: #555;
+    font-size: 0.95em; /* Ukuran font label */
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: calc(100% - 24px); /* Mengurangi padding untuk lebar yang pas */
+    padding: 12px; /* Padding sedikit lebih besar */
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Radius lebih besar agar mirip tombol/kartu */
+    font-size: 1em; /* Ukuran font disesuaikan */
+    color: #333;
+    background-color: #fcfcfc; /* Warna background input */
+}
+
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus {
+    border-color: #2a9d8f; /* Warna fokus mirip warna primer di dashboard */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(42,157,143,0.2); /* Shadow fokus mirip dengan efek di dashboard */
+}
+
+.error-message {
+    color: #e76f51; /* Warna error yang sedikit berbeda, bisa disesuaikan */
+    font-size: 0.88em;
+    margin-top: 6px; /* Margin atas sedikit lebih besar */
+    display: block; /* Memastikan pesan error berada di baris baru */
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px; /* Padding disesuaikan */
+    /* Menggunakan gaya tombol btn-beli dari dashboard.css */
+    background: #2a9d8f;
+    color: #fff;
+    border: none;
+    border-radius: 8px; /* Border radius mirip dengan btn di dashboard */
+    font-size: 1.05em; /* Ukuran font sedikit lebih besar */
+    font-weight: 600; /* Tebal font */
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, transform 0.15s; /* Transisi yang sama */
+    outline: none;
+    margin-top: 20px; /* Menambahkan margin atas untuk memisahkan dari input terakhir */
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    /* Menggunakan efek hover dari btn-beli di dashboard.css */
+    background: #21867a;
+    transform: translateY(-2px) scale(1.01); /* Efek sedikit lebih halus untuk tombol login */
+    box-shadow: 0 4px 12px rgba(42,157,143,0.2); /* Menambahkan bayangan saat hover */
+}
+
+/* Opsional: Efek klik gelombang mirip product-card, terapkan pada tombol */
+.btn-primary:active::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%; /* Disesuaikan untuk tombol */
+    height: 100%; /* Disesuaikan untuk tombol */
+    background: rgba(42,157,143,0.08);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    animation: ripple 0.4s linear;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Pastikan @keyframes ripple juga ada di file CSS Anda jika menggunakannya pada tombol */
+@keyframes ripple {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.7); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}

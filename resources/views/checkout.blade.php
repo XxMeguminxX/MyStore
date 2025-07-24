@@ -52,15 +52,17 @@
 
     <button type="submit" class="btn-checkout">Bayar Sekarang</button>
   </form>
-  <div id="tripay-error" style="color:red;margin-top:1em;"></div>
+  <div id="tripay-message" style="display:none;margin-top:1em;"></div>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('tripay-checkout-form');
-  const errorDiv = document.getElementById('tripay-error');
+  const messageDiv = document.getElementById('tripay-message');
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
-    errorDiv.textContent = '';
+    messageDiv.style.display = 'none';
+    messageDiv.textContent = '';
+    messageDiv.className = '';
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
     try {
@@ -74,13 +76,22 @@ document.addEventListener('DOMContentLoaded', function() {
         body: JSON.stringify(data)
       });
       const result = await response.json();
-      if (response.ok && result.success && result.data && result.data.payment_url) {
-        window.location.href = result.data.payment_url;
+      if (response.ok && result.success && (result.payment_url || (result.data && result.data.payment_url) || (result.data && result.data.checkout_url))) {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'alert alert-success';
+        messageDiv.innerHTML = 'Transaksi berhasil dibuat! Anda akan diarahkan ke halaman pembayaran...';
+        setTimeout(function() {
+          window.location.href = result.payment_url || (result.data && result.data.payment_url) || (result.data && result.data.checkout_url);
+        }, 1200);
       } else {
-        errorDiv.textContent = result.error || (result.response && result.response.message) || 'Gagal membuat transaksi.';
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'alert alert-danger';
+        messageDiv.innerHTML = result.error || (result.response && result.response.message) || 'Gagal membuat transaksi.';
       }
     } catch (err) {
-      errorDiv.textContent = 'Terjadi kesalahan koneksi.';
+      messageDiv.style.display = 'block';
+      messageDiv.className = 'alert alert-danger';
+      messageDiv.innerHTML = 'Terjadi kesalahan koneksi.';
     }
   });
 });

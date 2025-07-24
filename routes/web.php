@@ -3,16 +3,57 @@
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TripayController;
+use App\Http\Controllers\AuthController; // Pastikan ini sudah ada atau tambahkan
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+// Rute untuk halaman awal yang bisa diakses tanpa login
 Route::get('/', function () {
-    return view('welcome');
+ return redirect()->route('login'); // Ini akan mengarahkan ke rute yang bernama 'login'
 });
 
-Route::get('/dashboard',[ DashboardController::class, 'index']);
-Route::get('/beli/{id}', [App\Http\Controllers\CheckoutController::class, 'beli']);
-// Route::get('/checkout/{id}', [App\Http\Controllers\CheckoutController::class, 'show']);
-// Route::post('/tripay/transaction', [TripayController::class, 'createTransaction']);
+// Rute untuk Login (bisa diakses tanpa login)
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/webtest', function() {
-    return 'web ok';
+// Rute untuk Logout (hanya bisa diakses jika sudah login, tapi ini akan otomatis logout)
+// Penting: Method logout biasanya adalah POST, bukan GET, untuk alasan keamanan CSRF.
+// Saya akan asumsikan Anda akan menambahkan ini di layout Anda atau tempat lain.
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
+Route::middleware(['auth'])->group(function () {
+    // Rute Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // Rute Beli Produk
+    Route::get('/beli/{id}', [App\Http\Controllers\CheckoutController::class, 'beli']);
+
+    // Rute Tripay Transactions (jika hanya untuk user terautentikasi)
+    // Jika ini adalah endpoint callback dari Tripay, mungkin tidak perlu di-auth
+    // Tinjau kembali apakah rute POST Tripay perlu diautentikasi atau tidak
+    // Biasanya callback dari payment gateway tidak memerlukan autentikasi user
+    Route::post('/tripay/transaction', [TripayController::class, 'createTransaction']);
+
+    // Rute Profil
+    Route::get('/profile', function () {
+        return view('profile');
+    });
+
+    // Anda bisa menambahkan rute lain di sini yang memerlukan login
+    // Route::get('/settings', [UserController::class, 'settings']);
 });
+
+// Route::post('/tripay/callback', [TripayController::class, 'handleCallback']);
+// Catatan: Rute callback biasanya tidak dilindungi oleh autentikasi karena dipanggil oleh pihak ketiga (Tripay)
+// dan tidak melibatkan sesi user yang sedang login.

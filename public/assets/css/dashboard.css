@@ -248,3 +248,24 @@ body {
   .desc-modal-close:hover {
     color: #21867a;
   }
+
+    /* Anda bisa menambahkan styling CSS untuk tombol logout di sini */
+    .logout-form {
+      display: inline-block; /* Agar tombolnya tidak mengambil lebar penuh */
+      margin-left: 10px; /* Jarak antara ikon profil dan tombol logout */
+    }
+    .logout-btn {
+      background: none;
+      border: none;
+      color: #e74c3c; /* Warna merah untuk logout */
+      cursor: pointer;
+      font-size: 0.95em;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .logout-btn:hover {
+      background-color: #fcebeb; /* Latar belakang merah muda saat hover */
+      color: #c0392b; /* Warna teks merah lebih gelap saat hover */
+    }

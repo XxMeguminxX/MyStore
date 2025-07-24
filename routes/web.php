@@ -11,8 +11,5 @@ Route::get('/', function () {
 Route::get('/dashboard',[ DashboardController::class, 'index']);
 Route::get('/beli/{id}', [App\Http\Controllers\CheckoutController::class, 'beli']);
 // Route::get('/checkout/{id}', [App\Http\Controllers\CheckoutController::class, 'show']);
-// Route::post('/tripay/transaction', [TripayController::class, 'createTransaction']);
-
-Route::get('/webtest', function() {
-    return 'web ok';
-});
+Route::post('/tripay/transaction', [TripayController::class, 'createTransaction']);
+Route::post('/tripay/callback', [TripayController::class, 'handleCallback']);

@@ -163,6 +163,23 @@ body {
   background: #e0f7f4;
   box-shadow: 0 0 0 2px #2a9d8f33;
 }
+.alert {
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-size: 1em;
+  margin-bottom: 1em;
+  font-weight: 500;
+}
+.alert-success {
+  background: #e6f9f1;
+  color: #21867a;
+  border: 1.5px solid #2a9d8f;
+}
+.alert-danger {
+  background: #fff0f0;
+  color: #d90429;
+  border: 1.5px solid #d90429;
+}
 @media (max-width: 600px) {
   .checkout-container {
     padding: 18px 6vw 18px 6vw;

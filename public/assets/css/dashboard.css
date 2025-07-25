@@ -5,11 +5,11 @@ body {
     padding: 0;
   }
   h1 {
-    text-align: center;
-    margin-top: 40px;
-    color: #222;
-    letter-spacing: 1px;
-  }
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  color: #333;
+}
   .product-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -249,23 +249,56 @@ body {
     color: #21867a;
   }
 
-    /* Anda bisa menambahkan styling CSS untuk tombol logout di sini */
-    .logout-form {
-      display: inline-block; /* Agar tombolnya tidak mengambil lebar penuh */
-      margin-left: 10px; /* Jarak antara ikon profil dan tombol logout */
-    }
-    .logout-btn {
-      background: none;
-      border: none;
-      color: #e74c3c; /* Warna merah untuk logout */
-      cursor: pointer;
-      font-size: 0.95em;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: background-color 0.2s ease, color 0.2s ease;
-    }
-    .logout-btn:hover {
-      background-color: #fcebeb; /* Latar belakang merah muda saat hover */
-      color: #c0392b; /* Warna teks merah lebih gelap saat hover */
+/* Gaya untuk Header Bar */
+.header-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* Mengubah ini untuk menempatkan search di kiri dan icons di kanan */
+  align-items: center;
+  padding: 18px 32px; /* Sesuaikan padding agar ada ruang di atas dan bawah, dan samping */
+  box-sizing: border-box;
+  position: relative;
+  z-index: 10;
+  background-color: #f7f8fa;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Modifikasi Gaya Kolom Pencarian */
+.search-container {
+  flex-grow: 1; /* Mengambil sisa ruang */
+  margin-right: 20px; /* Memberi jarak ke elemen di kanannya (icons/logout) */
+  margin-left: 0; /* Pastikan tidak ada margin kiri tambahan yang tidak diinginkan */
+  max-width: 400px; /* Batasi lebar maksimum */
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 0.95em;
+  color: #333;
+  background-color: #fff;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.search-input::placeholder {
+  color: #888;
+}
+
+.search-input:focus {
+  border-color: #2a9d8f;
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.15);
+}
+ /* Tambahkan gaya dasar untuk pesan 'Tidak Ditemukan' */
+    .no-results-message {
+      text-align: center;
+      font-size: 1.2em;
+      color: #777;
+      margin-top: 40px;
+      display: none; /* Sembunyikan secara default */
     }

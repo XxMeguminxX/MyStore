@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TripayController;
 use App\Http\Controllers\AuthController; // Pastikan ini sudah ada atau tambahkan
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes

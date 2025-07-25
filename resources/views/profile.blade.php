@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <!-- menghubungkan ke file CSS profil -->
     <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}">
 </head>
+
 <body>
     {{-- Header baru dengan tombol kembali --}}
     <div class="header-bar">
@@ -30,8 +32,13 @@
                 <span class="profile-label">Email</span>
                 <div class="profile-value">saputraerik042@gmail.com</div>
             </div>
-            
-            </div>
+            {{-- Tombol Logout Baru --}}
+            <form action="{{ route('logout') }}" method="POST" class="logout-form">
+                @csrf
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
     </div>
 </body>
+
 </html>

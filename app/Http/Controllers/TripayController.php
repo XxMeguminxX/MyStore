@@ -6,46 +6,45 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use App\Models\Transaction;
+use illuminate\Support\Facades\Mail;
+use App\Models\Product;
+use App\Mail\PaymentSuccessMail;
 
 class TripayController extends Controller
 {
     public function getPaymentChannels()
     {
- 
+        $apiKey = env('TRIPAY_API_KEY');
 
-$apiKey = env('TRIPAY_API_KEY');
+        $curl = curl_init();
 
-$curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_FRESH_CONNECT  => true,
+            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/merchant/payment-channel',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER         => false,
+            CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $apiKey],
+            CURLOPT_FAILONERROR    => false,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_IPRESOLVE      => CURL_IPRESOLVE_V4
+        ));
 
-curl_setopt_array($curl, array(
-  CURLOPT_FRESH_CONNECT  => true,
-  CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/merchant/payment-channel',
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_HEADER         => false,
-  CURLOPT_HTTPHEADER     => ['Authorization: Bearer '.$apiKey],
-  CURLOPT_FAILONERROR    => false,
-  CURLOPT_SSL_VERIFYPEER => false,
-  CURLOPT_IPRESOLVE      => CURL_IPRESOLVE_V4
-));
+        $response = curl_exec($curl);
+        $error = curl_error($curl);
 
-$response = curl_exec($curl);
-$error = curl_error($curl);
+        curl_close($curl);
 
-curl_close($curl);
+        $decoded = json_decode($response);
 
-$decoded = json_decode($response);
-
-if (isset($decoded->data)) {
-    return $decoded->data;
-} else {
-    // Optionally, log $decoded or $error for debugging
-    return [
-        'error' => $error ?: ($decoded->message ?? 'Unknown error'),
-        'response' => $decoded
-    ];
-}
-
-
+        if (isset($decoded->data)) {
+            return $decoded->data;
+        } else {
+            // Optionally, log $decoded or $error for debugging
+            return [
+                'error' => $error ?: ($decoded->message ?? 'Unknown error'),
+                'response' => $decoded
+            ];
+        }
     }
 
     /**
@@ -159,13 +158,30 @@ if (isset($decoded->data)) {
             return response()->json(['success' => false, 'message' => 'Invalid signature'], 403);
         }
 
-        $data = $request->all();
+        $data = json_decode($rawBody, true);
         // Update status pembayaran di database
         $trx = Transaction::where('merchant_ref', $data['merchant_ref'] ?? null)->first();
         if ($trx) {
-            $trx->status = $data['status'] ?? $trx->status;
+            // Periksa jika status berubah menjadi PAID/SETTLED dan email belum dikirim
+            $oldStatus = $trx->status;
+            $newStatus = $data['status'] ?? $oldStatus;
+
+            $trx->status = $newStatus;
             $trx->response = $data;
             $trx->save();
+
+            // Kirim email jika status berubah menjadi PAID atau SETTLED dan sebelumnya bukan status tersebut
+            if (($newStatus === 'PAID' || $newStatus === 'SETTLED') && !in_array($oldStatus, ['PAID', 'SETTLED'])) {
+                $product = Product::find($trx->product_id); // Ambil data produk terkait
+                if ($product && $trx->customer_email) { // Pastikan produk dan email pelanggan ada
+                    try {
+                        Mail::to($trx->customer_email)->send(new PaymentSuccessMail($trx, $product));
+                        Log::info('Email konfirmasi pembayaran berhasil dikirim untuk transaksi: ' . $trx->merchant_ref);
+                    } catch (\Exception $e) {
+                        Log::error('Gagal mengirim email konfirmasi pembayaran untuk transaksi: ' . $trx->merchant_ref . ' Error: ' . $e->getMessage());
+                    }
+                }
+            }
         }
         Log::info('Tripay callback received', $data);
 

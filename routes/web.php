@@ -4,22 +4,10 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TripayController;
 use App\Http\Controllers\AuthController; // Pastikan ini sudah ada atau tambahkan
+use App\Http\Controllers\TransactionHistoryController;
 
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-// --- Rute yang diubah: Mengarahkan rute dasar '/' ke halaman login ---
 Route::get('/', function () {
-    return redirect()->route('login'); // Ini akan mengarahkan ke rute yang bernama 'login'
+    return redirect()->route('login');
 });
 
 // Rute untuk Login (bisa diakses tanpa login)
@@ -29,6 +17,8 @@ Route::post('/login', [AuthController::class, 'login']);
 // Rute untuk Logout (hanya bisa diakses jika sudah login, tapi ini akan otomatis logout)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Rute Tripay Callback (tidak memerlukan autentikasi)
+Route::post('/tripay/callback', [TripayController::class, 'handleCallback']);
 
 // --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
 Route::middleware(['auth'])->group(function () {
@@ -38,10 +28,14 @@ Route::middleware(['auth'])->group(function () {
     // Rute Beli Produk
     Route::get('/beli/{id}', [App\Http\Controllers\CheckoutController::class, 'beli']);
 
-    // Rute Tripay Transactions (jika hanya untuk user terautentikasi)
-    // Jika ini adalah endpoint callback dari Tripay, mungkin tidak perlu di-auth
-    // Tinjau kembali apakah rute POST Tripay perlu diautentikasi atau tidak
-    // Biasanya callback dari payment gateway tidak memerlukan autentikasi user
+    // Rute Histori Transaksi
+    Route::get('/transaction-history', [TransactionHistoryController::class, 'index'])->name('transaction.history');
+    Route::post('/transaction/update-status', [TransactionHistoryController::class, 'updateStatus'])->name('transaction.update-status');
+    Route::post('/transaction/manual-update-status', [TransactionHistoryController::class, 'manualUpdateStatus'])->name('transaction.manual-update-status');
+    Route::get('/callback-logs', [TransactionHistoryController::class, 'viewCallbackLogs'])->name('callback.logs');
+    Route::post('/test-callback/{transactionId}', [TransactionHistoryController::class, 'testCallback'])->name('test.callback');
+
+    // Rute Tripay Transactions
     Route::post('/tripay/transaction', [TripayController::class, 'createTransaction']);
 
     // Rute Profil

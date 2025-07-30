@@ -6,7 +6,7 @@ body {
   }
   h1 {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 100px;
   margin-bottom: 20px;
   color: #333;
 }
@@ -124,7 +124,8 @@ body {
   }
   .header-icons {
     display: flex;
-    gap: 18px;
+    align-items: center;
+    gap: 12px;
   }
   .icon-btn {
     display: flex;
@@ -257,10 +258,14 @@ body {
   align-items: center;
   padding: 18px 32px; /* Sesuaikan padding agar ada ruang di atas dan bawah, dan samping */
   box-sizing: border-box;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   z-index: 10;
-  background-color: #f7f8fa;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background-color: rgba(247, 248, 250, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.1);
 }
 
 /* Modifikasi Gaya Kolom Pencarian */
@@ -302,3 +307,34 @@ body {
       margin-top: 40px;
       display: none; /* Sembunyikan secara default */
     }
+
+  /* Background 3D Simple */
+  .product-section {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 16px;
+    min-height: 400px;
+  }
+
+  .background-3d {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+    border-radius: 20px;
+    box-shadow: 
+      0 20px 40px rgba(0,0,0,0.08),
+      0 8px 16px rgba(0,0,0,0.06),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+    z-index: 0;
+  }
+
+  .product-grid {
+    position: relative;
+    z-index: 1;
+    padding: 40px 20px;
+  }

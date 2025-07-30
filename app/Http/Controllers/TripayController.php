@@ -142,50 +142,118 @@ class TripayController extends Controller
      */
     public function handleCallback(Request $request)
     {
+        // Log semua data yang diterima untuk debugging
+        Log::info('Tripay callback received - Raw data', [
+            'headers' => $request->headers->all(),
+            'body' => $request->getContent(),
+            'method' => $request->method(),
+            'url' => $request->url()
+        ]);
+
         $privateKey = env('TRIPAY_PRIVATE_KEY');
         $callbackSignature = $request->header('X-Callback-Signature');
         $rawBody = $request->getContent();
-        $computedSignature = hash_hmac('sha256', $rawBody, $privateKey);
+        
+        // Log signature verification
+        Log::info('Tripay callback signature verification', [
+            'received_signature' => $callbackSignature,
+            'raw_body_length' => strlen($rawBody),
+            'private_key_exists' => !empty($privateKey)
+        ]);
 
-        // Verifikasi signature
-        if ($callbackSignature !== $computedSignature) {
-            // Signature tidak valid
-            Log::warning('Tripay callback signature mismatch', [
-                'expected' => $computedSignature,
-                'received' => $callbackSignature,
-                'body' => $rawBody
-            ]);
-            return response()->json(['success' => false, 'message' => 'Invalid signature'], 403);
+        // Verifikasi signature jika private key ada
+        if (!empty($privateKey)) {
+            $computedSignature = hash_hmac('sha256', $rawBody, $privateKey);
+            
+            if ($callbackSignature !== $computedSignature) {
+                Log::warning('Tripay callback signature mismatch', [
+                    'expected' => $computedSignature,
+                    'received' => $callbackSignature,
+                    'body' => $rawBody
+                ]);
+                return response()->json(['success' => false, 'message' => 'Invalid signature'], 403);
+            }
+        } else {
+            Log::warning('Tripay private key not found, skipping signature verification');
         }
 
+        // Parse JSON body
         $data = json_decode($rawBody, true);
-        // Update status pembayaran di database
-        $trx = Transaction::where('merchant_ref', $data['merchant_ref'] ?? null)->first();
-        if ($trx) {
-            // Periksa jika status berubah menjadi PAID/SETTLED dan email belum dikirim
-            $oldStatus = $trx->status;
-            $newStatus = $data['status'] ?? $oldStatus;
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Log::error('Tripay callback JSON parse error', [
+                'error' => json_last_error_msg(),
+                'raw_body' => $rawBody
+            ]);
+            return response()->json(['success' => false, 'message' => 'Invalid JSON'], 400);
+        }
 
-            $trx->status = $newStatus;
-            $trx->response = $data;
-            $trx->save();
+        Log::info('Tripay callback parsed data', $data);
 
-            // Kirim email jika status berubah menjadi PAID atau SETTLED dan sebelumnya bukan status tersebut
-            if (($newStatus === 'PAID' || $newStatus === 'SETTLED') && !in_array($oldStatus, ['PAID', 'SETTLED'])) {
-                $product = Product::find($trx->product_id); // Ambil data produk terkait
-                if ($product && $trx->customer_email) { // Pastikan produk dan email pelanggan ada
-                    try {
-                        Mail::to($trx->customer_email)->send(new PaymentSuccessMail($trx, $product));
-                        Log::info('Email konfirmasi pembayaran berhasil dikirim untuk transaksi: ' . $trx->merchant_ref);
-                    } catch (\Exception $e) {
-                        Log::error('Gagal mengirim email konfirmasi pembayaran untuk transaksi: ' . $trx->merchant_ref . ' Error: ' . $e->getMessage());
-                    }
+        // Cari transaksi berdasarkan merchant_ref
+        $merchantRef = $data['merchant_ref'] ?? null;
+        if (!$merchantRef) {
+            Log::error('Tripay callback missing merchant_ref', $data);
+            return response()->json(['success' => false, 'message' => 'Missing merchant_ref'], 400);
+        }
+
+        $trx = Transaction::where('merchant_ref', $merchantRef)->first();
+        if (!$trx) {
+            Log::error('Tripay callback transaction not found', [
+                'merchant_ref' => $merchantRef,
+                'callback_data' => $data
+            ]);
+            return response()->json(['success' => false, 'message' => 'Transaction not found'], 404);
+        }
+
+        // Update status pembayaran
+        $oldStatus = $trx->status;
+        $newStatus = $data['status'] ?? $oldStatus;
+
+        Log::info('Tripay callback updating transaction status', [
+            'transaction_id' => $trx->id,
+            'merchant_ref' => $merchantRef,
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'callback_data' => $data
+        ]);
+
+        // Update transaksi
+        $trx->status = $newStatus;
+        $trx->response = array_merge($trx->response ?? [], [
+            'callback_data' => $data,
+            'callback_received_at' => now()->toISOString(),
+            'status_updated_from' => $oldStatus,
+            'status_updated_to' => $newStatus
+        ]);
+        $trx->save();
+
+        // Kirim email jika status berubah menjadi PAID atau SETTLED
+        if (($newStatus === 'PAID' || $newStatus === 'SETTLED') && !in_array($oldStatus, ['PAID', 'SETTLED'])) {
+            $product = Product::find($trx->product_id);
+            if ($product && $trx->customer_email) {
+                try {
+                    Mail::to($trx->customer_email)->send(new PaymentSuccessMail($trx, $product));
+                    Log::info('Payment success email sent', [
+                        'transaction_id' => $trx->id,
+                        'merchant_ref' => $merchantRef,
+                        'customer_email' => $trx->customer_email
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send payment success email', [
+                        'transaction_id' => $trx->id,
+                        'merchant_ref' => $merchantRef,
+                        'error' => $e->getMessage()
+                    ]);
                 }
             }
         }
-        Log::info('Tripay callback received', $data);
 
-        // Contoh response sukses
-        return response()->json(['success' => true]);
+        Log::info('Tripay callback processed successfully', [
+            'transaction_id' => $trx->id,
+            'merchant_ref' => $merchantRef,
+            'status_updated' => $oldStatus . ' -> ' . $newStatus
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Callback processed successfully']);
     }
 }

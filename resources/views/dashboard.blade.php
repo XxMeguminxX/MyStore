@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
 
-<body>
+<body class="body-background-3d">
     <div class="header-bar">
         {{-- Kolom Pencarian Baru, dipindahkan ke dalam header-bar --}}
         <div class="search-container">
@@ -19,6 +19,11 @@
         </div>
 
         <div class="header-icons">
+            <a href="{{ route('transaction.history') }}" class="icon-btn" title="Histori Transaksi">
+                <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+            </a>
             <a href="{{ url('/profile') }}" class="icon-btn" title="Profil">
                 <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <circle cx="12" cy="8" r="4" stroke-width="2" />
@@ -30,11 +35,11 @@
     </div>
 
   <h1>Produk Digital Saya</h1>
-  {{-- Pesan "Produk Tidak Ditemukan" --}}
   <div id="noResults" class="no-results-message">
     Produk Tidak Ditemukan.
   </div>
-  
+  <div class="product-section">
+    <div class="background-3d"></div>
     <div class="product-grid">
         @foreach ($products as $data)
         <div class="product-card">
@@ -53,6 +58,7 @@
         </div>
         @endforeach
     </div>
+  </div>
 
     <div id="desc-modal" class="desc-modal" style="display:none;">
         <div class="desc-modal-content">
@@ -90,31 +96,35 @@
     // Fungsi Pencarian Produk
     function filterProducts() {
         // Dapatkan nilai input pencarian, ubah ke huruf kecil untuk pencarian case-insensitive
-       const searchInput = document.getElementById('productSearch').value.toLowerCase();
-      const productCards = document.querySelectorAll('.product-card');
-      let visibleProductCount = 0; // Tambahkan penghitung produk yang terlihat
+        const searchInput = document.getElementById('productSearch').value.toLowerCase();
+        const productCards = document.querySelectorAll('.product-card');
+        let visibleProductCount = 0; // Tambahkan penghitung produk yang terlihat
+        
+        productCards.forEach(card => {
+          const productTitle = card.querySelector('.product-title').textContent.toLowerCase();
 
-      productCards.forEach(card => {
-        const productTitle = card.querySelector('.product-title').textContent.toLowerCase();
+          if (productTitle.includes(searchInput)) {
+            card.style.display = ''; // Tampilkan elemen
+            visibleProductCount++; // Tambah hitungan jika produk terlihat
+          } else {
+            card.style.display = 'none'; // Sembunyikan elemen
+          }
+        });
 
-        if (productTitle.includes(searchInput)) {
-          card.style.display = ''; // Tampilkan elemen
-          visibleProductCount++; // Tambah hitungan jika produk terlihat
+        // Dapatkan elemen pesan "Tidak Ditemukan"
+        const noResultsMessage = document.getElementById('noResults');
+
+        // Tampilkan atau sembunyikan pesan berdasarkan jumlah produk yang terlihat
+        if (visibleProductCount === 0) {
+          noResultsMessage.style.display = 'block'; // Tampilkan pesan
         } else {
-          card.style.display = 'none'; // Sembunyikan elemen
+          noResultsMessage.style.display = 'none'; // Sembunyikan pesan
         }
-      });
-
-      // Dapatkan elemen pesan "Tidak Ditemukan"
-      const noResultsMessage = document.getElementById('noResults');
-
-      // Tampilkan atau sembunyikan pesan berdasarkan jumlah produk yang terlihat
-      if (visibleProductCount === 0) {
-        noResultsMessage.style.display = 'bs ock'; // Tampilkan pesan
-      } else {
-        noResultsMessage.style.display = 'none'; // Sembunyikan pesan
-      }
     }
+    
+    window.onload = function() {
+      filterProducts();
+    };
     </script>
 </body>
 

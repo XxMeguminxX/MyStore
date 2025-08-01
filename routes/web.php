@@ -43,3 +43,6 @@ Route::middleware(['auth'])->group(function () {
         return view('profile');
     });
 });
+
+// Rute quantity produk
+Route::post('/products/{id}/update-quantity', [ProductController::class, 'updateQuantity'])->name('products.update_quantity');

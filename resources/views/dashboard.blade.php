@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}"> <title>E Store ID</title>
     <title>E Store ID</title>
     <style>
     </style>
@@ -51,6 +52,7 @@
                 <span class="desc-full" style="display:none;">{!! nl2br(e($data->description)) !!}</span>
                 <button class="btn-desc-toggle" onclick="openDescModal(this)">Lihat Selengkapnya</button>
             </div>
+            <div class="product-quantity">Tersisa: {{ $data->quantity }}</div>
             <div class="product-price">Rp {{ number_format($data->price,0,'','.') }}</div>
             <div class="product-actions">
                 <a href="{{url('/beli/'.$data->id) }}" class="btn btn-beli" id="beli-produk-1">Beli</a>
@@ -125,6 +127,39 @@
     window.onload = function() {
       filterProducts();
     };
+
+    // Fungsi untuk memperbarui quantity produk
+    async function updateProductQuantity(productId, newQuantity) {
+        // Ambil CSRF token dari meta tag
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        try {
+            const response = await fetch(`/products/${productId}/update-quantity`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken, // Mengirim CSRF token untuk keamanan
+                },
+                body: JSON.stringify({
+                    quantity: newQuantity
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log(result.message); // Tampilkan pesan sukses
+                // Kamu bisa menambahkan logika lain di sini,
+                // misalnya memperbarui tampilan quantity di halaman
+            } else {
+                console.error('Gagal memperbarui quantity:', result.message);
+            }
+
+        } catch (error) {
+            console.error('Terjadi kesalahan:', error);
+        }
+    }
+
     </script>
 </body>
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -23,6 +24,26 @@ class TransactionHistoryController extends Controller
     public function updateStatus(Request $request)
     {
         $transaction = Transaction::findOrFail($request->transaction_id);
+
+        // Tambahkan logika ini untuk mengurangi stok
+        if ($request->status === 'PAID' && $transaction->status !== 'PAID') {
+            // Asumsi model Transaction memiliki relasi ke model Product
+            // atau memiliki kolom product_id
+            $product = Product::find($transaction->product_id); // Asumsi kolom product_id ada di tabel transactions
+
+            if ($product) {
+                // Pastikan quantity tidak menjadi negatif
+                if ($product->quantity > 0) {
+                    $product->quantity = $product->quantity - 1; // Kurangi 1 dari stok
+                    $product->save(); // Simpan perubahan ke database
+                } else {
+                    // Log atau tangani jika stok habis
+                    Log::warning("Stok produk ID {$product->id} habis saat transaksi ID {$transaction->id} dibayar.");
+                }
+            } else {
+                Log::error("Produk dengan ID {$transaction->product_id} tidak ditemukan.");
+            }
+        }
         
         // Update status pembayaran
         $transaction->update([
@@ -123,4 +144,4 @@ class TransactionHistoryController extends Controller
             'signature' => $signature
         ]);
     }
-} 
+}

@@ -53,7 +53,7 @@
             @if($transactions->count() > 0)
                 <!-- Debug: Tampilkan status mentah -->
                 <div class="debug-info">
-                    <strong>Debug Info:</strong><br>
+                    <!-- <strong>Debug Info:</strong><br>
                     @foreach($transactions as $transaction)
                         @php
                             $rawStatus = $transaction->status;
@@ -66,7 +66,7 @@
                         Lowercase: "{{ $lowercaseStatus }}" | 
                         CSS Class: "{{ $statusClass }}" | 
                         Display Text: "{{ $displayText }}"<br>
-                    @endforeach
+                    @endforeach -->
                 </div>
                 
                 <div id="transactionsList">
@@ -85,7 +85,7 @@
                                         style="background: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; cursor: pointer; margin-right: 5px;">
                                     Set PAID
                                 </button>
-                                <button onclick="updateTransactionStatus({{ $transaction->id }}, 'EXPIRED')" 
+                                <!-- <button onclick="updateTransactionStatus({{ $transaction->id }}, 'EXPIRED')" 
                                         style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; cursor: pointer; margin-right: 5px;">
                                     Set EXPIRED
                                 </button>
@@ -97,7 +97,7 @@
                                         style="background: #007bff; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; cursor: pointer;">
                                     Test Callback
                                 </button>
-                            </div>
+                            </div> -->
                             
                             <div class="transaction-details">
                                 <div class="detail-item">

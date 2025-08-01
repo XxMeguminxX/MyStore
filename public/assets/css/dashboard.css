@@ -338,3 +338,11 @@ body {
     z-index: 1;
     padding: 40px 20px;
   }
+
+  .product-quantity {
+    font-size: 0.85em; /* Ukuran font lebih kecil */
+    color: #777; /* Warna abu-abu yang lebih pudar */
+    text-align: left; /* Teks rata kanan */
+    margin-top: 10px; /* Jarak dari deskripsi */
+    padding-right: 5px; /* Jarak dari sisi kanan card */
+  }

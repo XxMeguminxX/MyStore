@@ -8,7 +8,7 @@
     <title>E Store ID</title>
     <style>
     </style>
-    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
 </head>
 
 <body class="body-background-3d">

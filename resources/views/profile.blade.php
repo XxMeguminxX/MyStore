@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil</title>
     <!-- menghubungkan ke file CSS profil -->
-    <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}?v={{ time() }}">
 </head>
 
 <body>

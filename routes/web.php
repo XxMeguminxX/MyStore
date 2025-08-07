@@ -3,16 +3,21 @@
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TripayController;
-use App\Http\Controllers\AuthController; // Pastikan ini sudah ada atau tambahkan
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransactionHistoryController;
+use App\Http\Controllers\ProfileController;
+
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Rute untuk Login (bisa diakses tanpa login)
+// Rute untuk Login dan Register (bisa diakses tanpa login)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
 
 // Rute untuk Logout (hanya bisa diakses jika sudah login, tapi ini akan otomatis logout)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -39,10 +44,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tripay/transaction', [TripayController::class, 'createTransaction']);
 
     // Rute Profil
-    Route::get('/profile', function () {
-        return view('profile');
-    });
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Rute quantity produk
-Route::post('/products/{id}/update-quantity', [ProductController::class, 'updateQuantity'])->name('products.update_quantity');
+Route::post('/products/{id}/update-quantity', [\App\Http\Controllers\ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');

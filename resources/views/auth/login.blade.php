@@ -30,6 +30,10 @@
 
             <button type="submit" class="btn-primary">Login</button>
         </form>
+        
+        <div class="register-link">
+            <p>Belum punya akun? <a href="{{ route('register') }}">Register di sini</a></p>
+        </div>
     </div>
 </body>
 </html>

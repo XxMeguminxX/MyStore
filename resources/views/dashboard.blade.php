@@ -32,9 +32,23 @@
                         d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4" />
                 </svg>
             </a>
+            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                @csrf
+                <button type="submit" class="icon-btn logout-btn" title="Logout">
+                    <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </button>
+            </form>
         </div>
     </div>
 
+  @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+  @endif
+  
   <h1>Produk Digital Saya</h1>
   <div id="noResults" class="no-results-message">
     Produk Tidak Ditemukan.
@@ -163,4 +177,5 @@
     </script>
 </body>
 
+</html>
 </html>

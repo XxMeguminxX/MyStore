@@ -80,11 +80,11 @@
                             </div>
                             
                             <!-- Tombol untuk update status manual (untuk testing) -->
-                            <div style="margin-bottom: 10px; text-align: right;">
+                            <!-- <div style="margin-bottom: 10px; text-align: right;">
                                 <button onclick="updateTransactionStatus({{ $transaction->id }}, 'PAID')" 
                                         style="background: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; cursor: pointer; margin-right: 5px;">
                                     Set PAID
-                                </button>
+                                </button> -->
                                 <!-- <button onclick="updateTransactionStatus({{ $transaction->id }}, 'EXPIRED')" 
                                         style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; cursor: pointer; margin-right: 5px;">
                                     Set EXPIRED

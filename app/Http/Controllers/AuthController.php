@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Tambahkan ini
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -14,7 +16,17 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login'); // Asumsi view login ada di resources/views/auth/login.blade.php
+        return view('auth.login');
+    }
+
+    /**
+     * Menampilkan formulir registrasi.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
     }
 
     /**
@@ -39,6 +51,39 @@ class AuthController extends Controller
         return back()->withErrors([
             'email' => 'Email atau kata sandi yang anda masukkan salah atau akun belum terdaftar.',
         ])->onlyInput('email');
+    }
+
+    /**
+     * Menangani proses registrasi.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'name.required' => 'Nama harus diisi.',
+            'email.required' => 'Email harus diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Password harus diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        Auth::login($user);
+
+        return redirect('/dashboard')->with('success', 'Akun berhasil dibuat dan Anda telah login!');
     }
 
     /**

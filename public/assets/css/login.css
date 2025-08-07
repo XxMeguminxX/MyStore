@@ -47,7 +47,8 @@ body {
 }
 
 .form-group input[type="email"],
-.form-group input[type="password"] {
+.form-group input[type="password"],
+.form-group input[type="text"] {
     width: calc(100% - 24px); /* Mengurangi padding untuk lebar yang pas */
     padding: 12px; /* Padding sedikit lebih besar */
     border: 1px solid #ddd;
@@ -58,7 +59,8 @@ body {
 }
 
 .form-group input[type="email"]:focus,
-.form-group input[type="password"]:focus {
+.form-group input[type="password"]:focus,
+.form-group input[type="text"]:focus {
     border-color: #2a9d8f; /* Warna fokus mirip warna primer di dashboard */
     outline: none;
     box-shadow: 0 0 0 3px rgba(42,157,143,0.2); /* Shadow fokus mirip dengan efek di dashboard */
@@ -114,4 +116,34 @@ body {
 @keyframes ripple {
   0% { opacity: 1; transform: translate(-50%, -50%) scale(0.7); }
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+
+/* Styling untuk link registrasi dan login */
+.register-link,
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.register-link p,
+.login-link p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.register-link a,
+.login-link a {
+    color: #2a9d8f;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.register-link a:hover,
+.login-link a:hover {
+    color: #21867a;
+    text-decoration: underline;
 }

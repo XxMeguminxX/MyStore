@@ -45,7 +45,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/dashboard'); // Arahkan ke dashboard setelah login
+            return redirect()->intended('/'); // Arahkan ke home/dashboard setelah login
         }
 
         return back()->withErrors([
@@ -83,7 +83,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/dashboard')->with('success', 'Akun berhasil dibuat dan Anda telah login!');
+        return redirect('/')->with('success', 'Akun berhasil dibuat dan Anda telah login!');
     }
 
     /**
@@ -100,6 +100,6 @@ class AuthController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/'); // Arahkan kembali ke halaman utama setelah logout
+        return redirect('/'); // Arahkan kembali ke home setelah logout
     }
 }

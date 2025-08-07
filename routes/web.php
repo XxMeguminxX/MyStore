@@ -8,10 +8,6 @@ use App\Http\Controllers\TransactionHistoryController;
 use App\Http\Controllers\ProfileController;
 
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
-
 // Rute untuk Login dan Register (bisa diakses tanpa login)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -19,17 +15,21 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-// Rute untuk Logout (hanya bisa diakses jika sudah login, tapi ini akan otomatis logout)
+// Rute untuk Logout (hanya bisa diakses jika sudah login)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rute Tripay Callback (tidak memerlukan autentikasi)
 Route::post('/tripay/callback', [TripayController::class, 'handleCallback']);
 
+// Rute quantity produk (bisa diakses tanpa login)
+Route::post('/products/{id}/update-quantity', [\App\Http\Controllers\ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');
+
+// Rute Dashboard (bisa diakses tanpa login)
+Route::get('/', [DashboardController::class, 'index'])->name('home');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 // --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
 Route::middleware(['auth'])->group(function () {
-    // Rute Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index']);
-
     // Rute Beli Produk
     Route::get('/beli/{id}', [App\Http\Controllers\CheckoutController::class, 'beli']);
 

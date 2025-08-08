@@ -33,7 +33,7 @@ class DonasiSeeder extends Seeder
             ],
             [
                 'title' => 'Sandwich',
-                'description' => "Sandwich",
+                'description' => "Buy me an Sandwich",
                 'image' => 'assets/img/sandwich.jpg',
                 'is_active' => true,
                 'amount' => 25000,

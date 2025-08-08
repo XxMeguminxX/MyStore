@@ -78,7 +78,7 @@
                 const response = await fetch('/tripay/transaction', {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token('callback') }}',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },

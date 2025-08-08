@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use App\Models\Transaction;
-use illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Product;
 use App\Mail\PaymentSuccessMail;
 
@@ -81,7 +81,7 @@ class TripayController extends Controller
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/transaction/create',
+            CURLOPT_URL            => 'https://tripay.co.id/api/transaction/create',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => false,
             CURLOPT_HTTPHEADER     => [
@@ -152,14 +152,24 @@ class TripayController extends Controller
 
         $privateKey = env('TRIPAY_PRIVATE_KEY');
         $callbackSignature = $request->header('X-Callback-Signature');
+        $callbackEvent = $request->header('X-Callback-Event');
         $rawBody = $request->getContent();
         
         // Log signature verification
         Log::info('Tripay callback signature verification', [
             'received_signature' => $callbackSignature,
             'raw_body_length' => strlen($rawBody),
-            'private_key_exists' => !empty($privateKey)
+            'private_key_exists' => !empty($privateKey),
+            'event' => $callbackEvent
         ]);
+
+        // Opsional: Abaikan event selain payment_status (sesuai dokumentasi Tripay)
+        if (!empty($callbackEvent) && strtolower($callbackEvent) !== 'payment_status') {
+            Log::info('Tripay callback ignored due to non payment_status event', [
+                'event' => $callbackEvent
+            ]);
+            return response()->json(['success' => true, 'message' => 'Event ignored']);
+        }
 
         // Verifikasi signature jika private key ada
         if (!empty($privateKey)) {
@@ -209,6 +219,18 @@ class TripayController extends Controller
         $oldStatus = $trx->status;
         $newStatus = $data['status'] ?? $oldStatus;
 
+        // Validasi jumlah pembayaran jika tersedia di payload
+        $callbackAmount = $data['amount'] ?? ($data['total_amount'] ?? null);
+        if ($callbackAmount !== null && (int) $callbackAmount !== (int) $trx->amount) {
+            Log::warning('Tripay callback amount mismatch', [
+                'merchant_ref' => $merchantRef,
+                'expected_amount' => $trx->amount,
+                'received_amount' => $callbackAmount
+            ]);
+            // Tetap kembalikan 200 agar Tripay tidak retry terus, tetapi jangan update status
+            return response()->json(['success' => true, 'message' => 'Amount mismatch, ignored']);
+        }
+
         Log::info('Tripay callback updating transaction status', [
             'transaction_id' => $trx->id,
             'merchant_ref' => $merchantRef,
@@ -230,6 +252,25 @@ class TripayController extends Controller
         // Kirim email jika status berubah menjadi PAID atau SETTLED
         if (($newStatus === 'PAID' || $newStatus === 'SETTLED') && !in_array($oldStatus, ['PAID', 'SETTLED'])) {
             $product = Product::find($trx->product_id);
+
+            // Kurangi stok produk (idempoten: hanya saat transisi ke PAID/SETTLED)
+            if ($product && isset($product->quantity) && $product->quantity > 0) {
+                try {
+                    $product->quantity = max(0, (int) $product->quantity - 1);
+                    $product->save();
+                    Log::info('Product stock decremented after payment', [
+                        'product_id' => $product->id,
+                        'new_quantity' => $product->quantity,
+                        'transaction_id' => $trx->id
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Failed to decrement product stock', [
+                        'product_id' => $trx->product_id,
+                        'transaction_id' => $trx->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
             if ($product && $trx->customer_email) {
                 try {
                     Mail::to($trx->customer_email)->send(new PaymentSuccessMail($trx, $product));

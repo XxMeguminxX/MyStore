@@ -43,7 +43,7 @@ class DonasiSeeder extends Seeder
                 'description' => "Buy me an Pizza",
                 'image' => 'assets/img/pizza.jpg',
                 'is_active' => true,
-                'amount' => 30000,
+                'amount' => 50000,
             ],
         ];
 

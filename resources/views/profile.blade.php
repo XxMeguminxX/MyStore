@@ -7,6 +7,7 @@
     <title>Profil</title>
     <!-- menghubungkan ke file CSS profil -->
     <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}?v={{ time() }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
 </head>
 
 <body>

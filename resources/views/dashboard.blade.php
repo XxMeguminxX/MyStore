@@ -9,6 +9,7 @@
     <style>
     </style>
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
 </head>
 
 <body class="body-background-3d">

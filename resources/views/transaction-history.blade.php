@@ -8,6 +8,7 @@
     <title>Histori Transaksi - E Store ID</title>
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/transaction-history.css') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
     <style>
        
     </style>

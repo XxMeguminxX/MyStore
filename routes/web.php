@@ -6,6 +6,8 @@ use App\Http\Controllers\TripayController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransactionHistoryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DonasiController;
+use App\Http\Controllers\ProductQttController;
 
 
 // Rute untuk Login dan Register (bisa diakses tanpa login)
@@ -22,16 +24,20 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/tripay/callback', [TripayController::class, 'handleCallback']);
 
 // Rute quantity produk (bisa diakses tanpa login)
-Route::post('/products/{id}/update-quantity', [\App\Http\Controllers\ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');
+Route::post('/products/{id}/update-quantity', [ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');
 
 // Rute Dashboard (bisa diakses tanpa login)
-Route::get('/', [DashboardController::class, 'index'])->name('home');
+Route::get('/', [DonasiController::class, 'index'])->name('donasi.index');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// Rute Donasi (bisa diakses tanpa login)
+Route::get('/donasi', [DonasiController::class, 'index'])->name('donasi.index');
 
 // --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
 Route::middleware(['auth'])->group(function () {
     // Rute Beli Produk
 Route::get('/beli/{id}', [App\Http\Controllers\CheckoutController::class, 'beli']);
+    // Rute Beli Donasi (gunakan checkout yang sama)
+    Route::get('/donasi/beli/{id}', [DonasiController::class, 'beli'])->name('donasi.beli');
 
     // Rute Histori Transaksi
 Route::get('/transaction-history', [TransactionHistoryController::class, 'index'])->name('transaction.history');
@@ -48,5 +54,4 @@ Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
 Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
 
-// Rute quantity produk
-Route::post('/products/{id}/update-quantity', [\App\Http\Controllers\ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');
+// (dihapus duplikat rute quantity produk)

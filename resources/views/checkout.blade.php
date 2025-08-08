@@ -22,7 +22,7 @@
         <div class="alert alert-danger" style="color: red; margin-bottom: 1em;">{{ $error }}</div>
         @endif
         <div class="checkout-summary">
-            <img class="checkout-img" src="{{ $product->image }}" alt="Nama Produk">
+            <img class="checkout-img" src="{{ asset($product->image) }}" alt="Nama Produk">
             <div class="checkout-info">
                 <div class="checkout-title">{{ $product->name }}</div>
                 <div class="checkout-id">ID {{ $product->id }}</div>

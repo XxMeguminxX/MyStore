@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product; // Pastikan kamu mengimpor model Product
 
-class ProductController extends Controller
+class ProductQttController extends Controller
 {
     // ... fungsi-fungsi lain yang sudah ada ...
 

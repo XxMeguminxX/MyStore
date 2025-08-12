@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Checkout</title>
     <link rel="stylesheet" href="{{ asset('assets/css/checkout.css') }}">
     <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
@@ -78,10 +79,11 @@
                 const response = await fetch('/tripay/transaction', {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'same-origin',
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();

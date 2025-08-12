@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Program Donasi</title>
+    <title>Donate me</title>
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
     <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
 </head>
@@ -13,7 +13,7 @@
 <body class="body-background-3d">
     <div class="header-bar">
         <div class="search-container">
-            <input type="text" id="donasiSearch" onkeyup="filterDonasi()" placeholder="Cari program donasi..."
+            <input type="text" id="donasiSearch" onkeyup="filterDonasi()" placeholder="Donate me..."
                 class="search-input">
         </div>
 

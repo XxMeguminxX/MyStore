@@ -48,7 +48,7 @@ echo json_encode($callbackData, JSON_PRETTY_PRINT) . "\n\n";
 echo "Generated Signature: {$signature}\n\n";
 
 // Simulasi HTTP request ke callback endpoint
-$url = 'http://localhost:8000/tripay/callback';
+$url = 'http://127.0.0.1:8000/tripay/callback';
 $headers = [
     'Content-Type: application/json',
     'X-Callback-Signature: ' . $signature

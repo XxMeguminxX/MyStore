@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TripayController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransactionHistoryController;
 use App\Http\Controllers\ProfileController;
@@ -20,8 +21,9 @@ Route::post('/register', [AuthController::class, 'register']);
 // Rute untuk Logout (hanya bisa diakses jika sudah login)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Rute Tripay Callback (tidak memerlukan autentikasi)
-Route::post('/tripay/callback', [TripayController::class, 'handleCallback']);
+// Rute Tripay Callback (tidak memerlukan autentikasi) - tanpa CSRF & tanpa grup web
+Route::post('/tripay/callback', [TripayController::class, 'handleCallback'])
+    ->withoutMiddleware(['web', VerifyCsrfToken::class, \App\Http\Middleware\VerifyCsrfToken::class]);
 
 // Rute quantity produk (bisa diakses tanpa login)
 Route::post('/products/{id}/update-quantity', [ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');

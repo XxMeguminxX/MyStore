@@ -118,6 +118,22 @@
                                     <div class="detail-value">{{ $transaction->customer_name ?? 'N/A' }}</div>
                                 </div>
                             </div>
+
+                            @php
+                                $isUnpaid = strtoupper($transaction->status ?? 'UNPAID') === 'UNPAID';
+                                $resp = $transaction->response ?? [];
+                                $payUrl = $transaction->payment_url
+                                    ?? ($resp['data']['payment_url'] ?? null)
+                                    ?? ($resp['data']['checkout_url'] ?? null);
+                            @endphp
+
+                            @if($isUnpaid && $payUrl)
+                                <div style="margin: 12px 0 0 0; text-align: right;">
+                                    <a href="{{ $payUrl }}" class="pay-now-btn" style="display: inline-block; background: #f4a261; color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.95em; font-weight: 600; text-decoration: none; box-shadow: 0 2px 8px rgba(244,162,97,0.25);">
+                                        Lanjutkan Pembayaran
+                                    </a>
+                                </div>
+                            @endif
                             
                             <div class="transaction-date">
                                 {{ $transaction->created_at ? $transaction->created_at->format('d M Y H:i') : 'N/A' }}

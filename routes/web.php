@@ -25,6 +25,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/tripay/callback', [TripayController::class, 'handleCallback'])
     ->withoutMiddleware(['web', VerifyCsrfToken::class, \App\Http\Middleware\VerifyCsrfToken::class]);
 
+// Rute halaman terima kasih setelah kembali dari pembayaran
+Route::get('/payment/thank-you', [TripayController::class, 'thankYou'])->name('payment.thank-you');
+
 // Rute quantity produk (bisa diakses tanpa login)
 Route::post('/products/{id}/update-quantity', [ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');
 

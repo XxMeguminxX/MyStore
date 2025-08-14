@@ -12,6 +12,19 @@ use App\Mail\PaymentSuccessMail;
 
 class TripayController extends Controller
 {
+    public function thankYou(Request $request)
+    {
+        $merchantRef = $request->query('merchant_ref');
+        $transaction = null;
+        if ($merchantRef) {
+            $transaction = Transaction::where('merchant_ref', $merchantRef)->first();
+        }
+        return view('thank-you', [
+            'transaction' => $transaction,
+            'merchant_ref' => $merchantRef,
+        ]);
+    }
+
     public function getPaymentChannels()
     {
         $apiKey = env('TRIPAY_API_KEY');
@@ -20,7 +33,7 @@ class TripayController extends Controller
 
         curl_setopt_array($curl, array(
             CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api/merchant/payment-channel',
+            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/merchant/payment-channel',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => false,
             CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $apiKey],
@@ -72,7 +85,7 @@ class TripayController extends Controller
                     'quantity' => 1
                 ]
             ],
-            'return_url'     => url('/dashboard'),
+            'return_url'     => url('/payment/thank-you?merchant_ref=' . $merchant_ref),
             'callback_url'   => url('/tripay/callback'),
             'expired_time'   => (time() + (24 * 60 * 60)),
             'signature'      => hash_hmac('sha256', $merchantCode . $merchant_ref . $request->amount, $privateKey)
@@ -81,7 +94,7 @@ class TripayController extends Controller
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api/transaction/create',
+            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/transaction/create',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => false,
             CURLOPT_HTTPHEADER     => [

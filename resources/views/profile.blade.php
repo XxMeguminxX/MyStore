@@ -22,9 +22,21 @@
     <div class="profile-container">
         <h1>Profil Pengguna</h1>
 
+        <div class="info-box" style="background: #e8f5e8; border: 1px solid #2a9d8f; border-radius: 8px; padding: 12px; margin-bottom: 20px; text-align: center;">
+            <p style="margin: 0; color: #2a9d8f; font-size: 0.9em;">
+                <strong>ℹ️ Informasi:</strong> Semua data profile harus lengkap untuk dapat melakukan checkout.
+            </p>
+        </div>
+
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-error">
+                {{ session('error') }}
             </div>
         @endif
 
@@ -51,24 +63,27 @@
 
                 <div class="profile-item">
                     <label for="name" class="profile-label">Nama</label>
-                    <input type="text" id="name" name="name" value="{{ $user->name }}" class="profile-input" required>
+                    <input type="text" id="name" name="name" value="{{ $user->name }}" class="profile-input {{ empty($user->name) ? 'field-empty' : '' }}" readonly>
+                    @if(empty($user->name))
+                        <small class="field-warning">⚠️ Nama harus diisi untuk melakukan checkout</small>
+                    @endif
                 </div>
 
                 <div class="profile-item">
                     <label for="email" class="profile-label">Email</label>
-                    <div class="email-display">
-                        <span class="current-email">{{ $user->email }}</span>
-                        <button type="button" class="btn-change-email" onclick="showChangeEmailModal()">
-                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Ubah Email
-                        </button>
-                    </div>
-                    <input type="hidden" id="email" name="email" value="{{ $user->email }}">
+                    <input type="email" id="email" name="email" value="{{ $user->email }}" class="profile-input {{ empty($user->email) ? 'field-empty' : '' }}" readonly>
+                    @if(empty($user->email))
+                        <small class="field-warning">⚠️ Email harus diisi untuk melakukan checkout</small>
+                    @endif
                 </div>
 
-                <input type="hidden" id="current_password" name="current_password">
+                <div class="profile-item">
+                    <label for="phone" class="profile-label">No HP</label>
+                    <input type="tel" id="phone" name="phone" value="{{ $user->phone ?? '' }}" class="profile-input {{ empty($user->phone) ? 'field-empty' : '' }}" readonly>
+                    @if(empty($user->phone))
+                        <small class="field-warning">⚠️ No HP harus diisi untuk melakukan checkout</small>
+                    @endif
+                </div>
 
                 <div class="profile-item">
                     <span class="profile-label">Tanggal Daftar</span>
@@ -76,162 +91,109 @@
                 </div>
 
                 <div class="profile-actions">
-                    <button type="button" class="btn-update" onclick="showUpdateModal()">Update Profil</button>
+                    <button type="button" class="btn-update" onclick="showEditProfileModal()">Edit Profil</button>
                 </div>
             </form>
             </div>
         </div>
     </div>
 
-    <!-- Modal Konfirmasi Update -->
-    <div id="updateModal" class="modal" style="display: none;">
+    <!-- Modal Edit Profil -->
+    <div id="editProfileModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Konfirmasi Update Profil</h3>
-                <span class="modal-close" onclick="closeUpdateModal()">&times;</span>
+                <h3>Edit Profil</h3>
+                <span class="modal-close" onclick="closeEditProfileModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <p>Apakah Anda yakin ingin mengupdate nama profil?</p>
-                <div class="confirmation-details">
-                    <div class="detail-item">
-                        <strong>Nama Baru:</strong> <span id="confirmName"></span>
+                <form id="editProfileForm" class="edit-profile-form">
+                    <div class="form-group">
+                        <label for="editName" class="form-label">Nama</label>
+                        <input type="text" id="editName" name="edit_name" value="{{ $user->name }}" class="form-input" required>
                     </div>
-                </div>
+                    
+                    <div class="form-group">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" id="editEmail" name="edit_email" value="{{ $user->email }}" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editPhone" class="form-label">No HP</label>
+                        <input type="tel" id="editPhone" name="edit_phone" value="{{ $user->phone ?? '' }}" class="form-input" placeholder="Masukkan nomor HP">
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeUpdateModal()">Batal</button>
-                <button type="button" class="btn-confirm" onclick="submitForm()">Ya, Update Nama</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Ubah Email -->
-    <div id="changeEmailModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Ubah Email</h3>
-                <span class="modal-close" onclick="closeChangeEmailModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="email-form">
-                    <div class="form-group">
-                        <label for="newEmail" class="form-label">Email Baru</label>
-                        <input type="email" id="newEmail" class="form-input" placeholder="Masukkan email baru">
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword" class="form-label">Password Saat Ini</label>
-                        <input type="password" id="confirmPassword" class="form-input" placeholder="Masukkan password untuk konfirmasi">
-                        <small class="form-note">Password diperlukan untuk mengubah email</small>
-                    </div>
-                </div>
-                <div class="email-warning">
-                    <p><strong>⚠️ Perhatian:</strong></p>
-                    <ul>
-                        <li>Email baru akan digunakan untuk login</li>
-                        <li>Pastikan email baru valid dan dapat diakses</li>
-                        <li>Perubahan email tidak dapat dibatalkan</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeChangeEmailModal()">Batal</button>
-                <button type="button" class="btn-confirm" onclick="updateEmail()">Ubah Email</button>
+                <button type="button" class="btn-cancel" onclick="closeEditProfileModal()">Batal</button>
+                <button type="button" class="btn-confirm" onclick="saveProfileChanges()">Simpan Perubahan</button>
             </div>
         </div>
     </div>
 
     <script>
-
-        // Fungsi untuk menampilkan modal konfirmasi update nama
-        function showUpdateModal() {
-            const nameInput = document.getElementById('name');
-            
-            // Validasi input
-            if (!nameInput.value.trim()) {
-                alert('Nama harus diisi.');
-                nameInput.focus();
-                return;
-            }
-            
-            // Isi data konfirmasi
-            document.getElementById('confirmName').textContent = nameInput.value;
+        // Fungsi untuk menampilkan modal edit profil
+        function showEditProfileModal() {
+            // Isi form edit dengan data saat ini
+            document.getElementById('editName').value = '{{ $user->name }}';
+            document.getElementById('editEmail').value = '{{ $user->email }}';
+            document.getElementById('editPhone').value = '{{ $user->phone ?? "" }}';
             
             // Tampilkan modal
-            document.getElementById('updateModal').style.display = 'flex';
+            document.getElementById('editProfileModal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
         
-        // Fungsi untuk menampilkan modal ubah email
-        function showChangeEmailModal() {
-            document.getElementById('changeEmailModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            document.getElementById('newEmail').focus();
-        }
-        
-        // Fungsi untuk menutup modal
-        function closeUpdateModal() {
-            document.getElementById('updateModal').style.display = 'none';
+        // Fungsi untuk menutup modal edit profil
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
             document.body.style.overflow = '';
         }
         
-        function closeChangeEmailModal() {
-            document.getElementById('changeEmailModal').style.display = 'none';
-            document.body.style.overflow = '';
-            // Reset form
-            document.getElementById('newEmail').value = '';
-            document.getElementById('confirmPassword').value = '';
-        }
-        
-        // Fungsi untuk submit form update nama
-        function submitForm() {
-            document.getElementById('profileForm').submit();
-        }
-        
-        // Fungsi untuk update email
-        function updateEmail() {
-            const newEmail = document.getElementById('newEmail').value.trim();
-            const password = document.getElementById('confirmPassword').value.trim();
+        // Fungsi untuk menyimpan perubahan profil
+        function saveProfileChanges() {
+            const name = document.getElementById('editName').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+            const phone = document.getElementById('editPhone').value.trim();
             
-            if (!newEmail) {
-                alert('Email baru harus diisi.');
-                document.getElementById('newEmail').focus();
+            // Validasi input
+            if (!name) {
+                alert('Nama harus diisi.');
+                document.getElementById('editName').focus();
                 return;
             }
             
-            if (!password) {
-                alert('Password harus diisi untuk mengubah email.');
-                document.getElementById('confirmPassword').focus();
+            if (!email) {
+                alert('Email harus diisi.');
+                document.getElementById('editEmail').focus();
                 return;
             }
             
             // Validasi format email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(newEmail)) {
+            if (!emailRegex.test(email)) {
                 alert('Format email tidak valid.');
-                document.getElementById('newEmail').focus();
+                document.getElementById('editEmail').focus();
                 return;
             }
             
-            // Update hidden email field dan submit form
-            document.getElementById('email').value = newEmail;
-            document.getElementById('current_password').value = password;
+            // Update field readonly di halaman utama
+            document.getElementById('name').value = name;
+            document.getElementById('email').value = email;
+            document.getElementById('phone').value = phone;
+            
+            // Submit form untuk menyimpan ke database
             document.getElementById('profileForm').submit();
         }
         
         // Menutup modal jika klik di luar konten modal
         window.onclick = function(event) {
-            const updateModal = document.getElementById('updateModal');
-            const changeEmailModal = document.getElementById('changeEmailModal');
+            const editProfileModal = document.getElementById('editProfileModal');
             
-            if (event.target == updateModal) {
-                closeUpdateModal();
-            }
-            if (event.target == changeEmailModal) {
-                closeChangeEmailModal();
+            if (event.target == editProfileModal) {
+                closeEditProfileModal();
             }
         };
     </script>
 </body>
 
-</html>
 </html>

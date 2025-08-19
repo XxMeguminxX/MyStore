@@ -30,14 +30,21 @@
                 <div class="checkout-price">RP {{ number_format($product->price,0,'','.') }}</div>
             </div>
         </div>
+        
+        <div class="info-box" style="background: #e8f5e8; border: 1px solid #2a9d8f; border-radius: 8px; padding: 12px; margin-bottom: 20px; text-align: center;">
+            <p style="margin: 0; color: #2a9d8f; font-size: 0.9em;">
+                <strong>ℹ️ Informasi:</strong> Data user diambil dari profile Anda dan tidak bisa diedit. 
+                Jika ingin mengubah data, silakan update di halaman <a href="{{ route('profile') }}" style="color: #1a7a6f; text-decoration: underline;">Profile</a>.
+            </p>
+        </div>
+        
         <form class="checkout-form" id="tripay-checkout-form">
             <label>Nama Lengkap</label>
-            <input type="text" name="customer_name" placeholder="Nama Anda" required>
+            <input type="text" name="customer_name" placeholder="Nama Anda" value="{{ $user->name ?? '' }}" readonly required>
             <label>Email</label>
-            <input type="email" name="customer_email" placeholder="Email aktif" required>
+            <input type="email" name="customer_email" placeholder="Email aktif" value="{{ $user->email ?? '' }}" readonly required>
             <label>No HP</label>
-            <input type="tel" name="customer_phone" placeholder="Nomor HP aktif" required pattern="[0-9]+"
-                inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+            <input type="tel" name="customer_phone" placeholder="Nomor HP aktif" value="{{ $user->phone ?? '' }}" readonly required>
 
             <input type="hidden" name="product_sku" value="{{ $product->id }}">
             <input type="hidden" name="product_name" value="{{ $product->name }}">

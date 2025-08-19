@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
@@ -22,7 +23,29 @@ class CheckoutController extends Controller
         if ($product == null) {
             return redirect('/dashboard');
         }
-        return view('checkout', compact('product', 'channels', 'error'));
+
+        // Ambil data user yang sedang login
+        $user = Auth::user();
+        
+        // Validasi apakah semua data user sudah lengkap
+        $missingFields = [];
+        if (empty($user->name)) {
+            $missingFields[] = 'Nama Lengkap';
+        }
+        if (empty($user->email)) {
+            $missingFields[] = 'Email';
+        }
+        if (empty($user->phone)) {
+            $missingFields[] = 'No HP';
+        }
+        
+        // Jika ada field yang kosong, redirect ke profile dengan pesan error
+        if (!empty($missingFields)) {
+            $missingFieldsText = implode(', ', $missingFields);
+            return redirect()->route('profile')->with('error', "Mohon lengkapi data profile terlebih dahulu: {$missingFieldsText}");
+        }
+        
+        return view('checkout', compact('product', 'channels', 'error', 'user'));
     }
 
     public function index()
@@ -47,7 +70,29 @@ class CheckoutController extends Controller
                 'icon' => asset('assets/img/qris.png')
             ],
         ];
+        
+        // Ambil data user yang sedang login
+        $user = Auth::user();
+        
+        // Validasi apakah semua data user sudah lengkap
+        $missingFields = [];
+        if (empty($user->name)) {
+            $missingFields[] = 'Nama Lengkap';
+        }
+        if (empty($user->email)) {
+            $missingFields[] = 'Email';
+        }
+        if (empty($user->phone)) {
+            $missingFields[] = 'No HP';
+        }
+        
+        // Jika ada field yang kosong, redirect ke profile dengan pesan error
+        if (!empty($missingFields)) {
+            $missingFieldsText = implode(', ', $missingFields);
+            return redirect()->route('profile')->with('error', "Mohon lengkapi data profile terlebih dahulu: {$missingFieldsText}");
+        }
+        
         // Pastikan juga $product dikirim
-        return view('checkout', compact('channels', 'product'));
+        return view('checkout', compact('channels', 'user'));
     }
 }

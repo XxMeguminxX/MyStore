@@ -33,7 +33,7 @@ class TripayController extends Controller
 
         curl_setopt_array($curl, array(
             CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api/merchant/payment-channel',
+            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/merchant/payment-channel',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => false,
             CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $apiKey],
@@ -94,7 +94,7 @@ class TripayController extends Controller
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api/transaction/create',
+            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/transaction/create',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => false,
             CURLOPT_HTTPHEADER     => [

@@ -78,6 +78,23 @@ body {
 .checkout-form select:focus {
   border: 1.5px solid #2a9d8f;
 }
+
+/* Styling untuk input readonly */
+.checkout-form input[readonly] {
+  background: #f0f0f0;
+  color: #666;
+  cursor: not-allowed;
+  border: 1px solid #d0d0d0;
+}
+
+.checkout-form input[readonly]:focus {
+  border: 1px solid #d0d0d0;
+  box-shadow: none;
+}
+
+.checkout-form input[readonly]::placeholder {
+  color: #999;
+}
 .btn-checkout {
   margin-top: 10px;
   background: #2a9d8f;

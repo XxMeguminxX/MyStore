@@ -62,7 +62,7 @@ class ProductSeeder extends Seeder
         - Layar
         - Layar AMOLED 6,67'
         ]);
-        
+
         Product::create([
             'image' => 'https://i02.appmifile.com/73_item_id/12/02/2025/0ebf8f7e88545795e4d331457d81f610.png',
             'name' => 'POCO X7 PRO 5G',
@@ -121,6 +121,53 @@ class ProductSeeder extends Seeder
         - Penyimpanan & RAM : 6 GB/128 GB, 8 GB/256 GB
         - LPDDR4X + eMMC 5.1
         - Mendukung ekstensi memori: Hingga 16 GB'
+        ]);
+
+
+        Product::create([
+            'image' => 'https://i02.appmifile.com/608_item_id/08/04/2025/5cc790210488357e5750c1bec1620bd1!800x800!85.png',
+            'name' => 'POCO F7 PRO',
+            'price' => 7499000,
+            'description' => 'POCO F7 PRO
+- Snapdragon® 8 Gen 3 Mobile Platform
+- Proses manufaktur 4 nm
+- CPU octa-core
+- 1x Prime core (berbasis X4), hingga 3,3 GHz
+- 3x Performance core (berbasis A720), hingga 3,2 GHz
+- 2x Performance core (berbasis A720), hingga 3,0 GHz
+- 2x Efficiency core (berbasis A520), hingga 2,3 GHz
+- Adreno™ GPU
+- Qualcomm AI Engine
+- Penyimpanan & RAM
+- 12 GB+256 GB
+- 12 GB+512 GB
+- LPDDR5X
+- UFS 4.1
+
+- Dimensi
+- Tinggi: 160,26 mm
+- Lebar: 74,95 mm
+- Tebal: 8,12 mm
+- 206 g
+
+- Layar
+- 6,67" WQHD+ Flow AMOLED DotDisplay
+- Resolusi: 3.200*1.440, 526 ppi
+- Rasio kontras: 5.000.000:1
+- Rasio menyegarkan layar: Hingga 120 Hz
+- Kecerahan puncak: 3.200 nit mencakup 25% area layar
+- Kecerahan HBM: 1.800 nit
+- Rasio pengambilan sampel sentuh: Hingga 480 Hz
+- Rasio pengambilan sampel sentuh instan: Hingga 2.560 Hz
+- Gamut warna DCI-P3 yang kaya
+- Peredupan: peredupan PWM hingga 3.840 Hz
+- Original color PRO
+- Layar Pro HDR
+- HDR10+, Dolby Vision
+- Sertifikasi Cahaya Biru Rendah TÜV (Solusi Perangkat Keras)
+- Sertifikasi Bebas Kedip TÜV
+- Sertifikasi Penyesuaian Ritme Sirkadian TÜV
+- Corning Gorilla Glass 7i'
         ]);
     }
 }

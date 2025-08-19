@@ -75,7 +75,7 @@
         @foreach ($products as $data)
         <div class="product-card">
             <div class="product-id">ID: {{ $data->id }}</div>
-            <img class="product-img" src="{{ $data->image }}" alt="Ebook Belajar Laravel">
+            <img class="product-img" src="{{ $data->image }}" alt="Produk Digital">
             <div class="product-title">{{ $data->name }}</div>
             <div class="product-desc">
                 <span class="desc-short">{{ substr($data->description,0,80) }}</span>

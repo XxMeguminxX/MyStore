@@ -8,7 +8,6 @@
     <title>Histori Transaksi - E Store ID</title>
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/transaction-history.css') }}">
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
     <style>
        
     </style>
@@ -52,9 +51,9 @@
             </div>
 
             @if($transactions->count() > 0)
-                <!-- Debug: Tampilkan status mentah -->
+                {{-- <!-- Debug: Tampilkan status mentah -->
                 <div class="debug-info">
-                    <!-- <strong>Debug Info:</strong><br>
+                    <strong>Debug Info:</strong><br>
                     @foreach($transactions as $transaction)
                         @php
                             $rawStatus = $transaction->status;
@@ -67,8 +66,8 @@
                         Lowercase: "{{ $lowercaseStatus }}" | 
                         CSS Class: "{{ $statusClass }}" | 
                         Display Text: "{{ $displayText }}"<br>
-                    @endforeach -->
-                </div>
+                    @endforeach
+                </div> --}}
                 
                 <div id="transactionsList">
                     @foreach($transactions as $transaction)
@@ -81,12 +80,12 @@
                             </div>
                             
                             <!-- Tombol untuk update status manual (untuk testing) -->
-                            <!-- <div style="margin-bottom: 10px; text-align: right;">
-                                <button onclick="updateTransactionStatus({{ $transaction->id }}, 'PAID')" 
+                            <div style="margin-bottom: 10px; text-align: right;">
+                                {{-- <button onclick="updateTransactionStatus({{ $transaction->id }}, 'PAID')" 
                                         style="background: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; cursor: pointer; margin-right: 5px;">
                                     Set PAID
-                                </button> -->
-                                <!-- <button onclick="updateTransactionStatus({{ $transaction->id }}, 'EXPIRED')" 
+                                </button>
+                                <button onclick="updateTransactionStatus({{ $transaction->id }}, 'EXPIRED')" 
                                         style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; cursor: pointer; margin-right: 5px;">
                                     Set EXPIRED
                                 </button>
@@ -97,10 +96,14 @@
                                 <button onclick="testCallback({{ $transaction->id }})" 
                                         style="background: #007bff; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; cursor: pointer;">
                                     Test Callback
-                                </button>
-                            </div> -->
+                                </button> --}}
+                            </div>
                             
                             <div class="transaction-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Nama Produk</div>
+                                    <div class="detail-value">{{ $transaction->product->name ?? 'Produk Tidak Ditemukan'}}</div>
+                                </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Merchant Ref</div>
                                     <div class="detail-value">{{ $transaction->merchant_ref ?? 'N/A' }}</div>
@@ -118,22 +121,6 @@
                                     <div class="detail-value">{{ $transaction->customer_name ?? 'N/A' }}</div>
                                 </div>
                             </div>
-
-                            @php
-                                $isUnpaid = strtoupper($transaction->status ?? 'UNPAID') === 'UNPAID';
-                                $resp = $transaction->response ?? [];
-                                $payUrl = $transaction->payment_url
-                                    ?? ($resp['data']['payment_url'] ?? null)
-                                    ?? ($resp['data']['checkout_url'] ?? null);
-                            @endphp
-
-                            @if($isUnpaid && $payUrl)
-                                <div style="margin: 12px 0 0 0; text-align: right;">
-                                    <a href="{{ $payUrl }}" class="pay-now-btn" style="display: inline-block; background: #f4a261; color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.95em; font-weight: 600; text-decoration: none; box-shadow: 0 2px 8px rgba(244,162,97,0.25);">
-                                        Lanjutkan Pembayaran
-                                    </a>
-                                </div>
-                            @endif
                             
                             <div class="transaction-date">
                                 {{ $transaction->created_at ? $transaction->created_at->format('d M Y H:i') : 'N/A' }}
@@ -191,63 +178,63 @@
             }
         }
 
-        function updateTransactionStatus(transactionId, newStatus) {
-            if (confirm(`Apakah Anda yakin ingin mengubah status transaksi ID ${transactionId} menjadi ${newStatus}?`)) {
-                fetch('/transaction/manual-update-status', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        transaction_id: transactionId,
-                        status: newStatus
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload(); // Refresh halaman untuk melihat perubahan
-                    } else {
-                        alert('Gagal mengupdate status: ' + (data.message || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan saat mengupdate status');
-                });
-            }
-        }
+        // function updateTransactionStatus(transactionId, newStatus) {
+        //     if (confirm(`Apakah Anda yakin ingin mengubah status transaksi ID ${transactionId} menjadi ${newStatus}?`)) {
+        //         fetch('/transaction/manual-update-status', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        //             },
+        //             body: JSON.stringify({
+        //                 transaction_id: transactionId,
+        //                 status: newStatus
+        //             })
+        //         })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.success) {
+        //                 alert(data.message);
+        //                 location.reload(); // Refresh halaman untuk melihat perubahan
+        //             } else {
+        //                 alert('Gagal mengupdate status: ' + (data.message || 'Unknown error'));
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //             alert('Terjadi kesalahan saat mengupdate status');
+        //         });
+        //     }
+        // }
 
 
 
         
-        function testCallback(transactionId) {
-            if (confirm(`Apakah Anda yakin ingin test callback untuk transaksi ID ${transactionId}?`)) {
-                fetch(`/test-callback/${transactionId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Callback test berhasil! Status transaksi akan diupdate menjadi PAID.');
-                        location.reload(); // Refresh halaman untuk melihat perubahan
-                    } else {
-                        alert('Callback test gagal: ' + (data.error || data.response || 'Unknown error'));
-                        console.log('Callback test details:', data);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan saat test callback');
-                });
-            }
-        }
+        // function testCallback(transactionId) {
+        //     if (confirm(`Apakah Anda yakin ingin test callback untuk transaksi ID ${transactionId}?`)) {
+        //         fetch(`/test-callback/${transactionId}`, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        //             }
+        //         })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.success) {
+        //                 alert('Callback test berhasil! Status transaksi akan diupdate menjadi PAID.');
+        //                 location.reload(); // Refresh halaman untuk melihat perubahan
+        //             } else {
+        //                 alert('Callback test gagal: ' + (data.error || data.response || 'Unknown error'));
+        //                 console.log('Callback test details:', data);
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //             alert('Terjadi kesalahan saat test callback');
+        //         });
+        //     }
+        // }
     </script>
 </body>
 

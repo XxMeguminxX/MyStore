@@ -29,7 +29,7 @@
         </div>
 
         @if(session('success'))
-            <div class="alert alert-success">
+            <div class="alert alert-success" id="successAlert">
                 {{ session('success') }}
             </div>
         @endif
@@ -131,6 +131,22 @@
     </div>
 
     <script>
+        // Auto-hide pesan sukses setelah 3 detik
+        document.addEventListener('DOMContentLoaded', function() {
+            const successAlert = document.getElementById('successAlert');
+            if (successAlert) {
+                setTimeout(function() {
+                    // Tambahkan class untuk animasi fade out
+                    successAlert.classList.add('fade-out');
+                    
+                    // Hapus element setelah animasi selesai
+                    setTimeout(function() {
+                        successAlert.remove();
+                    }, 400);
+                }, 3000);
+            }
+        });
+
         // Fungsi untuk menampilkan modal edit profil
         function showEditProfileModal() {
             // Isi form edit dengan data saat ini

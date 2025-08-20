@@ -33,7 +33,7 @@ class TripayController extends Controller
 
         curl_setopt_array($curl, array(
             CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api/merchant/payment-channel',
+            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/merchant/payment-channel',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => false,
             CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $apiKey],
@@ -65,9 +65,34 @@ class TripayController extends Controller
      */
     public function createTransaction(Request $request)
     {
+        // Validasi input yang diperlukan
+        $requiredFields = ['customer_name', 'customer_email', 'customer_phone', 'payment_method', 'amount', 'product_sku', 'product_name'];
+        $missingFields = [];
+        
+        foreach ($requiredFields as $field) {
+            if (empty($request->input($field))) {
+                $missingFields[] = $field;
+            }
+        }
+        
+        if (!empty($missingFields)) {
+            return response()->json([
+                'success' => false, 
+                'error' => 'Parameter yang diperlukan tidak lengkap: ' . implode(', ', $missingFields)
+            ], 400);
+        }
+
         $apiKey = env('TRIPAY_API_KEY');
         $merchantCode = env('TRIPAY_MERCHANT_CODE');
         $privateKey = env('TRIPAY_PRIVATE_KEY');
+
+        // Validasi environment variables
+        if (empty($apiKey) || empty($merchantCode) || empty($privateKey)) {
+            return response()->json([
+                'success' => false, 
+                'error' => 'Konfigurasi Tripay tidak lengkap. Silakan hubungi administrator.'
+            ], 500);
+        }
 
         $merchant_ref = 'INV-' . time();
         $data = [
@@ -91,10 +116,18 @@ class TripayController extends Controller
             'signature'      => hash_hmac('sha256', $merchantCode . $merchant_ref . $request->amount, $privateKey)
         ];
 
+        // Log data yang akan dikirim untuk debugging
+        Log::info('Creating Tripay transaction', [
+            'merchant_ref' => $merchant_ref,
+            'customer_name' => $request->customer_name,
+            'customer_email' => $request->customer_email,
+            'amount' => $request->amount
+        ]);
+
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api/transaction/create',
+            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/transaction/create',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => false,
             CURLOPT_HTTPHEADER     => [

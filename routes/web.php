@@ -9,6 +9,7 @@ use App\Http\Controllers\TransactionHistoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DonasiController;
 use App\Http\Controllers\ProductQttController;
+use App\Http\Controllers\CheckoutController;
 
 
 // Rute untuk Login dan Register (bisa diakses tanpa login)
@@ -40,7 +41,7 @@ Route::get('/donasi', [DonasiController::class, 'index'])->name('donasi.index');
 // --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
 Route::middleware(['auth'])->group(function () {
     // Rute Beli Produk
-Route::get('/beli/{id}', [App\Http\Controllers\CheckoutController::class, 'beli']);
+Route::get('/beli/{id}', [CheckoutController::class, 'beli']);
     // Rute Beli Donasi (gunakan checkout yang sama)
     Route::get('/donasi/beli/{id}', [DonasiController::class, 'beli'])->name('donasi.beli');
 

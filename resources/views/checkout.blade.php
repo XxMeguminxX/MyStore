@@ -38,13 +38,20 @@
             </p>
         </div>
         
+        @if(!$user || empty($user->name) || empty($user->email) || empty($user->phone))
+        <div class="alert alert-danger" style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+            <strong>⚠️ Error:</strong> Data user tidak lengkap. Silakan lengkapi profile Anda terlebih dahulu.
+            <br>
+            <a href="{{ route('profile') }}" style="color: #721c24; text-decoration: underline;">Klik di sini untuk ke halaman Profile</a>
+        </div>
+        @else
         <form class="checkout-form" id="tripay-checkout-form">
             <label>Nama Lengkap</label>
-            <input type="text" name="customer_name" placeholder="Nama Anda" value="{{ $user->name ?? '' }}" readonly required>
+            <input type="text" name="customer_name" placeholder="Nama Anda" value="{{ $user->name }}" readonly required>
             <label>Email</label>
-            <input type="email" name="customer_email" placeholder="Email aktif" value="{{ $user->email ?? '' }}" readonly required>
+            <input type="email" name="customer_email" placeholder="Email aktif" value="{{ $user->email }}" readonly required>
             <label>No HP</label>
-            <input type="tel" name="customer_phone" placeholder="Nomor HP aktif" value="{{ $user->phone ?? '' }}" readonly required>
+            <input type="tel" name="customer_phone" placeholder="Nomor HP aktif" value="{{ $user->phone }}" readonly required>
 
             <input type="hidden" name="product_sku" value="{{ $product->id }}">
             <input type="hidden" name="product_name" value="{{ $product->name }}">
@@ -69,6 +76,7 @@
 
             <button type="submit" class="btn-checkout">Bayar Sekarang</button>
         </form>
+        @endif
         <div id="tripay-message" style="display:none;margin-top:1em;"></div>
     </div>
     <script>
@@ -82,6 +90,21 @@
             messageDiv.className = '';
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
+            
+            // Debug: log data yang akan dikirim
+            console.log('Data yang akan dikirim ke Tripay:', data);
+            
+            // Validasi data sebelum dikirim
+            const requiredFields = ['customer_name', 'customer_email', 'customer_phone', 'payment_method', 'amount', 'product_sku', 'product_name'];
+            const missingFields = requiredFields.filter(field => !data[field]);
+            
+            if (missingFields.length > 0) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'alert alert-danger';
+                messageDiv.innerHTML = 'Data tidak lengkap: ' + missingFields.join(', ');
+                return;
+            }
+            
             try {
                 const response = await fetch('/tripay/transaction', {
                     method: 'POST',

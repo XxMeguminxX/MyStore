@@ -197,6 +197,7 @@ body {
   color: #d90429;
   border: 1.5px solid #d90429;
 }
+
 @media (max-width: 600px) {
   .checkout-container {
     padding: 18px 6vw 18px 6vw;
@@ -225,3 +226,41 @@ body {
   }
 }
 
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.quantity-btn {
+  background-color: #2a9d8f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+.quantity-btn:hover {
+  background-color: #264653;
+}
+
+.quantity-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.quantity-value {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0 15px;
+  min-width: 20px;
+  text-align: center;
+}

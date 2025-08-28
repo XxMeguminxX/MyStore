@@ -101,8 +101,8 @@
                             
                             <div class="transaction-details">
                                 <div class="detail-item">
-                                    <div class="detail-label">Nama Produk</div>
-                                    <div class="detail-value">{{ $transaction->product->name ?? 'Produk Tidak Ditemukan'}}</div>
+                                    <div class="detail-label">Nama {{ $transaction->isDonation() ? 'Donasi' : 'Produk' }}</div>
+                                    <div class="detail-value">{{ $transaction->getProductName() }}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Merchant Ref</div>

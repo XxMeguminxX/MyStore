@@ -20,15 +20,15 @@ class TransactionSeeder extends Seeder
         // Hapus transaksi yang sudah ada untuk menghindari duplikasi
         Transaction::where('customer_email', $user->email)->delete();
 
-        // Buat beberapa transaksi dengan status berbeda
+        // Buat beberapa transaksi dengan status berbeda (produk dan donasi)
         $transactions = [
             [
                 'merchant_ref' => 'REF' . time() . '001',
-                'product_id' => 1,
+                'product_id' => 1, // Product ID (POCO F6)
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,
                 'customer_phone' => '081234567890',
-                'amount' => 50000,
+                'amount' => 4612000,
                 'payment_method' => 'QRIS',
                 'status' => 'UNPAID',
                 'payment_url' => 'https://example.com/payment1',
@@ -36,50 +36,62 @@ class TransactionSeeder extends Seeder
             ],
             [
                 'merchant_ref' => 'REF' . time() . '002',
-                'product_id' => 1,
+                'product_id' => 2, // Donasi ID (Fanta)
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,
                 'customer_phone' => '081234567890',
-                'amount' => 75000,
+                'amount' => 10000,
+                'payment_method' => 'QRIS',
+                'status' => 'PAID',
+                'payment_url' => 'https://example.com/payment_donasi2',
+                'response' => json_encode(['status' => 'success'])
+            ],
+            [
+                'merchant_ref' => 'REF' . time() . '003',
+                'product_id' => 2, // Product ID (POCO F6)
+                'customer_name' => $user->name,
+                'customer_email' => $user->email,
+                'customer_phone' => '081234567890',
+                'amount' => 4612000,
                 'payment_method' => 'BNI',
                 'status' => 'PAID',
                 'payment_url' => 'https://example.com/payment2',
                 'response' => json_encode(['status' => 'success'])
             ],
             [
-                'merchant_ref' => 'REF' . time() . '003',
-                'product_id' => 1,
+                'merchant_ref' => 'REF' . time() . '004',
+                'product_id' => 3, // Donasi ID (Boba)
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,
                 'customer_phone' => '081234567890',
-                'amount' => 100000,
+                'amount' => 15000,
                 'payment_method' => 'Permata',
                 'status' => 'EXPIRED',
-                'payment_url' => 'https://example.com/payment3',
+                'payment_url' => 'https://example.com/payment_donasi3',
                 'response' => json_encode(['status' => 'expired'])
             ],
             [
-                'merchant_ref' => 'REF' . time() . '004',
-                'product_id' => 1,
+                'merchant_ref' => 'REF' . time() . '005',
+                'product_id' => 1, // Product ID (POCO F6)
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,
                 'customer_phone' => '081234567890',
-                'amount' => 25000,
+                'amount' => 4612000,
                 'payment_method' => 'QRIS',
                 'status' => 'CANCELLED',
                 'payment_url' => 'https://example.com/payment4',
                 'response' => json_encode(['status' => 'cancelled'])
             ],
             [
-                'merchant_ref' => 'REF' . time() . '005',
-                'product_id' => 1,
+                'merchant_ref' => 'REF' . time() . '006',
+                'product_id' => 4, // Donasi ID (Sandwich)
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,
                 'customer_phone' => '081234567890',
-                'amount' => 150000,
+                'amount' => 25000,
                 'payment_method' => 'BNI',
                 'status' => 'PENDING',
-                'payment_url' => 'https://example.com/payment5',
+                'payment_url' => 'https://example.com/payment_donasi4',
                 'response' => json_encode(['status' => 'pending'])
             ]
         ];

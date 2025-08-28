@@ -12,9 +12,10 @@ class TransactionHistoryController extends Controller
 {
     public function index()
     {
-        // Ambil semua transaksi user yang sedang login berdasarkan email
+        // Ambil semua transaksi user yang sedang login berdasarkan email dengan eager loading product
         $userEmail = Auth::user()->email;
-        $transactions = Transaction::where('customer_email', $userEmail)
+        $transactions = Transaction::with('product')
+            ->where('customer_email', $userEmail)
             ->orderBy('created_at', 'desc')
             ->get();
 

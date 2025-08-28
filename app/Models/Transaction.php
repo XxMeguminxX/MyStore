@@ -10,4 +10,12 @@ class Transaction extends Model
     protected $casts = [
         'response' => 'array',
     ];
+
+    /**
+     * Relasi dengan model Product
+     */
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 }

@@ -61,12 +61,15 @@ class DonasiController extends Controller
         if (empty($user->phone)) {
             $missingFields[] = 'No HP';
         }
-        
+
         // Jika ada field yang kosong, redirect ke profile dengan pesan error
         if (!empty($missingFields)) {
             $missingFieldsText = implode(', ', $missingFields);
             return redirect()->route('profile')->with('error', "Mohon lengkapi data profile terlebih dahulu: {$missingFieldsText}");
         }
+
+        // Tandai bahwa ini adalah transaksi donasi
+        $product->transaction_type = 'donation';
 
         return view('checkout', compact('product', 'channels', 'error', 'user'));
     }

@@ -152,6 +152,9 @@ class TripayController extends Controller
         $paymentUrl = $decoded->data->payment_url ?? $decoded->data->checkout_url ?? null;
 
         if (isset($decoded->success) && $decoded->success && $paymentUrl) {
+            // Tentukan type transaksi berdasarkan parameter atau logika bisnis
+            $transactionType = $request->transaction_type ?? 'product';
+
             // Simpan transaksi ke database
             Transaction::create([
                 'merchant_ref'   => $merchant_ref,
@@ -164,6 +167,7 @@ class TripayController extends Controller
                 'status'         => 'UNPAID',
                 'payment_url'    => $paymentUrl,
                 'response'       => $decoded,
+                'type'           => $transactionType,
             ]);
             return response()->json(['success' => true, 'data' => $decoded->data, 'payment_url' => $paymentUrl]);
         } else {

@@ -67,6 +67,7 @@
             <input type="hidden" name="product_sku" value="{{ $product->id }}">
             <input type="hidden" name="product_name" value="{{ $product->name }}">
             <input type="hidden" name="amount" id="amount-input" value="{{ $product->price }}">
+            <input type="hidden" name="transaction_type" value="{{ $product->transaction_type ?? 'product' }}">
 
             <label>Metode Pembayaran</label>
             <div class="payment-methods">

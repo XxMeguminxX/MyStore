@@ -29,13 +29,26 @@
             <div class="checkout-info">
                 <div class="checkout-title">{{ $product->name }}</div>
                 <div class="checkout-id">ID {{ $product->id }}</div>
-                
+
+                <!-- Informasi Stok -->
+                <div class="stock-info" style="margin: 8px 0; font-size: 0.9em; color: #666;">
+                    <div style="margin-bottom: 4px;">
+                        <span>Stok tersedia: <strong>{{ $product->stock }}</strong> item</span>
+                        @if($product->stock <= 5)
+                            <span style="color: #856404;"> (Stok terbatas)</span>
+                        @endif
+                    </div>
+                    <div style="font-size: 0.8em; color: #888;">
+                        Maksimal pembelian: {{ min($product->stock, 100) }} item per transaksi
+                    </div>
+                </div>
+
                 <div class="quantity-selector">
                     <button type="button" id="decrease-qty" class="quantity-btn">-</button>
                     <span id="quantity-value" class="quantity-value">1</span>
                     <button type="button" id="increase-qty" class="quantity-btn">+</button>
                 </div>
-                
+                    
                 <div class="checkout-price" id="total-price">
                     RP {{ number_format($product->price,0,'','.') }}
                 </div>
@@ -67,6 +80,7 @@
             <input type="hidden" name="product_sku" value="{{ $product->id }}">
             <input type="hidden" name="product_name" value="{{ $product->name }}">
             <input type="hidden" name="amount" id="amount-input" value="{{ $product->price }}">
+            <input type="hidden" name="quantity" id="quantity-input" value="1">
             <input type="hidden" name="transaction_type" value="{{ $product->transaction_type ?? 'product' }}">
 
             <label>Metode Pembayaran</label>
@@ -96,33 +110,54 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Bagian Logika Kuantitas
         const basePrice = {{ $product->price }};
+        const availableStock = {{ $product->stock }}; // Stok yang tersedia
         const decreaseBtn = document.getElementById('decrease-qty');
         const increaseBtn = document.getElementById('increase-qty');
         const quantityValue = document.getElementById('quantity-value');
         const totalPriceDisplay = document.getElementById('total-price');
         const amountInput = document.getElementById('amount-input');
-        
+        const quantityInput = document.getElementById('quantity-input');
+
         let quantity = 1;
 
         function updatePriceAndQuantity() {
             const total = basePrice * quantity;
-            
+
             // Update tampilan kuantitas
             quantityValue.textContent = quantity;
-            
+
             // Update tampilan harga (format Rupiah)
             totalPriceDisplay.textContent = 'RP ' + new Intl.NumberFormat('id-ID').format(total);
-            
+
             // Update nilai pada form yang akan dikirim
             amountInput.value = total;
-            
-            // Nonaktifkan tombol kurang jika kuantitas = 1
+            quantityInput.value = quantity;
+
+            // Nonaktifkan tombol sesuai kondisi
             decreaseBtn.disabled = (quantity === 1);
+            const maxAllowed = Math.min(availableStock, 100);
+            increaseBtn.disabled = (quantity >= maxAllowed);
+
+            // Tambahkan styling untuk tombol yang disabled
+            if (quantity >= maxAllowed) {
+                increaseBtn.style.opacity = '0.5';
+                increaseBtn.style.cursor = 'not-allowed';
+            } else {
+                increaseBtn.style.opacity = '1';
+                increaseBtn.style.cursor = 'pointer';
+            }
         }
         
         increaseBtn.addEventListener('click', function() {
-            quantity++;
-            updatePriceAndQuantity();
+            // Cek apakah masih bisa menambah quantity (batas: stok tersedia atau maksimal 100)
+            const maxAllowed = Math.min(availableStock, 100);
+            if (quantity < maxAllowed) {
+                quantity++;
+                updatePriceAndQuantity();
+            } else {
+                // Tampilkan pesan peringatan
+                alert('Tidak bisa menambah quantity karena melebihi batas maksimal pembelian (' + maxAllowed + ' item per transaksi)');
+            }
         });
         
         decreaseBtn.addEventListener('click', function() {

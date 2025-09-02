@@ -14,7 +14,46 @@ class CheckoutController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk melanjutkan checkout.');
         }
-        
+
+        $product = \App\Models\Product::where('id', '=', $id)->first();
+        if ($product == null) {
+            return redirect('/dashboard')->with('error', 'Produk tidak ditemukan.');
+        }
+
+        // Validasi stok yang lebih ketat
+        if (!$product->isInStock()) {
+            return redirect('/dashboard')->with('error', 'Maaf, produk "' . $product->name . '" sedang habis stok.');
+        }
+
+        // Pastikan stock minimal 1 untuk pembelian
+        if ($product->stock < 1) {
+            return redirect('/dashboard')->with('error', 'Maaf, stok produk "' . $product->name . '" tidak mencukupi untuk pembelian.');
+        }
+
+        // Cek apakah ada transaksi pending untuk produk ini oleh user yang sama
+        // Hanya blokir jika stok akan menjadi tidak mencukupi
+        $pendingTransactionCount = \App\Models\Transaction::where('product_id', $product->id)
+            ->where('customer_email', Auth::user()->email)
+            ->whereIn('status', ['UNPAID', 'PROCESSING'])
+            ->count();
+
+        // Jika ada transaksi pending dan stok akan menjadi tidak mencukupi setelah transaksi ini
+        if ($pendingTransactionCount > 0 && $product->stock <= $pendingTransactionCount) {
+            return redirect('/dashboard')->with('error', 'Anda memiliki transaksi pending untuk produk "' . $product->name . '" yang belum selesai. Silakan selesaikan pembayaran terlebih dahulu atau tunggu beberapa saat.');
+        }
+
+        // Log aktivitas checkout untuk monitoring
+        \Illuminate\Support\Facades\Log::info('User accessing checkout', [
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'current_stock' => $product->stock,
+            'timestamp' => now(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
         $tripay = new TripayController();
         $channels = $tripay->getPaymentChannels();
 
@@ -23,11 +62,6 @@ class CheckoutController extends Controller
         if (is_array($channels) && isset($channels['error'])) {
             $error = $channels['error'];
             $channels = [];
-        }
-
-        $product = \App\Models\Product::where('id', '=', $id)->first();
-        if ($product == null) {
-            return redirect('/dashboard');
         }
 
         // Ambil data user yang sedang login

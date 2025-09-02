@@ -34,10 +34,19 @@ class TransactionHistoryController extends Controller
             $product = Product::find($transaction->product_id); // Asumsi kolom product_id ada di tabel transactions
 
             if ($product) {
-                // Pastikan quantity tidak menjadi negatif
-                if ($product->quantity > 0) {
-                    $product->quantity = $product->quantity - 1; // Kurangi 1 dari stok
+                // Pastikan stock tidak menjadi negatif
+                if ($product->stock > 0) {
+                    $oldStock = $product->stock;
+                    $product->stock = $product->stock - 1; // Kurangi 1 dari stok
                     $product->save(); // Simpan perubahan ke database
+
+                    Log::info("Stock produk berhasil dikurangi setelah pembayaran", [
+                        'product_id' => $product->id,
+                        'product_name' => $product->name,
+                        'old_stock' => $oldStock,
+                        'new_stock' => $product->stock,
+                        'transaction_id' => $transaction->id
+                    ]);
                 } else {
                     // Log atau tangani jika stok habis
                     Log::warning("Stok produk ID {$product->id} habis saat transaksi ID {$transaction->id} dibayar.");

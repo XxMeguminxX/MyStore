@@ -109,6 +109,10 @@
                                     <div class="detail-value">{{ $transaction->merchant_ref ?? 'N/A' }}</div>
                                 </div>
                                 <div class="detail-item">
+                                    <div class="detail-label">Jumlah</div>
+                                    <div class="detail-value">{{ $transaction->quantity ?? 1 }} item</div>
+                                </div>
+                                <div class="detail-item">
                                     <div class="detail-label">Total Bayar</div>
                                     <div class="detail-value">Rp {{ number_format($transaction->amount ?? 0, 0, '', '.') }}</div>
                                 </div>
@@ -145,17 +149,21 @@
 
             transactionCards.forEach(card => {
                 const transactionId = card.querySelector('.transaction-id').textContent.toLowerCase();
-                const merchantRef = card.querySelector('.detail-item:nth-child(1) .detail-value').textContent.toLowerCase();
-                const totalAmount = card.querySelector('.detail-item:nth-child(2) .detail-value').textContent.toLowerCase();
-                const paymentMethod = card.querySelector('.detail-item:nth-child(3) .detail-value').textContent.toLowerCase();
-                const customerName = card.querySelector('.detail-item:nth-child(4) .detail-value').textContent.toLowerCase();
+                const productName = card.querySelector('.detail-item:nth-child(1) .detail-value').textContent.toLowerCase();
+                const merchantRef = card.querySelector('.detail-item:nth-child(2) .detail-value').textContent.toLowerCase();
+                const quantity = card.querySelector('.detail-item:nth-child(3) .detail-value').textContent.toLowerCase();
+                const totalAmount = card.querySelector('.detail-item:nth-child(4) .detail-value').textContent.toLowerCase();
+                const paymentMethod = card.querySelector('.detail-item:nth-child(5) .detail-value').textContent.toLowerCase();
+                const customerName = card.querySelector('.detail-item:nth-child(6) .detail-value').textContent.toLowerCase();
                 const status = card.querySelector('.transaction-status').textContent.toLowerCase();
 
-                if (transactionId.includes(searchInput) || 
-                    merchantRef.includes(searchInput) || 
-                    totalAmount.includes(searchInput) || 
-                    paymentMethod.includes(searchInput) || 
-                    customerName.includes(searchInput) || 
+                if (transactionId.includes(searchInput) ||
+                    productName.includes(searchInput) ||
+                    merchantRef.includes(searchInput) ||
+                    quantity.includes(searchInput) ||
+                    totalAmount.includes(searchInput) ||
+                    paymentMethod.includes(searchInput) ||
+                    customerName.includes(searchInput) ||
                     status.includes(searchInput)) {
                     card.style.display = '';
                     visibleCount++;

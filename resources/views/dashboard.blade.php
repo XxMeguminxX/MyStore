@@ -82,17 +82,47 @@
                 <span class="desc-full" style="display:none;">{!! nl2br(e($data->description)) !!}</span>
                 <button class="btn-desc-toggle" onclick="openDescModal(this)">Lihat Selengkapnya</button>
             </div>
-            <div class="product-quantity">Tersisa: {{ $data->quantity }}</div>
+            <div class="product-stock">
+                <span class="stock-status {{ $data->getStockStatusColor() }}"
+                      style="
+                        @if($data->stock > 10)
+                          background-color: #dcfce7; color: #166534; border: 2px solid #16a34a;
+                        @elseif($data->stock > 0)
+                          background-color: #fef3c7; color: #92400e; border: 2px solid #ca8a04;
+                        @else
+                          background-color: #fee2e2; color: #991b1b; border: 2px solid #dc2626;
+                        @endif
+                        font-weight: 600; padding: 4px 12px; border-radius: 16px; display: inline-block; font-size: 0.9em;">
+                    {{ $data->getStockStatus() }}
+                </span>
+                @if($data->stock > 0)
+                    <span class="stock-count" style="font-size: 0.85em; color: #666; font-weight: 500; margin-top: 4px; display: block;">
+                        Stok: {{ $data->stock }}
+                    </span>
+                @endif
+            </div>
             <div class="product-price">Rp {{ number_format($data->price,0,'','.') }}</div>
             <div class="product-actions">
                 @auth
                     {{-- User sudah login --}}
-                    <a href="{{url('/beli/'.$data->id) }}" class="btn btn-beli" id="beli-produk-{{ $data->id }}">Beli</a>
+                    @if($data->isInStock())
+                        <a href="{{url('/beli/'.$data->id) }}" class="btn btn-beli" id="beli-produk-{{ $data->id }}">Beli</a>
+                    @else
+                        <button type="button" class="btn btn-out-of-stock" disabled id="beli-produk-{{ $data->id }}">
+                            Stok Habis
+                        </button>
+                    @endif
                 @else
                     {{-- User belum login --}}
-                    <button type="button" class="btn btn-login-required" onclick="showLoginRequiredModal()" id="beli-produk-{{ $data->id }}">
-                        Login untuk Beli
-                    </button>
+                    @if($data->isInStock())
+                        <button type="button" class="btn btn-login-required" onclick="showLoginRequiredModal()" id="beli-produk-{{ $data->id }}">
+                            Login untuk Beli
+                        </button>
+                    @else
+                        <button type="button" class="btn btn-out-of-stock" disabled id="beli-produk-{{ $data->id }}">
+                            Stok Habis
+                        </button>
+                    @endif
                 @endauth
             </div>
         </div>

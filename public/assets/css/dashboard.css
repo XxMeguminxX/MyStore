@@ -575,6 +575,94 @@ body {
     padding: 40px 20px;
   }
 
+  .product-stock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    min-height: 35px;
+  }
+
+  .stock-status {
+    font-size: 0.85em;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-transform: none;
+    letter-spacing: 0.3px;
+    transition: all 0.18s cubic-bezier(.4,2,.6,1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+
+  .stock-status:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+
+  /* Status Tersedia - Menggunakan warna tema website */
+  .stock-available {
+    background: linear-gradient(135deg, #2a9d8f, #38b2ac);
+    color: #fff;
+    border: 1px solid #2a9d8f;
+  }
+
+  .stock-available:hover {
+    background: linear-gradient(135deg, #21867a, #319795);
+    box-shadow: 0 4px 12px rgba(42,157,143,0.25);
+  }
+
+  /* Status Stok Terbatas - Menggunakan warna kuning yang lebih soft */
+  .stock-limited {
+    background: linear-gradient(135deg, #fbbf24, #fcd34d);
+    color: #92400e;
+    border: 1px solid #f59e0b;
+  }
+
+  .stock-limited:hover {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    box-shadow: 0 4px 12px rgba(245,158,11,0.25);
+  }
+
+  /* Status Stok Habis - Menggunakan warna merah yang lebih soft */
+  .stock-out {
+    background: linear-gradient(135deg, #f87171, #fca5a5);
+    color: #991b1b;
+    border: 1px solid #ef4444;
+  }
+
+  .stock-out:hover {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+    box-shadow: 0 4px 12px rgba(239,68,68,0.25);
+  }
+
+  .stock-count {
+    font-size: 0.8em;
+    color: #666;
+    font-weight: 400;
+    background: rgba(255,255,255,0.8);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .btn-out-of-stock {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: #fff;
+    cursor: not-allowed;
+    opacity: 0.7;
+    border: 1px solid #6c757d;
+    box-shadow: 0 2px 8px rgba(108,117,125,0.2);
+  }
+
+  .btn-out-of-stock:hover {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    transform: none;
+    opacity: 0.7;
+    box-shadow: 0 2px 8px rgba(108,117,125,0.2);
+  }
+
+  /* Update existing product-quantity if still used */
   .product-quantity {
     font-size: 0.85em; /* Ukuran font lebih kecil */
     color: #777; /* Warna abu-abu yang lebih pudar */

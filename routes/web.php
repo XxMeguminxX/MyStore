@@ -36,7 +36,7 @@ Route::post('/products/{id}/add-stock', [ProductQttController::class, 'addStock'
 Route::post('/products/{id}/reduce-stock', [ProductQttController::class, 'reduceStock'])->name('products.reduce_stock');
 
 // Rute Dashboard (bisa diakses tanpa login)
-Route::get('/', [DonasiController::class, 'index'])->name('donasi.index');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 // Rute Donasi (bisa diakses tanpa login)
 Route::get('/donasi', [DonasiController::class, 'index'])->name('donasi.index');

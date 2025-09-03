@@ -9,10 +9,9 @@
 
 ## 📋 Deskripsi Proyek
 
-**MyStore** adalah platform web e-commerce modern yang dibangun dengan Laravel Framework. Website ini menyediakan dua layanan utama:
+**MyStore** adalah platform web e-commerce modern yang dibangun dengan Laravel Framework:
 
 - 🛒 **Toko Online**: Penjualan produk dengan sistem keranjang belanja
-- 💝 **Platform Donasi**: Sistem donasi untuk berbagai program sosial
 
 Website ini terintegrasi dengan sistem pembayaran **Tripay** untuk memproses transaksi yang aman dan terpercaya.
 
@@ -30,12 +29,6 @@ Website ini terintegrasi dengan sistem pembayaran **Tripay** untuk memproses tra
 - 💳 Integrasi pembayaran Tripay
 - 📊 Riwayat transaksi
 - 🔍 Pencarian produk
-
-### 💝 Sistem Donasi
-- 📋 Daftar program donasi
-- 💰 Pembayaran donasi yang mudah
-- 📈 Tracking donasi
-- 🎯 Target donasi yang jelas
 
 ### 💳 Sistem Pembayaran
 - 🔗 Integrasi Tripay Payment Gateway
@@ -361,7 +354,7 @@ Proyek ini menggunakan lisensi MIT. Lihat file `LICENSE` untuk informasi lebih d
 
 Jika Anda mengalami masalah atau memiliki pertanyaan:
 
-- 📧 **Email**: [your-email@example.com]
+- 📧 **Email**: [saputraerik042@gmail.com]
 - 💬 **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
 - 📖 **Documentation**: Lihat folder `docs/` untuk dokumentasi lengkap
 

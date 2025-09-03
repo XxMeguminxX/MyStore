@@ -42,7 +42,7 @@
         <div class="transaction-background"></div>
         <div class="transaction-content">
             <div style="margin-bottom: 20px;">
-                <a href="{{ url('/donasi') }}" class="back-btn">
+                <a href="{{ url('/dashboard') }}" class="back-btn">
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>

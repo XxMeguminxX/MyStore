@@ -64,13 +64,85 @@
         {{ session('success') }}
     </div>
   @endif
+
+  @if(session('error'))
+    <div class="alert alert-error">
+        {{ session('error') }}
+    </div>
+  @endif
+
+  {{-- Debug Info - Remove in production --}}
+  @auth
+    <div style="background: #e8f5e8; padding: 5px 10px; margin: 10px 0; border-radius: 4px; font-size: 12px; color: #2d5a2d;">
+        ✅ Debug: Anda sudah login sebagai {{ Auth::user()->name ?? 'N/A' }} (ID: {{ Auth::id() }})
+    </div>
+  @else
+    <div style="background: #ffe8e8; padding: 5px 10px; margin: 10px 0; border-radius: 4px; font-size: 12px; color: #8b2d2d;">
+        ❌ Debug: Anda belum login
+    </div>
+  @endauth
   
   <h1>Produk Digital Saya</h1>
   <div id="noResults" class="no-results-message">
     Produk Tidak Ditemukan.
   </div>
+
+  <!-- Filter Dropdown - Moved above product-section -->
+  <div class="filter-container">
+    <div class="filter-dropdown">
+      <button type="button" class="filter-btn" id="filterBtn">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+        <span class="filter-text" id="filterText">Urutkan</span>
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="filter-arrow">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div class="filter-options" id="filterOptions">
+        <a href="{{ url()->current() }}?sort=newest" class="filter-option {{ $sortBy == 'newest' ? 'active' : '' }}" data-sort="newest">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Terbaru
+        </a>
+        <a href="{{ url()->current() }}?sort=price_high" class="filter-option {{ $sortBy == 'price_high' ? 'active' : '' }}" data-sort="price_high">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+          Harga Tertinggi
+        </a>
+        <a href="{{ url()->current() }}?sort=price_low" class="filter-option {{ $sortBy == 'price_low' ? 'active' : '' }}" data-sort="price_low">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+          </svg>
+          Harga Terendah
+        </a>
+        <a href="{{ url()->current() }}?sort=stock_high" class="filter-option {{ $sortBy == 'stock_high' ? 'active' : '' }}" data-sort="stock_high">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+          Stok Terbanyak
+        </a>
+        <a href="{{ url()->current() }}?sort=stock_low" class="filter-option {{ $sortBy == 'stock_low' ? 'active' : '' }}" data-sort="stock_low">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-5.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+          </svg>
+          Stok Tersedikit
+        </a>
+        <a href="{{ url()->current() }}?sort=bestseller" class="filter-option {{ $sortBy == 'bestseller' ? 'active' : '' }}" data-sort="bestseller">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+          </svg>
+          Terlaris
+        </a>
+      </div>
+    </div>
+  </div>
+
   <div class="product-section">
     <div class="background-3d"></div>
+
     <div class="product-grid">
         @foreach ($products as $data)
         <div class="product-card">
@@ -106,7 +178,7 @@
                 @auth
                     {{-- User sudah login --}}
                     @if($data->isInStock())
-                        <a href="{{url('/beli/'.$data->id) }}" class="btn btn-beli" id="beli-produk-{{ $data->id }}">Beli</a>
+                        <a href="{{ route('beli', ['id' => $data->id]) }}" class="btn btn-beli" id="beli-produk-{{ $data->id }}">Beli</a>
                     @else
                         <button type="button" class="btn btn-out-of-stock" disabled id="beli-produk-{{ $data->id }}">
                             Stok Habis
@@ -271,6 +343,58 @@
             console.error('Terjadi kesalahan:', error);
         }
     }
+
+    // Fungsi Filter Dropdown
+    function initFilterDropdown() {
+        const filterBtn = document.getElementById('filterBtn');
+        const filterDropdown = document.querySelector('.filter-dropdown');
+        const filterOptions = document.getElementById('filterOptions');
+        const filterText = document.getElementById('filterText');
+
+        if (!filterBtn || !filterDropdown) return;
+
+        // Toggle dropdown
+        filterBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            filterDropdown.classList.toggle('open');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!filterDropdown.contains(e.target)) {
+                filterDropdown.classList.remove('open');
+            }
+        });
+
+        // Update filter text based on active option
+        const activeOption = filterOptions.querySelector('.filter-option.active');
+        if (activeOption) {
+            const sortType = activeOption.getAttribute('data-sort');
+            updateFilterText(sortType);
+        }
+    }
+
+    // Fungsi untuk mengupdate teks filter
+    function updateFilterText(sortType) {
+        const filterText = document.getElementById('filterText');
+        const sortLabels = {
+            'newest': 'Terbaru',
+            'price_high': 'Harga Tertinggi',
+            'price_low': 'Harga Terendah',
+            'stock_high': 'Stok Terbanyak',
+            'stock_low': 'Stok Tersedikit',
+            'bestseller': 'Terlaris'
+        };
+
+        if (filterText && sortLabels[sortType]) {
+            filterText.textContent = sortLabels[sortType];
+        }
+    }
+
+    // Inisialisasi filter dropdown saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        initFilterDropdown();
+    });
 
     </script>
 </body>

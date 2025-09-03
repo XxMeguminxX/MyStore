@@ -44,7 +44,7 @@ Route::get('/donasi', [DonasiController::class, 'index'])->name('donasi.index');
 // --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
 Route::middleware(['auth'])->group(function () {
     // Rute Beli Produk
-Route::get('/beli/{id}', [CheckoutController::class, 'beli']);
+Route::get('/beli/{id}', [CheckoutController::class, 'beli'])->name('beli');
     // Rute Beli Donasi (gunakan checkout yang sama)
     Route::get('/donasi/beli/{id}', [DonasiController::class, 'beli'])->name('donasi.beli');
 

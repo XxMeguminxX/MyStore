@@ -13,7 +13,7 @@
 <body>
     {{-- Header baru dengan tombol kembali --}}
     <div class="header-bar">
-        <a href="{{ url('/donasi') }}" class="btn-kembali">
+        <a href="{{ url('/dashboard') }}" class="btn-kembali">
             &larr; Kembali
         </a>
     </div>

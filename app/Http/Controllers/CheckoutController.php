@@ -10,8 +10,22 @@ class CheckoutController extends Controller
 {
     public function beli(Request $request, $id)
     {
+        // Debug: Log authentication status
+        \Illuminate\Support\Facades\Log::info('Checkout access attempt', [
+            'user_id' => Auth::id(),
+            'is_authenticated' => Auth::check(),
+            'session_id' => session()->getId(),
+            'product_id' => $id,
+            'timestamp' => now()
+        ]);
+
         // Cek apakah user sudah login
         if (!Auth::check()) {
+            \Illuminate\Support\Facades\Log::warning('Unauthenticated user trying to access checkout', [
+                'product_id' => $id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk melanjutkan checkout.');
         }
 
@@ -86,11 +100,26 @@ class CheckoutController extends Controller
         if (empty($user->phone)) {
             $missingFields[] = 'No HP';
         }
-        
+
+        // Log user data for debugging
+        \Illuminate\Support\Facades\Log::info('User profile validation', [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'user_email' => $user->email,
+            'user_phone' => $user->phone,
+            'missing_fields' => $missingFields,
+            'missing_count' => count($missingFields)
+        ]);
+
         // Jika ada field yang kosong, redirect ke profile dengan pesan error
         if (!empty($missingFields)) {
             $missingFieldsText = implode(', ', $missingFields);
-            return redirect()->route('login')->with('error', "Mohon lengkapi data profile terlebih dahulu: {$missingFieldsText}");
+            \Illuminate\Support\Facades\Log::warning('Incomplete user profile, redirecting to profile page', [
+                'user_id' => $user->id,
+                'missing_fields' => $missingFields,
+                'redirect_reason' => 'incomplete_profile'
+            ]);
+            return redirect()->route('profile')->with('error', "Mohon lengkapi data profile terlebih dahulu: {$missingFieldsText}");
         }
         
         return view('checkout', compact('product', 'channels', 'error', 'user'));
@@ -138,10 +167,25 @@ class CheckoutController extends Controller
         if (empty($user->phone)) {
             $missingFields[] = 'No HP';
         }
-        
+
+        // Log user data for debugging
+        \Illuminate\Support\Facades\Log::info('User profile validation', [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'user_email' => $user->email,
+            'user_phone' => $user->phone,
+            'missing_fields' => $missingFields,
+            'missing_count' => count($missingFields)
+        ]);
+
         // Jika ada field yang kosong, redirect ke profile dengan pesan error
         if (!empty($missingFields)) {
             $missingFieldsText = implode(', ', $missingFields);
+            \Illuminate\Support\Facades\Log::warning('Incomplete user profile, redirecting to profile page', [
+                'user_id' => $user->id,
+                'missing_fields' => $missingFields,
+                'redirect_reason' => 'incomplete_profile'
+            ]);
             return redirect()->route('profile')->with('error', "Mohon lengkapi data profile terlebih dahulu: {$missingFieldsText}");
         }
         

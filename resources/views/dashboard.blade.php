@@ -23,6 +23,12 @@
         <div class="header-icons">
             @auth
                 {{-- User sudah login --}}
+                <a href="{{ route('cart.index') }}" class="icon-btn cart-icon" title="Keranjang" id="cartBtn">
+                    <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5-5m-2.5 5L9.5 18M17 13l-2.5 5M9.5 18l-2.5-2M9.5 18h6.5" />
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
                 <a href="{{ route('transaction.history') }}" class="icon-btn" title="Histori Transaksi">
                     <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
@@ -179,6 +185,11 @@
                     {{-- User sudah login --}}
                     @if($data->isInStock())
                         <a href="{{ route('beli', ['id' => $data->id]) }}" class="btn btn-beli" id="beli-produk-{{ $data->id }}">Beli</a>
+                        <button type="button" class="btn btn-cart" onclick="addToCart({{ $data->id }}, '{{ $data->name }}')" id="cart-produk-{{ $data->id }}" title="Tambah ke Keranjang">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5-5m-2.5 5L9.5 18M17 13l-2.5 5M9.5 18l-2.5-2M9.5 18h6.5" />
+                            </svg>
+                        </button>
                     @else
                         <button type="button" class="btn btn-out-of-stock" disabled id="beli-produk-{{ $data->id }}">
                             Stok Habis
@@ -312,6 +323,125 @@
       filterProducts();
     };
 
+    // Fungsi untuk menambahkan produk ke keranjang
+    async function addToCart(productId, productName) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        try {
+            const response = await fetch(`/cart/add/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    quantity: 1
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // Update cart count
+                updateCartCount();
+
+                // Show success message
+                showNotification(`${productName} berhasil ditambahkan ke keranjang!`, 'success');
+
+                // Add animation to cart button
+                animateCartButton();
+            } else {
+                showNotification(result.message || 'Gagal menambahkan ke keranjang', 'error');
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            showNotification('Terjadi kesalahan saat menambahkan ke keranjang', 'error');
+        }
+    }
+
+    // Fungsi untuk update cart count di header
+    async function updateCartCount() {
+        try {
+            const response = await fetch('/cart/count');
+            const result = await response.json();
+
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                cartCountElement.textContent = result.count;
+                cartCountElement.style.display = result.count > 0 ? 'block' : 'none';
+            }
+        } catch (error) {
+            console.error('Error updating cart count:', error);
+        }
+    }
+
+    // Fungsi untuk menampilkan notifikasi
+    function showNotification(message, type = 'info') {
+        // Remove existing notification
+        const existingNotification = document.querySelector('.cart-notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // Create new notification
+        const notification = document.createElement('div');
+        notification.className = `cart-notification ${type}`;
+        notification.textContent = message;
+
+        // Style the notification
+        Object.assign(notification.style, {
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            color: 'white',
+            fontSize: '14px',
+            fontWeight: '500',
+            zIndex: '9999',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            opacity: '0',
+            transform: 'translateY(-10px)',
+            transition: 'all 0.3s ease'
+        });
+
+        // Set background color based on type
+        if (type === 'success') {
+            notification.style.backgroundColor = '#2a9d8f';
+        } else if (type === 'error') {
+            notification.style.backgroundColor = '#dc2626';
+        } else {
+            notification.style.backgroundColor = '#6b7280';
+        }
+
+        document.body.appendChild(notification);
+
+        // Show notification
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateY(0)';
+        }, 10);
+
+        // Hide notification after 3 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(-10px)';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // Fungsi untuk animasi cart button
+    function animateCartButton() {
+        const cartBtn = document.getElementById('cartBtn');
+        if (cartBtn) {
+            cartBtn.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                cartBtn.style.transform = 'scale(1)';
+            }, 200);
+        }
+    }
+
     // Fungsi untuk memperbarui quantity produk
     async function updateProductQuantity(productId, newQuantity) {
         // Ambil CSRF token dari meta tag
@@ -394,6 +524,7 @@
     // Inisialisasi filter dropdown saat halaman dimuat
     document.addEventListener('DOMContentLoaded', function() {
         initFilterDropdown();
+        updateCartCount(); // Update cart count saat halaman dimuat
     });
 
     </script>

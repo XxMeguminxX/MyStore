@@ -384,6 +384,39 @@ body {
     background: #fee2e2;
     color: #dc2626;
   }
+
+/* ===========================================
+   CART STYLING
+   =========================================== */
+
+
+
+/* Cart Button in Product Cards */
+.btn-cart {
+  background: #f59e0b;
+  color: #92400e;
+  border: 1px solid #f59e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-cart:hover {
+  background: #d97706;
+  border-color: #d97706;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(245,158,11,0.3);
+}
+
+.btn-cart:active {
+  transform: translateY(0);
+}
+
+
+
+
+
 /* ===========================================
    RESPONSIVE DESIGN - Comprehensive Mobile Support
    =========================================== */
@@ -937,7 +970,7 @@ body {
   padding: 0 16px;
   display: flex;
   justify-content: flex-end;
-  z-index: 1000;
+  z-index: 1;
   visibility: visible;
   opacity: 1;
 }
@@ -1006,7 +1039,7 @@ body {
   visibility: hidden;
   transform: translateY(-10px);
   transition: all 0.2s ease;
-  z-index: 1001;
+  z-index: 2;
 }
 
 .filter-dropdown.open .filter-options {

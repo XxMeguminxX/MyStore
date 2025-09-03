@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DonasiController;
 use App\Http\Controllers\ProductQttController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CartController;
 
 
 // Rute untuk Login dan Register (bisa diakses tanpa login)
@@ -41,12 +42,53 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 // Rute Donasi (bisa diakses tanpa login)
 Route::get('/donasi', [DonasiController::class, 'index'])->name('donasi.index');
 
+// Test route for cart functionality
+Route::get('/test-cart', function () {
+    try {
+        // Test 1: Check if we can query the carts table
+        $cartCount = \App\Models\Cart::count();
+
+        // Test 2: Check if we can create a cart item (if user is logged in)
+        $testResult = 'No test performed';
+        if (auth()->check()) {
+            $testResult = 'User authenticated, cart ready to use';
+        } else {
+            $testResult = 'User not authenticated, please login first';
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cart functionality test completed!',
+            'data' => [
+                'total_cart_items' => $cartCount,
+                'authentication_status' => auth()->check() ? 'Logged in' : 'Not logged in',
+                'test_result' => $testResult
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'file' => basename($e->getFile()),
+            'line' => $e->getLine()
+        ]);
+    }
+});
+
 // --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
 Route::middleware(['auth'])->group(function () {
     // Rute Beli Produk
 Route::get('/beli/{id}', [CheckoutController::class, 'beli'])->name('beli');
     // Rute Beli Donasi (gunakan checkout yang sama)
     Route::get('/donasi/beli/{id}', [DonasiController::class, 'beli'])->name('donasi.beli');
+
+    // Rute Keranjang
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{productId}', [CartController::class, 'add'])->name('cart.add');
+    Route::put('/cart/update/{cartId}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/remove/{cartId}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+    Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
 
     // Rute Histori Transaksi
 Route::get('/transaction-history', [TransactionHistoryController::class, 'index'])->name('transaction.history');

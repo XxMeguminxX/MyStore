@@ -380,11 +380,11 @@ p, span, div {
 }
 
 .quantity-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border: 1px solid #d1d5db;
   background: white;
-  border-radius: 6px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -394,16 +394,39 @@ p, span, div {
   transition: all 0.2s ease;
   user-select: none;
   font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1;
 }
 
 .quantity-btn:hover {
   background: #f3f4f6;
   border-color: #9ca3af;
+  color: #1f2937;
+}
+
+.quantity-btn:active {
+  background: #e5e7eb;
+  transform: scale(0.95);
 }
 
 .quantity-btn:disabled {
-  opacity: 0.5;
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  color: #9ca3af;
   cursor: not-allowed;
+}
+
+.quantity-btn:disabled:hover {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  color: #9ca3af;
+  transform: none;
+}
+
+/* Focus states for accessibility */
+.quantity-btn:focus {
+  outline: 2px solid #2a9d8f;
+  outline-offset: 2px;
 }
 
 .quantity-input {
@@ -425,6 +448,8 @@ p, span, div {
   color: #374151;
   padding: 0 8px;
   font-family: 'Segoe UI', Arial, sans-serif;
+  background: transparent;
+  line-height: 1;
 }
 
 /* Cart Item Total */
@@ -564,7 +589,7 @@ p, span, div {
 .btn-checkout {
   background: linear-gradient(135deg, #2a9d8f, #1a7a6f);
   color: white;
-  width: 100%;
+  width: 90%;
   justify-content: center;
   font-weight: 600;
   text-decoration: none;
@@ -654,6 +679,17 @@ p, span, div {
   .cart-item-title {
     font-size: 1em;
   }
+
+  .quantity-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 15px;
+  }
+
+  .quantity-value {
+    min-width: 36px;
+    font-size: 0.95em;
+  }
 }
 
 @media (max-width: 768px) {
@@ -669,6 +705,7 @@ p, span, div {
 
   .cart-item-quantity {
     justify-content: center;
+    gap: 4px;
   }
 
   .cart-item-total {
@@ -689,6 +726,17 @@ p, span, div {
     flex-direction: row;
     justify-content: space-between;
     text-align: left;
+  }
+
+  .quantity-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
+  }
+
+  .quantity-value {
+    min-width: 32px;
+    font-size: 0.9em;
   }
 }
 

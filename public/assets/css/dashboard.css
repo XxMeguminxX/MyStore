@@ -970,7 +970,7 @@ body {
   padding: 0 16px;
   display: flex;
   justify-content: flex-end;
-  z-index: 1;
+  z-index: 150;
   visibility: visible;
   opacity: 1;
 }
@@ -1039,7 +1039,7 @@ body {
   visibility: hidden;
   transform: translateY(-10px);
   transition: all 0.2s ease;
-  z-index: 2;
+  z-index: 200;
 }
 
 .filter-dropdown.open .filter-options {

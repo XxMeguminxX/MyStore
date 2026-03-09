@@ -91,7 +91,7 @@
                 </div>
 
                 <div class="profile-actions">
-                    <button type="button" class="btn-update" onclick="showEditProfileModal()">Edit Profil</button>
+                    <button type="button" class="btn-update" onclick="showEditProfileModal()">Perbarui Profil</button>
                 </div>
             </form>
             </div>
@@ -102,7 +102,7 @@
     <div id="editProfileModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Edit Profil</h3>
+                <h3>Perbarui Profil</h3>
                 <span class="modal-close" onclick="closeEditProfileModal()">&times;</span>
             </div>
             <div class="modal-body">

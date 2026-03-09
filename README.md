@@ -2,13 +2,6 @@
 
 Welcome to MyStore, your one-stop shop for all your shopping needs!
 
-## Table of Contents
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Features
 - User-friendly interface
 - Secure payment options

@@ -29,26 +29,30 @@
                     </svg>
                     <span class="cart-count" id="cartCount">0</span>
                 </a>
-                <a href="{{ route('transaction.history') }}" class="icon-btn" title="Histori Transaksi">
-                    <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>
-                </a>
-                <a href="{{ url('/profile') }}" class="icon-btn" title="Profil">
-                    <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <circle cx="12" cy="8" r="4" stroke-width="2" />
-                        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4" />
-                    </svg>
-                </a>
-                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="icon-btn logout-btn" title="Logout">
+
+                <div class="user-menu-dropdown">
+                    <button type="button" class="icon-btn user-menu-btn" id="userMenuBtn" title="Menu Akun">
                         <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            <circle cx="12" cy="8" r="4" stroke-width="2" />
+                            <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4" />
                         </svg>
                     </button>
-                </form>
+                    <div class="user-menu" id="userMenu">
+                        <a href="{{ url('/profile') }}" class="user-menu-item">
+                            Profil
+                        </a>
+                        <a href="{{ route('transaction.history') }}" class="user-menu-item">
+                            Histori Transaksi
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="user-menu-item user-menu-logout">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
             @else
                 {{-- User belum login --}}
                 <a href="{{ route('login') }}" class="icon-btn" title="Login">
@@ -77,7 +81,7 @@
     </div>
   @endif
 
-  {{-- Debug Info - Remove in production --}}
+  <!-- {{-- Debug Info - Remove in production --}}
   @auth
     <div style="background: #e8f5e8; padding: 5px 10px; margin: 10px 0; border-radius: 4px; font-size: 12px; color: #2d5a2d;">
         ✅ Debug: Anda sudah login sebagai {{ Auth::user()->name ?? 'N/A' }} (ID: {{ Auth::id() }})
@@ -86,7 +90,7 @@
     <div style="background: #ffe8e8; padding: 5px 10px; margin: 10px 0; border-radius: 4px; font-size: 12px; color: #8b2d2d;">
         ❌ Debug: Anda belum login
     </div>
-  @endauth
+  @endauth -->
   
   <h1>Produk Digital Saya</h1>
   <div id="noResults" class="no-results-message">
@@ -521,10 +525,26 @@
         }
     }
 
-    // Inisialisasi filter dropdown saat halaman dimuat
+    // Inisialisasi filter dropdown & user menu saat halaman dimuat
     document.addEventListener('DOMContentLoaded', function() {
         initFilterDropdown();
         updateCartCount(); // Update cart count saat halaman dimuat
+
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userMenu = document.getElementById('userMenu');
+
+        if (userMenuBtn && userMenu) {
+            userMenuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userMenu.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!userMenu.contains(e.target) && e.target !== userMenuBtn) {
+                    userMenu.classList.remove('open');
+                }
+            });
+        }
     });
 
     </script>

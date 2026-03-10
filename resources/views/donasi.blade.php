@@ -18,31 +18,29 @@
         </div>
 
         <div class="header-icons">
-            <!--<a href="{{ route('dashboard') }}" class="icon-btn" title="Dashboard">-->
-            <!--    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor">-->
-            <!--        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />-->
-            <!--    </svg>-->
-            </a>
             @auth
-                <a href="{{ route('transaction.history') }}" class="icon-btn" title="Histori Transaksi">
-                    <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>
-                </a>
-                <a href="{{ url('/profile') }}" class="icon-btn" title="Profil">
-                    <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <circle cx="12" cy="8" r="4" stroke-width="2" />
-                        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4" />
-                    </svg>
-                </a>
-                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="icon-btn logout-btn" title="Logout">
+                <div class="user-menu-dropdown">
+                    <button type="button" class="icon-btn user-menu-btn" id="userMenuBtnDonasi" title="Menu Akun">
                         <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            <circle cx="12" cy="8" r="4" stroke-width="2" />
+                            <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4" />
                         </svg>
                     </button>
-                </form>
+                    <div class="user-menu" id="userMenuDonasi">
+                        <a href="{{ url('/profile') }}" class="user-menu-item">
+                            Profil
+                        </a>
+                        <a href="{{ route('transaction.history') }}" class="user-menu-item">
+                            Histori Transaksi
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="user-menu-item user-menu-logout">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
             @else
                 <a href="{{ route('login') }}" class="icon-btn" title="Login">
                     <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -170,6 +168,25 @@
         const loginRequiredModal = document.getElementById('loginRequiredModal');
         if (event.target === loginRequiredModal) {
             closeLoginRequiredModal();
+        }
+    });
+
+    // User menu dropdown (donasi)
+    document.addEventListener('DOMContentLoaded', function() {
+        const userMenuBtnDonasi = document.getElementById('userMenuBtnDonasi');
+        const userMenuDonasi = document.getElementById('userMenuDonasi');
+
+        if (userMenuBtnDonasi && userMenuDonasi) {
+            userMenuBtnDonasi.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userMenuDonasi.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!userMenuDonasi.contains(e.target) && e.target !== userMenuBtnDonasi) {
+                    userMenuDonasi.classList.remove('open');
+                }
+            });
         }
     });
     </script>

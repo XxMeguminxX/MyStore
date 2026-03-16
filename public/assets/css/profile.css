@@ -225,18 +225,55 @@ h1 {
     gap: 8px;
 }
 
+/* Parent grup: Profil & Transaksi */
+.sidebar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-group-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 4px 12px 2px;
+}
+
+.sidebar-sublinks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-sublinks .sidebar-link {
+    margin-left: 0;
+}
+
+/* Ukuran & spacing seragam untuk semua item menu */
 .sidebar-link {
     display: flex;
+    align-items: center;
     width: 100%;
+    min-height: 44px;
     padding: 10px 12px;
     border-radius: 10px;
     text-decoration: none;
     color: var(--text-dark);
     border: 1px solid var(--border-light);
     background: var(--bg-main);
+    font-size: 0.95rem;
     font-weight: 600;
     transition: all 0.2s ease;
     cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* Tombol logout pakai class yang sama, pastikan tampil sama dengan link */
+.sidebar-logout .sidebar-link {
+    font-family: inherit;
+    text-align: left;
 }
 
 .sidebar-link:hover {

@@ -17,13 +17,6 @@
             &larr; Dashboard
         </a>
         <div class="header-title">Histori Transaksi</div>
-        <div class="header-actions">
-            <a href="{{ url('/profile') }}" class="header-link">Profil</a>
-            <form method="POST" action="{{ route('logout') }}" class="header-logout">
-                @csrf
-                <button type="submit" class="header-link header-link-danger">Logout</button>
-            </form>
-        </div>
     </div>
 
     <div class="profile-container">
@@ -37,8 +30,13 @@
                 <div class="sidebar-card">
                     <div class="sidebar-title">Menu</div>
                     <nav class="sidebar-nav">
-                        <a class="sidebar-link" href="{{ url('/profile') }}">Profil</a>
-                        <a class="sidebar-link active" href="{{ route('transaction.history') }}">Histori Transaksi</a>
+                        <div class="sidebar-group">
+                            <div class="sidebar-group-title">Profil & Transaksi</div>
+                            <div class="sidebar-sublinks">
+                                <a class="sidebar-link" href="{{ url('/profile') }}">Profil</a>
+                                <a class="sidebar-link active" href="{{ route('transaction.history') }}">Histori Transaksi</a>
+                            </div>
+                        </div>
                         <a class="sidebar-link" href="{{ url('/dashboard') }}">Kembali ke Dashboard</a>
                     </nav>
                     <form method="POST" action="{{ route('logout') }}" class="sidebar-logout">

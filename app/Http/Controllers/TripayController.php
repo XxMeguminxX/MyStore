@@ -27,7 +27,7 @@ class TripayController extends Controller
 
     public function getPaymentChannels()
     {
-        $apiKey = env('TRIPAY_API_KEY');
+        $apiKey = config('services.tripay.api_key');
 
         $curl = curl_init();
 
@@ -166,9 +166,9 @@ class TripayController extends Controller
             $reservedStock = $product->stock;
         });
 
-        $apiKey = env('TRIPAY_API_KEY');
-        $merchantCode = env('TRIPAY_MERCHANT_CODE');
-        $privateKey = env('TRIPAY_PRIVATE_KEY');
+        $apiKey = config('services.tripay.api_key');
+        $merchantCode = config('services.tripay.merchant_code');
+        $privateKey = config('services.tripay.private_key');
 
         // Validasi environment variables
         if (empty($apiKey) || empty($merchantCode) || empty($privateKey)) {
@@ -318,7 +318,7 @@ class TripayController extends Controller
             'url' => $request->url()
         ]);
 
-        $privateKey = env('TRIPAY_PRIVATE_KEY');
+        $privateKey = config('services.tripay.private_key');
         $callbackSignature = $request->header('X-Callback-Signature');
         $callbackEvent = $request->header('X-Callback-Event');
         $rawBody = $request->getContent();

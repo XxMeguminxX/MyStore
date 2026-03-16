@@ -98,12 +98,12 @@
                     <div class="product-detail-price">Rp {{ number_format($product->price, 0, '', '.') }}</div>
 
                     @if($product->isInStock())
-                    <div class="product-detail-qty" data-max-qty="{{ min($product->stock, 100) }}">
+                    <div class="product-detail-qty" id="product-qty-container" data-max-qty="{{ min($product->stock, 100) }}">
                         <label class="qty-label">Kuantitas</label>
                         <div class="quantity-selector">
-                            <button type="button" id="qty-decrease" class="qty-btn" aria-label="Kurangi">−</button>
-                            <input type="number" id="product-detail-quantity" class="qty-input" value="1" min="1" max="{{ min($product->stock, 100) }}" readonly>
-                            <button type="button" id="qty-increase" class="qty-btn" aria-label="Tambah">+</button>
+                            <button type="button" id="qty-decrease" class="qty-btn" aria-label="Kurangi" data-action="decrease">−</button>
+                            <input type="number" id="product-detail-quantity" class="qty-input" value="1" min="1" max="{{ min($product->stock, 100) }}" readonly aria-label="Kuantitas">
+                            <button type="button" id="qty-increase" class="qty-btn" aria-label="Tambah" data-action="increase">+</button>
                         </div>
                         <span class="qty-hint">Maks. {{ min($product->stock, 100) }} per transaksi</span>
                     </div>
@@ -146,7 +146,7 @@
     <script>
         (function() {
             var productId = {{ $product->id }};
-            var productName = {{ json_encode($product->name) }};
+            var productName = {!! json_encode($product->name) !!};
             var maxQty = {{ $product->isInStock() ? min($product->stock, 100) : 1 }};
 
             function getQtyInput() {
@@ -158,123 +158,129 @@
                 return el ? Math.min(maxQty, Math.max(1, parseInt(el.value, 10) || 1)) : 1;
             }
 
-            function setQty(val) {
+            function setQty(val, container) {
                 var el = getQtyInput();
+                if (!el) return;
+                var box = container || el.closest('.product-detail-qty');
+                var max = maxQty;
+                if (box && box.dataset.maxQty) max = parseInt(box.dataset.maxQty, 10) || maxQty;
+                val = Math.min(max, Math.max(1, val));
+                el.value = val;
                 var dec = document.getElementById('qty-decrease');
                 var inc = document.getElementById('qty-increase');
-                if (!el) return;
-                val = Math.min(maxQty, Math.max(1, val));
-                el.value = val;
                 if (dec) dec.disabled = (val <= 1);
-                if (inc) inc.disabled = (val >= maxQty);
+                if (inc) inc.disabled = (val >= max);
             }
+
+            /** Event delegation: tangani klik tombol +/- dari mana saja */
+            document.addEventListener('click', function(ev) {
+                var btn = ev.target && ev.target.closest && ev.target.closest('.product-detail-qty button.qty-btn[data-action]');
+                if (!btn) return;
+                ev.preventDefault();
+                ev.stopPropagation();
+                var action = btn.getAttribute('data-action');
+                var input = document.getElementById('product-detail-quantity');
+                if (!input) return;
+                var container = btn.closest('.product-detail-qty');
+                var max = maxQty;
+                if (container && container.dataset.maxQty) max = parseInt(container.dataset.maxQty, 10) || maxQty;
+                var v = parseInt(input.value, 10) || 1;
+                if (action === 'increase') v = Math.min(max, v + 1);
+                else if (action === 'decrease') v = Math.max(1, v - 1);
+                setQty(v, container);
+            }, true);
 
             async function addToCart() {
-            const qty = getQty();
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            try {
-                const response = await fetch('/cart/add/' + productId, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ quantity: qty })
-                });
-                const result = await response.json();
-                if (response.ok && result.success) {
-                    updateCartCount();
-                    showNotification(productName + ' (' + qty + ' item) berhasil ditambahkan ke keranjang!', 'success');
-                } else {
-                    showNotification(result.message || 'Gagal menambahkan ke keranjang', 'error');
+                var qty = getQty();
+                var meta = document.querySelector('meta[name="csrf-token"]');
+                var csrfToken = meta ? meta.getAttribute('content') : '';
+                try {
+                    var response = await fetch('/cart/add/' + productId, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ quantity: qty })
+                    });
+                    var result = await response.json();
+                    if (response.ok && result.success) {
+                        updateCartCount();
+                        showNotification(productName + ' (' + qty + ' item) berhasil ditambahkan ke keranjang!', 'success');
+                    } else {
+                        showNotification(result.message || 'Gagal menambahkan ke keranjang', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Terjadi kesalahan saat menambahkan ke keranjang', 'error');
                 }
-            } catch (error) {
-                showNotification('Terjadi kesalahan saat menambahkan ke keranjang', 'error');
             }
-        }
 
-        async function updateCartCount() {
-            try {
-                const response = await fetch('/cart/count');
-                const result = await response.json();
-                const el = document.getElementById('cartCount');
-                if (el) {
-                    el.textContent = result.count;
-                    el.style.display = result.count > 0 ? 'block' : 'none';
+            async function updateCartCount() {
+                try {
+                    var response = await fetch('/cart/count');
+                    var result = await response.json();
+                    var el = document.getElementById('cartCount');
+                    if (el) {
+                        el.textContent = result.count;
+                        el.style.display = result.count > 0 ? 'block' : 'none';
+                    }
+                } catch (e) {}
+            }
+
+            function showNotification(message, type) {
+                var existing = document.querySelector('.cart-notification');
+                if (existing) existing.remove();
+                var n = document.createElement('div');
+                n.className = 'cart-notification ' + type;
+                n.textContent = message;
+                Object.assign(n.style, {
+                    position: 'fixed', top: '20px', right: '20px', padding: '12px 20px', borderRadius: '8px',
+                    color: 'white', fontSize: '14px', fontWeight: '500', zIndex: '9999', boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    backgroundColor: type === 'success' ? '#2a9d8f' : type === 'error' ? '#dc2626' : '#6b7280'
+                });
+                document.body.appendChild(n);
+                setTimeout(function() { n.remove(); }, 3000);
+            }
+
+            function initProductDetail() {
+                updateCartCount();
+                var qtyInput = getQtyInput();
+                if (qtyInput) setQty(parseInt(qtyInput.value, 10) || 1);
+
+                var btnBeli = document.getElementById('btn-beli-sekarang');
+                if (btnBeli) {
+                    btnBeli.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var q = getQty();
+                        var href = btnBeli.getAttribute('href') || '';
+                        window.location.href = href + (href.indexOf('?') >= 0 ? '&' : '?') + 'quantity=' + q;
+                    });
                 }
-            } catch (e) {}
-        }
 
-        function showNotification(message, type) {
-            const existing = document.querySelector('.cart-notification');
-            if (existing) existing.remove();
-            const n = document.createElement('div');
-            n.className = 'cart-notification ' + type;
-            n.textContent = message;
-            Object.assign(n.style, {
-                position: 'fixed', top: '20px', right: '20px', padding: '12px 20px', borderRadius: '8px',
-                color: 'white', fontSize: '14px', fontWeight: '500', zIndex: '9999', boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                backgroundColor: type === 'success' ? '#2a9d8f' : type === 'error' ? '#dc2626' : '#6b7280'
-            });
-            document.body.appendChild(n);
-            setTimeout(function() { n.remove(); }, 3000);
-        }
+                var btnCart = document.getElementById('btn-tambah-keranjang');
+                if (btnCart) {
+                    btnCart.addEventListener('click', addToCart);
+                }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCartCount();
-
-            var qtyInput = document.getElementById('product-detail-quantity');
-            var qtyDec = document.getElementById('qty-decrease');
-            var qtyInc = document.getElementById('qty-increase');
-            if (qtyInput && qtyDec && qtyInc) {
-                setQty(1);
-                qtyDec.addEventListener('click', function(ev) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    var v = parseInt(qtyInput.value, 10) || 1;
-                    v = Math.max(1, v - 1);
-                    qtyInput.value = String(v);
-                    qtyDec.disabled = (v <= 1);
-                    qtyInc.disabled = (v >= maxQty);
-                });
-                qtyInc.addEventListener('click', function(ev) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    var v = parseInt(qtyInput.value, 10) || 1;
-                    v = Math.min(maxQty, v + 1);
-                    qtyInput.value = String(v);
-                    qtyDec.disabled = (v <= 1);
-                    qtyInc.disabled = (v >= maxQty);
-                });
+                var userMenuBtn = document.getElementById('userMenuBtn');
+                var userMenu = document.getElementById('userMenu');
+                if (userMenuBtn && userMenu) {
+                    userMenuBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        userMenu.classList.toggle('open');
+                    });
+                    document.addEventListener('click', function(e) {
+                        if (!userMenu.contains(e.target) && e.target !== userMenuBtn) userMenu.classList.remove('open');
+                    });
+                }
             }
 
-            var btnBeli = document.getElementById('btn-beli-sekarang');
-            if (btnBeli) {
-                btnBeli.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    var q = getQty();
-                    window.location.href = btnBeli.getAttribute('href') + (btnBeli.getAttribute('href').indexOf('?') >= 0 ? '&' : '?') + 'quantity=' + q;
-                });
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initProductDetail);
+            } else {
+                initProductDetail();
             }
-
-            var btnCart = document.getElementById('btn-tambah-keranjang');
-            if (btnCart) {
-                btnCart.addEventListener('click', addToCart);
-            }
-
-            var userMenuBtn = document.getElementById('userMenuBtn');
-            var userMenu = document.getElementById('userMenu');
-            if (userMenuBtn && userMenu) {
-                userMenuBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    userMenu.classList.toggle('open');
-                });
-                document.addEventListener('click', function(e) {
-                    if (!userMenu.contains(e.target) && e.target !== userMenuBtn) userMenu.classList.remove('open');
-                });
-            }
-        });
         })();
     </script>
 </body>

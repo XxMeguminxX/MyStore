@@ -121,8 +121,13 @@ class CheckoutController extends Controller
             ]);
             return redirect()->route('profile')->with('error', "Mohon lengkapi data profile terlebih dahulu: {$missingFieldsText}");
         }
+
+        // Quantity dari halaman detail (query ?quantity=)
+        $maxQty = min($product->stock, 100);
+        $initialQuantity = (int) $request->get('quantity', 1);
+        $initialQuantity = max(1, min($maxQty, $initialQuantity));
         
-        return view('checkout', compact('product', 'channels', 'error', 'user'));
+        return view('checkout', compact('product', 'channels', 'error', 'user', 'initialQuantity'));
     }
 
     public function index()

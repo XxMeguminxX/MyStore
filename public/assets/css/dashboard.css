@@ -163,12 +163,6 @@
     transform: translateY(-2px);
   }
   
-  .icon-btn.logout-btn:hover {
-    background: #ffe8e8;
-    border-color: var(--danger);
-    color: var(--danger);
-  }
-  
   .cart-count {
     position: absolute;
     top: -8px;
@@ -499,13 +493,6 @@
     letter-spacing: -0.5px;
   }
   
-  .product-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 16px;
-  }
-  
   /* ===================================
      BUTTONS
      =================================== */
@@ -534,20 +521,6 @@
     background: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(90, 139, 124, 0.2);
-  }
-  
-  .btn-keranjang {
-    background: var(--accent-warm-light);
-    color: var(--accent-warm);
-    border: 1px solid var(--accent-warm);
-    flex: 1;
-  }
-  
-  .btn-keranjang:hover {
-    background: var(--accent-warm);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
   }
   
   .btn-login-required {

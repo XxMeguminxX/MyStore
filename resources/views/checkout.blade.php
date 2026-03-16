@@ -45,12 +45,12 @@
 
                 <div class="quantity-selector">
                     <button type="button" id="decrease-qty" class="quantity-btn">-</button>
-                    <span id="quantity-value" class="quantity-value">1</span>
+                    <span id="quantity-value" class="quantity-value">{{ $initialQuantity ?? 1 }}</span>
                     <button type="button" id="increase-qty" class="quantity-btn">+</button>
                 </div>
                     
                 <div class="checkout-price" id="total-price">
-                    RP {{ number_format($product->price,0,'','.') }}
+                    RP {{ number_format($product->price * ($initialQuantity ?? 1), 0, '', '.') }}
                 </div>
             </div>
         </div>
@@ -79,8 +79,8 @@
 
             <input type="hidden" name="product_sku" value="{{ $product->id }}">
             <input type="hidden" name="product_name" value="{{ $product->name }}">
-            <input type="hidden" name="amount" id="amount-input" value="{{ $product->price }}">
-            <input type="hidden" name="quantity" id="quantity-input" value="1">
+            <input type="hidden" name="amount" id="amount-input" value="{{ $product->price * ($initialQuantity ?? 1) }}">
+            <input type="hidden" name="quantity" id="quantity-input" value="{{ $initialQuantity ?? 1 }}">
             <input type="hidden" name="transaction_type" value="{{ $product->transaction_type ?? 'product' }}">
 
             <label>Metode Pembayaran</label>
@@ -118,7 +118,7 @@
         const amountInput = document.getElementById('amount-input');
         const quantityInput = document.getElementById('quantity-input');
 
-        let quantity = 1;
+        let quantity = {{ $initialQuantity ?? 1 }};
 
         function updatePriceAndQuantity() {
             const total = basePrice * quantity;

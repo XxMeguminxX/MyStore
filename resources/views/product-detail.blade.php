@@ -69,79 +69,123 @@
 
     <div class="product-detail-page">
         <div class="product-detail-card">
-            <div class="product-detail-id">ID: {{ $product->id }}</div>
-            <img class="product-detail-img" src="{{ $product->image }}" alt="{{ $product->name }}">
-            <h1 class="product-detail-title">{{ $product->name }}</h1>
+            <div class="product-detail-top">
+                <div class="product-detail-gallery">
+                    <div class="product-detail-id">ID: {{ $product->id }}</div>
+                    <img class="product-detail-img" src="{{ $product->image }}" alt="{{ $product->name }}">
+                </div>
+                <div class="product-detail-info">
+                    <h1 class="product-detail-title">{{ $product->name }}</h1>
 
-            <div class="product-detail-stock">
-                <span class="stock-status {{ $product->getStockStatusColor() }}"
-                    style="
-                        @if($product->stock > 10)
-                            background-color: #dcfce7; color: #166534; border: 2px solid #16a34a;
-                        @elseif($product->stock > 0)
-                            background-color: #fef3c7; color: #92400e; border: 2px solid #ca8a04;
-                        @else
-                            background-color: #fee2e2; color: #991b1b; border: 2px solid #dc2626;
+                    <div class="product-detail-stock">
+                        <span class="stock-status {{ $product->getStockStatusColor() }}"
+                            style="
+                                @if($product->stock > 10)
+                                    background-color: #dcfce7; color: #166534; border: 2px solid #16a34a;
+                                @elseif($product->stock > 0)
+                                    background-color: #fef3c7; color: #92400e; border: 2px solid #ca8a04;
+                                @else
+                                    background-color: #fee2e2; color: #991b1b; border: 2px solid #dc2626;
+                                @endif
+                                font-weight: 600; padding: 6px 14px; border-radius: 16px; font-size: 0.95em;">
+                            {{ $product->getStockStatus() }}
+                        </span>
+                        @if($product->stock > 0)
+                            <span class="stock-count">Stok: {{ $product->stock }}</span>
                         @endif
-                        font-weight: 600; padding: 6px 14px; border-radius: 16px; font-size: 0.95em;">
-                    {{ $product->getStockStatus() }}
-                </span>
-                @if($product->stock > 0)
-                    <span class="stock-count">Stok: {{ $product->stock }}</span>
-                @endif
-            </div>
+                    </div>
 
-            <div class="product-detail-price">Rp {{ number_format($product->price, 0, '', '.') }}</div>
+                    <div class="product-detail-price">Rp {{ number_format($product->price, 0, '', '.') }}</div>
+
+                    @if($product->isInStock())
+                    <div class="product-detail-qty" data-max-qty="{{ min($product->stock, 100) }}">
+                        <label class="qty-label">Kuantitas</label>
+                        <div class="quantity-selector">
+                            <button type="button" id="qty-decrease" class="qty-btn" aria-label="Kurangi">−</button>
+                            <input type="number" id="product-detail-quantity" class="qty-input" value="1" min="1" max="{{ min($product->stock, 100) }}" readonly>
+                            <button type="button" id="qty-increase" class="qty-btn" aria-label="Tambah">+</button>
+                        </div>
+                        <span class="qty-hint">Maks. {{ min($product->stock, 100) }} per transaksi</span>
+                    </div>
+                    @endif
+
+                    <div class="product-detail-actions">
+                        @auth
+                            @if($product->isInStock())
+                                <a href="{{ route('beli', ['id' => $product->id]) }}" id="btn-beli-sekarang" class="btn btn-beli btn-detail-beli">Beli Sekarang</a>
+                                <button type="button" class="btn btn-cart btn-detail-cart" id="btn-tambah-keranjang" title="Tambah ke Keranjang">
+                                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5-5m-2.5 5L9.5 18M17 13l-2.5 5M9.5 18l-2.5-2M9.5 18h6.5" />
+                                    </svg>
+                                    Masukkan Keranjang
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-out-of-stock" disabled>Stok Habis</button>
+                            @endif
+                        @else
+                            @if($product->isInStock())
+                                <a href="{{ route('login') }}" class="btn btn-beli btn-detail-beli">Login untuk Beli</a>
+                                <button type="button" class="btn btn-login-required" onclick="window.location.href='{{ route('login') }}'">
+                                    Login untuk Masukkan Keranjang
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-out-of-stock" disabled>Stok Habis</button>
+                            @endif
+                        @endauth
+                    </div>
+                </div>
+            </div>
 
             <div class="product-detail-desc">
                 <h3>Deskripsi</h3>
                 <div class="desc-content">{!! nl2br(e($product->description)) !!}</div>
             </div>
-
-            <div class="product-detail-actions">
-                @auth
-                    @if($product->isInStock())
-                        <a href="{{ route('beli', ['id' => $product->id]) }}" class="btn btn-beli btn-detail-beli">Beli Sekarang</a>
-                        <button type="button" class="btn btn-cart btn-detail-cart" onclick="addToCart({{ $product->id }}, {{ json_encode($product->name) }})" title="Tambah ke Keranjang">
-                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5-5m-2.5 5L9.5 18M17 13l-2.5 5M9.5 18l-2.5-2M9.5 18h6.5" />
-                            </svg>
-                            Tambah ke Keranjang
-                        </button>
-                    @else
-                        <button type="button" class="btn btn-out-of-stock" disabled>Stok Habis</button>
-                    @endif
-                @else
-                    @if($product->isInStock())
-                        <a href="{{ route('login') }}" class="btn btn-beli btn-detail-beli">Login untuk Beli</a>
-                        <button type="button" class="btn btn-login-required" onclick="window.location.href='{{ route('login') }}'">
-                            Login untuk Tambah Keranjang
-                        </button>
-                    @else
-                        <button type="button" class="btn btn-out-of-stock" disabled>Stok Habis</button>
-                    @endif
-                @endauth
-            </div>
         </div>
     </div>
 
     <script>
-        async function addToCart(productId, productName) {
+        (function() {
+            var productId = {{ $product->id }};
+            var productName = {{ json_encode($product->name) }};
+            var maxQty = {{ $product->isInStock() ? min($product->stock, 100) : 1 }};
+
+            function getQtyInput() {
+                return document.getElementById('product-detail-quantity');
+            }
+
+            function getQty() {
+                var el = getQtyInput();
+                return el ? Math.min(maxQty, Math.max(1, parseInt(el.value, 10) || 1)) : 1;
+            }
+
+            function setQty(val) {
+                var el = getQtyInput();
+                var dec = document.getElementById('qty-decrease');
+                var inc = document.getElementById('qty-increase');
+                if (!el) return;
+                val = Math.min(maxQty, Math.max(1, val));
+                el.value = val;
+                if (dec) dec.disabled = (val <= 1);
+                if (inc) inc.disabled = (val >= maxQty);
+            }
+
+            async function addToCart() {
+            const qty = getQty();
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             try {
-                const response = await fetch(`/cart/add/${productId}`, {
+                const response = await fetch('/cart/add/' + productId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ quantity: 1 })
+                    body: JSON.stringify({ quantity: qty })
                 });
                 const result = await response.json();
                 if (response.ok && result.success) {
                     updateCartCount();
-                    showNotification(productName + ' berhasil ditambahkan ke keranjang!', 'success');
+                    showNotification(productName + ' (' + qty + ' item) berhasil ditambahkan ke keranjang!', 'success');
                 } else {
                     showNotification(result.message || 'Gagal menambahkan ke keranjang', 'error');
                 }
@@ -149,6 +193,7 @@
                 showNotification('Terjadi kesalahan saat menambahkan ke keranjang', 'error');
             }
         }
+
         async function updateCartCount() {
             try {
                 const response = await fetch('/cart/count');
@@ -160,6 +205,7 @@
                 }
             } catch (e) {}
         }
+
         function showNotification(message, type) {
             const existing = document.querySelector('.cart-notification');
             if (existing) existing.remove();
@@ -174,10 +220,51 @@
             document.body.appendChild(n);
             setTimeout(function() { n.remove(); }, 3000);
         }
+
         document.addEventListener('DOMContentLoaded', function() {
             updateCartCount();
-            const userMenuBtn = document.getElementById('userMenuBtn');
-            const userMenu = document.getElementById('userMenu');
+
+            var qtyInput = document.getElementById('product-detail-quantity');
+            var qtyDec = document.getElementById('qty-decrease');
+            var qtyInc = document.getElementById('qty-increase');
+            if (qtyInput && qtyDec && qtyInc) {
+                setQty(1);
+                qtyDec.addEventListener('click', function(ev) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    var v = parseInt(qtyInput.value, 10) || 1;
+                    v = Math.max(1, v - 1);
+                    qtyInput.value = String(v);
+                    qtyDec.disabled = (v <= 1);
+                    qtyInc.disabled = (v >= maxQty);
+                });
+                qtyInc.addEventListener('click', function(ev) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    var v = parseInt(qtyInput.value, 10) || 1;
+                    v = Math.min(maxQty, v + 1);
+                    qtyInput.value = String(v);
+                    qtyDec.disabled = (v <= 1);
+                    qtyInc.disabled = (v >= maxQty);
+                });
+            }
+
+            var btnBeli = document.getElementById('btn-beli-sekarang');
+            if (btnBeli) {
+                btnBeli.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var q = getQty();
+                    window.location.href = btnBeli.getAttribute('href') + (btnBeli.getAttribute('href').indexOf('?') >= 0 ? '&' : '?') + 'quantity=' + q;
+                });
+            }
+
+            var btnCart = document.getElementById('btn-tambah-keranjang');
+            if (btnCart) {
+                btnCart.addEventListener('click', addToCart);
+            }
+
+            var userMenuBtn = document.getElementById('userMenuBtn');
+            var userMenu = document.getElementById('userMenu');
             if (userMenuBtn && userMenu) {
                 userMenuBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -188,6 +275,7 @@
                 });
             }
         });
+        })();
     </script>
 </body>
 

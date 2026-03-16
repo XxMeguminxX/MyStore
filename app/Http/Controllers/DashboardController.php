@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    // Removed beli method, now in CheckoutController
     public function index(Request $request)
     {
         $sortBy = $request->get('sort', 'newest');

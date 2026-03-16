@@ -17,13 +17,6 @@
             &larr; Dashboard
         </a>
         <div class="header-title">Profil</div>
-        <div class="header-actions">
-            <a href="{{ route('transaction.history') }}" class="header-link">Histori</a>
-            <form method="POST" action="{{ route('logout') }}" class="header-logout">
-                @csrf
-                <button type="submit" class="header-link header-link-danger">Logout</button>
-            </form>
-        </div>
     </div>
 
     {{-- Kontainer untuk konten utama --}}

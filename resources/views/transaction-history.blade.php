@@ -7,50 +7,58 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Histori Transaksi - E Store ID</title>
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('assets/css/transaction-history.css') }}">
-    <style>
-       
-    </style>
 </head>
 
-<body class="body-background-3d">
+<body class="body-background-3d page-account">
     <div class="header-bar">
-        <div class="search-container">
-            <input type="text" id="transactionSearch" onkeyup="filterTransactions()" placeholder="Cari transaksi..."
-                class="search-input">
-        </div>
-
-        <div class="header-icons">
-            <a href="{{ route('transaction.history') }}" class="icon-btn" title="Histori Transaksi">
-                <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                </svg>
-            </a>
-            <a href="{{ url('/profile') }}" class="icon-btn" title="Profil">
-                <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <circle cx="12" cy="8" r="4" stroke-width="2" />
-                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4" />
-                </svg>
-            </a>
+        <a href="{{ url('/dashboard') }}" class="btn-kembali" aria-label="Kembali ke Dashboard">
+            &larr; Dashboard
+        </a>
+        <div class="header-title">Histori Transaksi</div>
+        <div class="header-actions">
+            <a href="{{ url('/profile') }}" class="header-link">Profil</a>
+            <form method="POST" action="{{ route('logout') }}" class="header-logout">
+                @csrf
+                <button type="submit" class="header-link header-link-danger">Logout</button>
+            </form>
         </div>
     </div>
 
-    <h1>Histori Transaksi</h1>
-    
-    <div class="transaction-section">
-        <div class="transaction-background"></div>
-        <div class="transaction-content">
-            <div style="margin-bottom: 20px;">
-                <a href="{{ url('/dashboard') }}" class="back-btn">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Kembali ke Dashboard
-                </a>
-            </div>
+    <div class="profile-container">
+        <div class="page-heading">
+            <h1>Histori Transaksi</h1>
+            <div class="page-subtitle">Lihat status dan detail transaksi Anda.</div>
+        </div>
 
-            @if($transactions->count() > 0)
+        <div class="profile-layout">
+            <aside class="profile-sidebar" aria-label="Menu Akun">
+                <div class="sidebar-card">
+                    <div class="sidebar-title">Menu</div>
+                    <nav class="sidebar-nav">
+                        <a class="sidebar-link" href="{{ url('/profile') }}">Profil</a>
+                        <a class="sidebar-link active" href="{{ route('transaction.history') }}">Histori Transaksi</a>
+                        <a class="sidebar-link" href="{{ url('/dashboard') }}">Kembali ke Dashboard</a>
+                    </nav>
+                    <form method="POST" action="{{ route('logout') }}" class="sidebar-logout">
+                        @csrf
+                        <button type="submit" class="sidebar-link sidebar-link-danger">Logout</button>
+                    </form>
+                </div>
+            </aside>
+
+            <main class="profile-main">
+                <div class="profile-content">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Daftar Transaksi</div>
+                            <div class="card-subtitle">Gunakan pencarian untuk menemukan transaksi dengan cepat.</div>
+                        </div>
+                        <input type="text" id="transactionSearch" onkeyup="filterTransactions()" placeholder="Cari transaksi..." class="search-input" style="max-width: 320px;">
+                    </div>
+
+                    @if($transactions->count() > 0)
                 {{-- <!-- Debug: Tampilkan status mentah -->
                 <div class="debug-info">
                     <strong>Debug Info:</strong><br>
@@ -138,51 +146,39 @@
                     <p>Anda belum memiliki riwayat transaksi.</p>
                 </div>
             @endif
+                </div>
+            </main>
         </div>
     </div>
 
     <script>
         function filterTransactions() {
-            const searchInput = document.getElementById('transactionSearch').value.toLowerCase();
-            const transactionCards = document.querySelectorAll('.transaction-card');
+            const searchEl = document.getElementById('transactionSearch');
+            if (!searchEl) return;
+
+            const query = searchEl.value.toLowerCase();
+            const cards = document.querySelectorAll('#transactionsList .transaction-card');
             let visibleCount = 0;
 
-            transactionCards.forEach(card => {
-                const transactionId = card.querySelector('.transaction-id').textContent.toLowerCase();
-                const productName = card.querySelector('.detail-item:nth-child(1) .detail-value').textContent.toLowerCase();
-                const merchantRef = card.querySelector('.detail-item:nth-child(2) .detail-value').textContent.toLowerCase();
-                const quantity = card.querySelector('.detail-item:nth-child(3) .detail-value').textContent.toLowerCase();
-                const totalAmount = card.querySelector('.detail-item:nth-child(4) .detail-value').textContent.toLowerCase();
-                const paymentMethod = card.querySelector('.detail-item:nth-child(5) .detail-value').textContent.toLowerCase();
-                const customerName = card.querySelector('.detail-item:nth-child(6) .detail-value').textContent.toLowerCase();
-                const status = card.querySelector('.transaction-status').textContent.toLowerCase();
-
-                if (transactionId.includes(searchInput) ||
-                    productName.includes(searchInput) ||
-                    merchantRef.includes(searchInput) ||
-                    quantity.includes(searchInput) ||
-                    totalAmount.includes(searchInput) ||
-                    paymentMethod.includes(searchInput) ||
-                    customerName.includes(searchInput) ||
-                    status.includes(searchInput)) {
-                    card.style.display = '';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
+            cards.forEach(card => {
+                const match = card.textContent.toLowerCase().includes(query);
+                card.style.display = match ? '' : 'none';
+                if (match) visibleCount++;
             });
 
-            // Tampilkan pesan jika tidak ada hasil
-            const noTransactions = document.querySelector('.no-transactions');
-            if (visibleCount === 0 && searchInput !== '') {
-                if (!noTransactions) {
+            const container = document.querySelector('.profile-content');
+            if (!container) return;
+
+            const existingNoResults = container.querySelector('.no-transactions.no-results');
+            if (visibleCount === 0 && query !== '') {
+                if (!existingNoResults) {
                     const noResults = document.createElement('div');
-                    noResults.className = 'no-transactions';
+                    noResults.className = 'no-transactions no-results';
                     noResults.innerHTML = '<h3>Tidak ada hasil</h3><p>Tidak ada transaksi yang sesuai dengan pencarian Anda.</p>';
-                    document.querySelector('.transaction-content').appendChild(noResults);
+                    container.appendChild(noResults);
                 }
-            } else if (noTransactions) {
-                noTransactions.remove();
+            } else if (existingNoResults) {
+                existingNoResults.remove();
             }
         }
 

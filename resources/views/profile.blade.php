@@ -10,21 +10,32 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
 </head>
 
-<body>
+<body class="page-account">
     {{-- Header baru dengan tombol kembali --}}
     <div class="header-bar">
-        <a href="{{ url('/dashboard') }}" class="btn-kembali">
-            &larr; Kembali
+        <a href="{{ url('/dashboard') }}" class="btn-kembali" aria-label="Kembali ke Dashboard">
+            &larr; Dashboard
         </a>
+        <div class="header-title">Profil</div>
+        <div class="header-actions">
+            <a href="{{ route('transaction.history') }}" class="header-link">Histori</a>
+            <form method="POST" action="{{ route('logout') }}" class="header-logout">
+                @csrf
+                <button type="submit" class="header-link header-link-danger">Logout</button>
+            </form>
+        </div>
     </div>
 
     {{-- Kontainer untuk konten utama --}}
     <div class="profile-container">
-        <h1>Profil Pengguna</h1>
+        <div class="page-heading">
+            <h1>Profil Pengguna</h1>
+            <div class="page-subtitle">Kelola data akun agar siap untuk checkout.</div>
+        </div>
 
-        <div class="info-box" style="background: #e8f5e8; border: 1px solid #2a9d8f; border-radius: 8px; padding: 12px; margin-bottom: 20px; text-align: center;">
-            <p style="margin: 0; color: #2a9d8f; font-size: 0.9em;">
-                <strong>ℹ️ Informasi:</strong> Semua data profile harus lengkap untuk dapat melakukan checkout.
+        <div class="info-box" role="note">
+            <p>
+                <strong>Informasi:</strong> Semua data profil harus lengkap untuk dapat melakukan checkout.
             </p>
         </div>
 
@@ -50,56 +61,79 @@
             </div>
         @endif
 
-        {{-- Kartu profil dengan struktur baru --}}
-        <div class="profile-content">
-            <form method="POST" action="{{ route('profile.update') }}" class="profile-form" id="profileForm">
-                @csrf
-
-                <div class="profile-info">
-                <div class="profile-item">
-                    <span class="profile-label">ID User</span>
-                    <div class="profile-value">{{ $user->id }}</div>
+        <div class="profile-layout">
+            <aside class="profile-sidebar" aria-label="Menu Profil">
+                <div class="sidebar-card">
+                    <div class="sidebar-title">Menu</div>
+                    <nav class="sidebar-nav">
+                        <a class="sidebar-link active" href="{{ url('/profile') }}">Profil</a>
+                        <a class="sidebar-link" href="{{ route('transaction.history') }}">Histori Transaksi</a>
+                        <a class="sidebar-link" href="{{ url('/dashboard') }}">Kembali ke Dashboard</a>
+                    </nav>
+                    <form method="POST" action="{{ route('logout') }}" class="sidebar-logout">
+                        @csrf
+                        <button type="submit" class="sidebar-link sidebar-link-danger">Logout</button>
+                    </form>
                 </div>
+            </aside>
 
-                <div class="profile-item">
-                    <label for="name" class="profile-label">Nama</label>
-                    <input type="text" id="name" name="name" value="{{ $user->name }}" class="profile-input {{ empty($user->name) ? 'field-empty' : '' }}" readonly>
-                    @if(empty($user->name))
-                        <small class="field-warning">⚠️ Nama harus diisi untuk melakukan checkout</small>
-                    @endif
-                </div>
+            <main class="profile-main">
+                {{-- Kartu profil --}}
+                <div class="profile-content">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Data Profil</div>
+                            <div class="card-subtitle">Periksa dan perbarui informasi akun Anda.</div>
+                        </div>
+                        <button type="button" class="btn-update" onclick="showEditProfileModal()">Perbarui</button>
+                    </div>
 
-                <div class="profile-item">
-                    <label for="email" class="profile-label">Email</label>
-                    <input type="email" id="email" name="email" value="{{ $user->email }}" class="profile-input {{ empty($user->email) ? 'field-empty' : '' }}" readonly>
-                    @if(empty($user->email))
-                        <small class="field-warning">⚠️ Email harus diisi untuk melakukan checkout</small>
-                    @endif
-                </div>
+                    <form method="POST" action="{{ route('profile.update') }}" class="profile-form" id="profileForm">
+                        @csrf
 
-                <div class="profile-item">
-                    <label for="phone" class="profile-label">No HP</label>
-                    <input type="tel" id="phone" name="phone" value="{{ $user->phone ?? '' }}" class="profile-input {{ empty($user->phone) ? 'field-empty' : '' }}" readonly>
-                    @if(empty($user->phone))
-                        <small class="field-warning">⚠️ No HP harus diisi untuk melakukan checkout</small>
-                    @endif
-                </div>
+                        <div class="profile-info">
+                            <div class="profile-item">
+                                <span class="profile-label">ID User</span>
+                                <div class="profile-value">{{ $user->id }}</div>
+                            </div>
 
-                <div class="profile-item">
-                    <span class="profile-label">Tanggal Daftar</span>
-                    <div class="profile-value">{{ $user->created_at->format('d M Y H:i') }}</div>
-                </div>
+                            <div class="profile-item">
+                                <label for="name" class="profile-label">Nama</label>
+                                <input type="text" id="name" name="name" value="{{ $user->name }}" class="profile-input {{ empty($user->name) ? 'field-empty' : '' }}" readonly>
+                                @if(empty($user->name))
+                                    <small class="field-warning">Nama harus diisi untuk melakukan checkout</small>
+                                @endif
+                            </div>
 
-                <div class="profile-actions">
-                    <button type="button" class="btn-update" onclick="showEditProfileModal()">Perbarui Profil</button>
+                            <div class="profile-item">
+                                <label for="email" class="profile-label">Email</label>
+                                <input type="email" id="email" name="email" value="{{ $user->email }}" class="profile-input {{ empty($user->email) ? 'field-empty' : '' }}" readonly>
+                                @if(empty($user->email))
+                                    <small class="field-warning">Email harus diisi untuk melakukan checkout</small>
+                                @endif
+                            </div>
+
+                            <div class="profile-item">
+                                <label for="phone" class="profile-label">No HP</label>
+                                <input type="tel" id="phone" name="phone" value="{{ $user->phone ?? '' }}" class="profile-input {{ empty($user->phone) ? 'field-empty' : '' }}" readonly>
+                                @if(empty($user->phone))
+                                    <small class="field-warning">No HP harus diisi untuk melakukan checkout</small>
+                                @endif
+                            </div>
+
+                            <div class="profile-item">
+                                <span class="profile-label">Tanggal Daftar</span>
+                                <div class="profile-value">{{ $user->created_at->format('d M Y H:i') }}</div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </form>
-            </div>
+            </main>
         </div>
     </div>
 
     <!-- Modal Edit Profil -->
-    <div id="editProfileModal" class="modal" style="display: none;">
+    <div id="editProfileModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Perbarui Profil</h3>
@@ -209,6 +243,7 @@
                 closeEditProfileModal();
             }
         };
+
     </script>
 </body>
 

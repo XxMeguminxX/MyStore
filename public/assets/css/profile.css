@@ -1,21 +1,52 @@
-/* --- Global & Body --- */
+/* ===================================
+   PROFILE (Aligned with Dashboard)
+   =================================== */
+
+:root {
+    --primary-color: #5a8b7c;
+    --primary-dark: #4a7a6b;
+    --primary-light: #e8f0ed;
+    --text-dark: #2c3e3f;
+    --text-light: #6b7a7a;
+    --bg-main: #fafbf9;
+    --bg-card: #ffffff;
+    --border-light: #e5e8e8;
+    --accent-warm: #d4a574;
+    --accent-warm-light: #f5ede2;
+    --success: #6ba587;
+    --warning: #c9a55d;
+    --danger: #b85a5a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    background: #f7f8fa; /* Menyamakan background dengan dashboard */
-    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
     margin: 0;
     padding: 0;
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
 }
 
 /* --- Header --- */
 /* Menggunakan style yang sama dengan header-bar dan icon-btn di dashboard */
 .header-bar {
     width: 100%;
-    display: flex;
-    justify-content: flex-start; /* Mengubah dari flex-end ke flex-start untuk tombol kembali */
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
     align-items: center;
-    padding: 18px 32px 0;
-    box-sizing: border-box;
-    animation: slideInHeader 0.6s ease-out 0.1s both;
+    padding: 20px 40px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-light);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    animation: slideInHeader 0.35s ease-out 0.05s both;
 }
 
 @keyframes slideInHeader {
@@ -35,9 +66,9 @@ body {
     justify-content: center;
     padding: 8px 16px;
     border-radius: 20px; /* Membuatnya sedikit lebih oval */
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(42,157,143,0.09);
-    color: #2a9d8f;
+    background: var(--bg-main);
+    border: 1px solid var(--border-light);
+    color: var(--text-dark);
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -59,18 +90,68 @@ body {
 }
 
 .btn-kembali:hover, .btn-kembali:focus {
-    background: #e0f7f4;
-    color: #21867a;
-    box-shadow: 0 4px 16px rgba(42,157,143,0.13);
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
     transform: translateY(-2px) scale(1.04);
+}
+
+.header-title {
+    justify-self: center;
+    font-weight: 650;
+    color: var(--text-dark);
+    letter-spacing: -0.3px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-self: end;
+}
+
+.header-logout {
+    margin: 0;
+}
+
+.header-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    background: var(--bg-main);
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.header-link:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.header-link-danger {
+    color: var(--danger);
+}
+
+.header-link-danger:hover {
+    background: #fef4f4;
+    border-color: var(--danger);
+    color: var(--danger);
 }
 
 /* --- Konten Utama --- */
 .profile-container {
-    max-width: 500px;
-    margin: 20px auto 40px auto;
-    padding: 0 16px;
-    animation: fadeInUp 0.8s ease-out;
+    max-width: 1200px;
+    margin: 28px auto 60px auto;
+    padding: 0 40px;
+    animation: fadeInUp 0.6s ease-out;
 }
 
 @keyframes fadeInUp {
@@ -84,13 +165,25 @@ body {
     }
 }
 
+.page-heading {
+    margin-bottom: 18px;
+}
+
 h1 {
-    text-align: center;
+    text-align: left;
     margin-top: 0;
-    margin-bottom: 30px;
-    color: #222;
-    letter-spacing: 1px;
-    animation: slideInTitle 0.6s ease-out 0.2s both;
+    margin-bottom: 0;
+    color: var(--text-dark);
+    letter-spacing: -0.5px;
+    font-size: 2em;
+    font-weight: 650;
+    animation: slideInTitle 0.45s ease-out 0.05s both;
+}
+
+.page-subtitle {
+    margin-top: 6px;
+    color: var(--text-light);
+    font-size: 0.98em;
 }
 
 @keyframes slideInTitle {
@@ -105,12 +198,105 @@ h1 {
 }
 
 /* Menyamakan style kartu profil dengan .product-card */
+.profile-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.sidebar-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.sidebar-title {
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-link {
+    display: flex;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text-dark);
+    border: 1px solid var(--border-light);
+    background: var(--bg-main);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.sidebar-link:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.sidebar-link.active {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.sidebar-logout {
+    margin-top: 12px;
+}
+
+.sidebar-link-danger {
+    color: var(--danger);
+}
+
+.sidebar-link-danger:hover {
+    background: #fef4f4;
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.profile-main {
+    min-width: 0;
+}
+
 .profile-content {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 16px; /* Radius sudut yang sama */
-    box-shadow: 0 4px 24px rgba(0,0,0,0.07); /* Bayangan yang sama */
-    padding: 32px;
-    animation: slideInCard 0.7s ease-out 0.3s both;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06); /* Bayangan yang sama */
+    padding: 20px;
+    animation: slideInCard 0.5s ease-out 0.08s both;
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 16px;
+}
+
+.card-title {
+    font-weight: 750;
+    color: var(--text-dark);
+}
+
+.card-subtitle {
+    margin-top: 4px;
+    color: var(--text-light);
+    font-size: 0.95em;
 }
 
 @keyframes slideInCard {
@@ -154,51 +340,51 @@ h1 {
 
 .profile-label {
     font-size: 0.9em;
-    color: #555;
+    color: var(--text-light);
     margin-bottom: 6px;
     font-weight: 500;
 }
 
 .profile-value {
     font-size: 1.1em;
-    color: #222;
+    color: var(--text-dark);
     font-weight: 600;
-    background: #f7f8fa;
+    background: var(--bg-main);
     padding: 10px 14px;
     border-radius: 8px;
-    border: 1px solid #eef0f2;
+    border: 1px solid var(--border-light);
 }
 
 .profile-input {
     font-size: 1.1em;
-    color: #222;
+    color: var(--text-dark);
     font-weight: 600;
-    background: #f7f8fa;
+    background: var(--bg-main);
     padding: 10px 14px;
     border-radius: 8px;
-    border: 1px solid #eef0f2;
+    border: 1px solid var(--border-light);
     width: 100%;
     box-sizing: border-box;
 }
 
 /* Styling untuk input readonly */
 .profile-input[readonly] {
-    background: #f0f0f0;
-    color: #666;
+    background: var(--bg-main);
+    color: var(--text-dark);
     cursor: not-allowed;
-    border: 1px solid #d0d0d0;
+    border: 1px solid var(--border-light);
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .profile-input[readonly]:hover {
-    background: #e8e8e8;
-    border-color: #c0c0c0;
+    background: var(--primary-light);
+    border-color: var(--primary-color);
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .profile-input[readonly]:focus {
-    border: 1px solid #d0d0d0;
+    border: 1px solid var(--border-light);
     box-shadow: none;
     outline: none;
     transform: translateY(0);
@@ -285,15 +471,15 @@ h1 {
 }
 
 .alert-success {
-    background: #f0fff4;
-    color: #22543d;
-    border: 1px solid #9ae6b4;
+    background: #f0f8f4;
+    color: var(--success);
+    border: 1px solid rgba(107, 165, 135, 0.35);
 }
 
 .alert-error {
-    background: #fed7d7;
-    color: #c53030;
-    border: 1px solid #fc8181;
+    background: #fef4f4;
+    color: var(--danger);
+    border: 1px solid rgba(184, 90, 90, 0.35);
 }
 
 /* Styling untuk form edit profil */
@@ -323,8 +509,8 @@ h1 {
 
 .profile-input:focus {
     outline: none;
-    border-color: #2a9d8f;
-    box-shadow: 0 0 0 3px rgba(42,157,143,0.2);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 .profile-form {
@@ -349,18 +535,18 @@ h1 {
 }
 
 .btn-update {
-    background: #2a9d8f;
+    background: var(--primary-color);
     color: #fff;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
     font-size: 1em;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
     overflow: hidden;
-    animation: pulseIn 0.8s ease-out 1s both;
+    animation: none;
 }
 
 @keyframes pulseIn {
@@ -378,9 +564,9 @@ h1 {
 }
 
 .btn-update:hover {
-    background: #21867a;
+    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(42, 157, 143, 0.3);
+    box-shadow: 0 8px 25px rgba(90, 139, 124, 0.25);
 }
 
 .btn-update:active {
@@ -757,14 +943,22 @@ h1 {
 
 /* Info box styling */
 .info-box {
-    background: #e8f5e8;
-    border: 1px solid #2a9d8f;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 20px;
-    text-align: center;
-    animation: slideInInfo 0.6s ease-out 0.4s both;
-    transform-origin: top;
+    background: var(--primary-light);
+    border: 1px solid rgba(90, 139, 124, 0.35);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 14px 0 18px 0;
+    text-align: left;
+}
+
+.info-box p {
+    margin: 0;
+    color: var(--primary-dark);
+    font-size: 0.95em;
+}
+
+.info-box strong {
+    font-weight: 750;
 }
 
 @keyframes slideInInfo {
@@ -775,5 +969,58 @@ h1 {
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
+    }
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+    .profile-container {
+        padding: 0 18px;
+    }
+
+    .header-bar {
+        padding: 16px 18px;
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            "back actions"
+            "title title";
+        row-gap: 10px;
+    }
+
+    .btn-kembali {
+        grid-area: back;
+    }
+
+    .header-actions {
+        grid-area: actions;
+    }
+
+    .header-title {
+        grid-area: title;
+        justify-self: start;
+    }
+
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===================================
+   Performance: disable heavy animations
+   Scoped to account pages only
+   =================================== */
+
+.page-account *,
+.page-account *::before,
+.page-account *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
     }
 }

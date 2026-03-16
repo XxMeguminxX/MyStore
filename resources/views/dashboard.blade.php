@@ -155,14 +155,14 @@
 
     <div class="product-grid">
         @foreach ($products as $data)
-        <div class="product-card">
+        <div class="product-card product-card-clickable" data-url="{{ route('product.show', $data->id) }}" role="button" tabindex="0">
             <div class="product-id">ID: {{ $data->id }}</div>
             <img class="product-img" src="{{ $data->image }}" alt="Produk Digital">
             <div class="product-title">{{ $data->name }}</div>
-            <div class="product-desc">
+            <div class="product-desc product-card-no-click">
                 <span class="desc-short">{{ substr($data->description,0,80) }}</span>
                 <span class="desc-full" style="display:none;">{!! nl2br(e($data->description)) !!}</span>
-                <button class="btn-desc-toggle" onclick="openDescModal(this)">Lihat Selengkapnya</button>
+                <button type="button" class="btn-desc-toggle" onclick="openDescModal(this); event.stopPropagation();">Lihat Selengkapnya</button>
             </div>
             <div class="product-stock">
                 <span class="stock-status {{ $data->getStockStatusColor() }}"
@@ -184,34 +184,6 @@
                 @endif
             </div>
             <div class="product-price">Rp {{ number_format($data->price,0,'','.') }}</div>
-            <div class="product-actions">
-                @auth
-                    {{-- User sudah login --}}
-                    @if($data->isInStock())
-                        <a href="{{ route('beli', ['id' => $data->id]) }}" class="btn btn-beli" id="beli-produk-{{ $data->id }}">Beli</a>
-                        <button type="button" class="btn btn-cart" onclick="addToCart({{ $data->id }}, '{{ $data->name }}')" id="cart-produk-{{ $data->id }}" title="Tambah ke Keranjang">
-                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5-5m-2.5 5L9.5 18M17 13l-2.5 5M9.5 18l-2.5-2M9.5 18h6.5" />
-                            </svg>
-                        </button>
-                    @else
-                        <button type="button" class="btn btn-out-of-stock" disabled id="beli-produk-{{ $data->id }}">
-                            Stok Habis
-                        </button>
-                    @endif
-                @else
-                    {{-- User belum login --}}
-                    @if($data->isInStock())
-                        <button type="button" class="btn btn-login-required" onclick="showLoginRequiredModal()" id="beli-produk-{{ $data->id }}">
-                            Login untuk Beli
-                        </button>
-                    @else
-                        <button type="button" class="btn btn-out-of-stock" disabled id="beli-produk-{{ $data->id }}">
-                            Stok Habis
-                        </button>
-                    @endif
-                @endauth
-            </div>
         </div>
         @endforeach
     </div>
@@ -525,9 +497,30 @@
         }
     }
 
+    // Klik card produk -> ke halaman detail (kecuali klik area .product-card-no-click)
+    function initProductCardClicks() {
+        document.querySelectorAll('.product-card-clickable').forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('.product-card-no-click')) return;
+                var url = card.getAttribute('data-url');
+                if (url) window.location.href = url;
+            });
+            card.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (!e.target.closest('.product-card-no-click')) {
+                        var url = card.getAttribute('data-url');
+                        if (url) window.location.href = url;
+                    }
+                }
+            });
+        });
+    }
+
     // Inisialisasi filter dropdown & user menu saat halaman dimuat
     document.addEventListener('DOMContentLoaded', function() {
         initFilterDropdown();
+        initProductCardClicks();
         updateCartCount(); // Update cart count saat halaman dimuat
 
         const userMenuBtn = document.getElementById('userMenuBtn');
@@ -550,5 +543,4 @@
     </script>
 </body>
 
-</html>
 </html>

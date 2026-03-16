@@ -402,7 +402,15 @@
   .product-card:hover::before {
     transform: scaleX(1);
   }
-  
+
+  .product-card-clickable {
+    cursor: pointer;
+  }
+
+  .product-card-no-click {
+    cursor: default;
+  }
+
   .product-id {
     position: absolute;
     top: 12px;

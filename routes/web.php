@@ -11,6 +11,7 @@ use App\Http\Controllers\DonasiController;
 use App\Http\Controllers\ProductQttController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
 
 
 // Rute untuk Login dan Register (bisa diakses tanpa login)
@@ -41,6 +42,9 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 // Rute Donasi (bisa diakses tanpa login)
 Route::get('/donasi', [DonasiController::class, 'index'])->name('donasi.index');
+
+// Rute Detail Produk (bisa diakses tanpa login, untuk lihat detail & lanjut beli)
+Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
 // Test route for cart functionality
 Route::get('/test-cart', function () {

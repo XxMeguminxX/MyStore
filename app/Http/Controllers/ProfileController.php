@@ -47,13 +47,13 @@ class ProfileController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'phone' => ['nullable', 'numeric', 'max:20'],
+            'phone' => ['nullable', 'string', 'regex:/^(\+62|62|0)[0-9]{8,12}$/'],
         ], [
             'name.required' => 'Nama harus diisi.',
             'email.required' => 'Email harus diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah digunakan oleh user lain.',
-            'phone.max' => 'Nomor HP maksimal 20 karakter.',
+            'phone.regex' => 'Format nomor HP tidak valid. Gunakan format: 08xx, +62xx, atau 62xx.',
         ]);
 
         // Update data user

@@ -22,7 +22,7 @@ class ProfileController extends Controller
             return redirect()->route('login');
         }
 
-        $transactions = Transaction::with(['product', 'donasi'])
+        $transactions = Transaction::with(['product'])
             ->where('customer_email', $user->email)
             ->orderBy('created_at', 'desc')
             ->get();

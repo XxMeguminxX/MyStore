@@ -20,30 +20,10 @@ class Transaction extends Model
     }
 
     /**
-     * Relasi dengan model Donasi
-     */
-    public function donasi()
-    {
-        return $this->belongsTo(Donasi::class, 'product_id');
-    }
-
-    /**
-     * Mendapatkan nama produk/donasi berdasarkan type
+     * Mendapatkan nama produk berdasarkan relasi
      */
     public function getProductName()
     {
-        if ($this->type === 'donation') {
-            return $this->donasi ? $this->donasi->title : 'Donasi Tidak Ditemukan';
-        } else {
-            return $this->product ? $this->product->name : 'Produk Tidak Ditemukan';
-        }
-    }
-
-    /**
-     * Menentukan apakah transaksi ini untuk donasi
-     */
-    public function isDonation()
-    {
-        return $this->type === 'donation';
+        return $this->product ? $this->product->name : 'Produk Tidak Ditemukan';
     }
 }

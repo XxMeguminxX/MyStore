@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\Product;
-use App\Models\Donasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -15,7 +14,7 @@ class TransactionHistoryController extends Controller
     {
         // Ambil semua transaksi user yang sedang login berdasarkan email dengan eager loading product dan donasi
         $userEmail = Auth::user()->email;
-        $transactions = Transaction::with(['product', 'donasi'])
+        $transactions = Transaction::with(['product'])
             ->where('customer_email', $userEmail)
             ->orderBy('created_at', 'desc')
             ->get();

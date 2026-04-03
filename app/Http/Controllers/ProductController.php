@@ -18,6 +18,11 @@ class ProductController extends Controller
             return redirect()->route('dashboard')->with('error', 'Produk tidak ditemukan.');
         }
 
-        return view('product-detail', compact('product'));
+        $relatedProducts = Product::where('id', '!=', $id)
+            ->inRandomOrder()
+            ->limit(6)
+            ->get();
+
+        return view('product-detail', compact('product', 'relatedProducts'));
     }
 }

@@ -94,8 +94,10 @@ Route::get('/beli/{id}', [CheckoutController::class, 'beli'])->name('beli');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
 
-    // Rute Histori Transaksi
-Route::get('/transaction-history', [TransactionHistoryController::class, 'index'])->name('transaction.history');
+    // Rute Histori Transaksi — redirect ke halaman profil tab transaksi
+Route::get('/transaction-history', function () {
+    return redirect()->route('profile', ['tab' => 'transactions']);
+})->name('transaction.history');
 Route::post('/transaction/update-status', [TransactionHistoryController::class, 'updateStatus'])->name('transaction.update-status');
 Route::post('/transaction/manual-update-status', [TransactionHistoryController::class, 'manualUpdateStatus'])->name('transaction.manual-update-status');
 Route::get('/callback-logs', [TransactionHistoryController::class, 'viewCallbackLogs'])->name('callback.logs');

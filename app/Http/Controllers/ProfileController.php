@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Transaction;
 
 class ProfileController extends Controller
 {
@@ -21,7 +22,12 @@ class ProfileController extends Controller
             return redirect()->route('login');
         }
 
-        return view('profile', compact('user'));
+        $transactions = Transaction::with(['product', 'donasi'])
+            ->where('customer_email', $user->email)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('profile', compact('user', 'transactions'));
     }
 
     /**

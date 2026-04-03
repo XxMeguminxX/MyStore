@@ -81,18 +81,44 @@
     </div>
   @endif
 
-  <!-- {{-- Debug Info - Remove in production --}}
-  @auth
-    <div style="background: #e8f5e8; padding: 5px 10px; margin: 10px 0; border-radius: 4px; font-size: 12px; color: #2d5a2d;">
-        ✅ Debug: Anda sudah login sebagai {{ Auth::user()->name ?? 'N/A' }} (ID: {{ Auth::id() }})
-    </div>
-  @else
-    <div style="background: #ffe8e8; padding: 5px 10px; margin: 10px 0; border-radius: 4px; font-size: 12px; color: #8b2d2d;">
-        ❌ Debug: Anda belum login
-    </div>
-  @endauth -->
-  
-  <h1>Produk Digital Saya</h1>
+  <!-- Hero Banner — Two Column -->
+  <section class="dashboard-hero">
+      <div class="hero-content-card">
+          <h2 class="hero-headline">Produk Digital <span>Pilihan Terbaik</span></h2>
+          <p class="hero-sub">Temukan koleksi produk digital berkualitas dengan harga terjangkau dan aktivasi instan.</p>
+          <a href="#produk" class="hero-cta">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+              Lihat Produk
+          </a>
+      </div>
+      <div class="hero-features-card">
+          <div class="hero-feature-item">
+              <div class="feature-icon blue">🛍️</div>
+              <div class="feature-text">
+                  <strong>Produk Berkualitas</strong>
+                  <span>Dikurasi langsung oleh tim kami</span>
+              </div>
+          </div>
+          <div class="hero-feature-item">
+              <div class="feature-icon indigo">🔒</div>
+              <div class="feature-text">
+                  <strong>Pembayaran Aman</strong>
+                  <span>Dilindungi sistem enkripsi penuh</span>
+              </div>
+          </div>
+          <div class="hero-feature-item">
+              <div class="feature-icon mint">⚡</div>
+              <div class="feature-text">
+                  <strong>Aktivasi Instan</strong>
+                  <span>Langsung aktif setelah pembayaran</span>
+              </div>
+          </div>
+      </div>
+  </section>
+
+  <h1 id="produk">Produk Digital</h1>
   <div id="noResults" class="no-results-message">
     Produk Tidak Ditemukan.
   </div>

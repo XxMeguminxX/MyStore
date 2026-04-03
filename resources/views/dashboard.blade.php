@@ -248,6 +248,19 @@
             </div>
         </div>
     </div>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <span class="footer-brand">E Store ID</span>
+            <nav class="footer-links">
+                <a href="{{ route('static.page', 'kebijakan-privasi') }}">Kebijakan Privasi</a>
+                <a href="{{ route('static.page', 'ketentuan-layanan') }}">Ketentuan Layanan</a>
+                <a href="{{ route('static.page', 'tentang-kami') }}">Tentang Kami</a>
+                <a href="{{ route('static.page', 'kontak') }}">Kontak</a>
+            </nav>
+            <span class="footer-copy">&copy; {{ date('Y') }} E Store ID. Hak cipta dilindungi.</span>
+        </div>
+    </footer>
+
     <script>
     function openDescModal(btn) {
         const card = btn.closest('.product-card');

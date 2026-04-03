@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductQttController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StaticPageController;
 
 
 // Rute untuk Login dan Register (bisa diakses tanpa login)
@@ -36,6 +37,9 @@ Route::post('/products/{id}/update-quantity', [ProductQttController::class, 'upd
 Route::get('/products/{id}/stock-info', [ProductQttController::class, 'getStockInfo'])->name('products.stock_info');
 Route::post('/products/{id}/add-stock', [ProductQttController::class, 'addStock'])->name('products.add_stock');
 Route::post('/products/{id}/reduce-stock', [ProductQttController::class, 'reduceStock'])->name('products.reduce_stock');
+
+// Rute Halaman Statis (bisa diakses tanpa login)
+Route::get('/halaman/{slug}', [StaticPageController::class, 'show'])->name('static.page');
 
 // Rute Dashboard (bisa diakses tanpa login)
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');

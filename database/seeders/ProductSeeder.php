@@ -14,30 +14,28 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         Product::create([
-            'image' => 'https://i02.appmifile.com/563_item_id/25/06/2024/a215a7a1c96c92826ce2f7339d3169ec!800x800!85.png',
-            'name' => 'POCO F6 12/512',
-            'price' => 4612000,
-            'description' => 'POCO F6 12/512
-        - Platform Mobile Snapdragon 8s Gen 3 Unggulan
-        - DotDisplay AMOLED Flow 6,67" CrystalRes 1,5K
-        - CPU Prosesor Octa-core, hingga 3,0GHz
-        1x X4@3.0GHz+4x A720@2.8GHz+3x A520@2.0GHz
-        - GPU: GPU Adreno
-        - AI: Qualcomm AI Engine
-        - Refresh rate: Hingga 120 Hz
-        - Kecerahan: 500 nit (umum), 1000-1200 nit (kecerahan HBM) , 2400 nit (kecerahan puncak)
-        - Rasio kontras: 5.000.000:1
-        - Resolusi: 2712 x 1220
-        - PPI:446
-        - Kamera utama 50 MP
-        - Kamera ultra-lebar 8 MP
-        - Kamera depan 20 MP
-        - Baterai & Pengisian Daya 5000 mAh
-        - Pengisian daya turbo 90 W
-        - NFC
-        - Sensor sidik jari di layar
-        - Dual SIM, dual standby 5G+5G, 5G+4G
-        - Didukung oleh Xiaomi HyperOS'
+            'image' => '/assets/img/gmail.jpg',
+            'name' => 'Akun Gmail Fresh 1 acc',
+            'price' => 10000,
+            'description' => 'Dapatkan Akun Gmail Fresh yang dirancang khusus untuk memenuhi kebutuhan email Anda! Setiap pembelian akan mendapatkan 1 akun yang sepenuhnya baru dan siap digunakan, Anda dapat memisahkan pekerjaan, personal, dan berbagai keperluan lain dengan mudah. Setiap akun dibuat untuk memberikan akses penuh dan aman ke berbagai layanan Google, termasuk Google Drive, Google Docs, dan banyak lagi.
+Bergabunglah dengan ribuan pelanggan lain yang telah merasakan manfaat dari Akun Gmail Fresh 1acc! Ini adalah pilihan ideal bagi Anda yang menginginkan keamanan dan kemudahan dalam pengelolaan akun email.
+Manfaat menggunakan Akun Gmail Fresh :
+Jangan tunggu lebih lama lagi! Dapatkan Akun Gmail Fresh sekarang juga dan nikmati kemudahan dalam berkomunikasi. Klik tombol beli di bawah ini dan mulai manfaatkan keunggulan dari akun email terkini!
+
+'
         ]);
+
+        Product::create([
+            'image' => '/assets/img/gmail.jpg',
+            'name' => 'Akun Gmail Fresh 5 acc',
+            'price' => 30000,
+            'description' => 'Dapatkan Akun Gmail Fresh yang dirancang khusus untuk memenuhi kebutuhan email Anda! Setiap pembelian akan mendapatkan 1 akun yang sepenuhnya baru dan siap digunakan, Anda dapat memisahkan pekerjaan, personal, dan berbagai keperluan lain dengan mudah. Setiap akun dibuat untuk memberikan akses penuh dan aman ke berbagai layanan Google, termasuk Google Drive, Google Docs, dan banyak lagi.
+Bergabunglah dengan ribuan pelanggan lain yang telah merasakan manfaat dari Akun Gmail Fresh 1acc! Ini adalah pilihan ideal bagi Anda yang menginginkan keamanan dan kemudahan dalam pengelolaan akun email.
+Manfaat menggunakan Akun Gmail Fresh :
+Jangan tunggu lebih lama lagi! Dapatkan Akun Gmail Fresh sekarang juga dan nikmati kemudahan dalam berkomunikasi. Klik tombol beli di bawah ini dan mulai manfaatkan keunggulan dari akun email terkini!
+
+'
+        ]);
+
     }
 }

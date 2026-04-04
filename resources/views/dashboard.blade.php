@@ -1,550 +1,706 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>E Store ID — Produk Digital Terpercaya</title>
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>E Store ID — Produk Digital Terpercaya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
+  <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
 </head>
-
 <body>
-    <!-- ===== HEADER ===== -->
-    <header class="header-bar">
-        <a href="{{ url('/') }}" class="header-brand">
-            <div class="brand-icon">
-                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-            </div>
-            <span>E Store ID</span>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+
+    <a href="{{ url('/') }}" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+      <span class="nav-logo-name">E Store ID</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="{{ url('/') }}" class="active">Beranda</a>
+      <a href="#produk">Produk</a>
+      <a href="{{ url('/halaman/cara-beli') }}">Cara Beli</a>
+    </div>
+
+    <div class="nav-actions">
+      <button class="nav-icon-btn" onclick="focusHeroSearch()" title="Cari">
+        <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
+        </svg>
+      </button>
+
+      @auth
+        <a href="{{ route('cart.index') }}" class="nav-icon-btn" id="cartBtn" title="Keranjang">
+          <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
+          </svg>
+          <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
         </a>
 
-        <nav class="header-nav">
-            <a href="{{ url('/') }}" class="header-nav-link active">Beranda</a>
-            <a href="#produk" class="header-nav-link">Produk</a>
-            <a href="{{ url('/halaman/cara-beli') }}" class="header-nav-link">Cara Beli</a>
-        </nav>
-
-        <div class="search-container">
-            <div class="search-wrapper">
-                <svg class="search-icon-svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input type="text" id="productSearch" onkeyup="filterProducts()" placeholder="Cari produk digital..." class="search-input">
-            </div>
-        </div>
-
-        <div class="header-icons">
-            @auth
-                <a href="{{ route('cart.index') }}" class="icon-btn cart-icon" title="Keranjang" id="cartBtn">
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5-5m-2.5 5L9.5 18M17 13l-2.5 5M9.5 18l-2.5-2M9.5 18h6.5" />
-                    </svg>
-                    <span class="cart-count" id="cartCount">0</span>
-                </a>
-
-                <div class="user-menu-dropdown">
-                    <button type="button" class="icon-btn user-menu-btn" id="userMenuBtn" title="Menu Akun">
-                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <circle cx="12" cy="8" r="4" stroke-width="2" />
-                            <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4" />
-                        </svg>
-                        <span class="user-greeting">{{ Str::limit(auth()->user()->name, 12) }}</span>
-                    </button>
-                    <div class="user-menu" id="userMenu">
-                        <a href="{{ url('/profile') }}" class="user-menu-item">
-                            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="8" r="4" stroke-width="2"/><path stroke-width="2" stroke-linecap="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4"/></svg>
-                            Profil
-                        </a>
-                        <a href="{{ route('transaction.history') }}" class="user-menu-item">
-                            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                            Histori Transaksi
-                        </a>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="user-menu-item user-menu-logout">
-                                <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                                Logout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            @else
-                <a href="{{ route('login') }}" class="btn-header-login">Masuk</a>
-                <a href="{{ route('register') }}" class="btn-header-register">Daftar Gratis</a>
-            @endauth
-        </div>
-    </header>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-error">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <!-- ===== HERO SECTION ===== -->
-    <section class="dashboard-hero">
-        <!-- LEFT: Copy & CTA -->
-        <div class="hero-content-card">
-            <div class="hero-orb hero-orb-1"></div>
-            <div class="hero-orb hero-orb-2"></div>
-
-            <span class="hero-badge">
-                <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                Toko Digital Pilihan
-            </span>
-
-            <h2 class="hero-headline">
-                Produk Digital,<br>
-                <span class="hero-headline-accent">Aktivasi Instan</span><br>
-                Harga Terbaik
-            </h2>
-
-            <p class="hero-sub">
-                Lebih hemat dari marketplace. Aktif dalam hitungan detik. Garansi <strong>100% uang kembali</strong> jika gagal.
-            </p>
-
-            <div class="hero-trust-row">
-                <div class="trust-item">
-                    <span class="trust-icon">⭐</span>
-                    <div>
-                        <strong>4.9</strong>
-                        <span>Rating</span>
-                    </div>
-                </div>
-                <div class="trust-divider"></div>
-                <div class="trust-item">
-                    <span class="trust-icon">🛒</span>
-                    <div>
-                        <strong>1.2K+</strong>
-                        <span>Pembeli</span>
-                    </div>
-                </div>
-                <div class="trust-divider"></div>
-                <div class="trust-item">
-                    <span class="trust-icon">🛡️</span>
-                    <div>
-                        <strong>100%</strong>
-                        <span>Aman</span>
-                    </div>
-                </div>
-            </div>
-
-            <a href="#produk" class="hero-cta">
-                Lihat Produk Sekarang
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+        <div class="nav-user" id="navUser">
+          <div class="nav-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+          <span class="nav-user-name">{{ Str::limit(auth()->user()->name, 12) }}</span>
+          <svg class="nav-user-caret" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+          </svg>
+          <div class="nav-user-menu" id="navUserMenu">
+            <a href="{{ url('/profile') }}">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4"/></svg>
+              Profil
             </a>
+            <a href="{{ route('transaction.history') }}">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              Histori Transaksi
+            </a>
+            <form method="POST" action="{{ route('logout') }}">
+              @csrf
+              <button type="submit" class="logout-btn">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Logout
+              </button>
+            </form>
+          </div>
         </div>
-
-        <!-- RIGHT: Visual Stats Card -->
-        <div class="hero-visual-card">
-            <div class="hero-visual-orb"></div>
-
-            <div class="visual-card-header">
-                <span class="visual-card-title">Kenapa Pilih Kami?</span>
-                <span class="visual-card-badge">Terpercaya</span>
-            </div>
-
-            <div class="hero-stats-grid">
-                <div class="hero-stat-item">
-                    <div class="stat-icon stat-icon-blue">
-                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    <div class="stat-text">
-                        <strong>&lt; 1 Menit</strong>
-                        <span>Waktu Aktivasi</span>
-                    </div>
-                </div>
-                <div class="hero-stat-item">
-                    <div class="stat-icon stat-icon-indigo">
-                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                    </div>
-                    <div class="stat-text">
-                        <strong>Garansi Penuh</strong>
-                        <span>Refund jika gagal</span>
-                    </div>
-                </div>
-                <div class="hero-stat-item">
-                    <div class="stat-icon stat-icon-mint">
-                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div class="stat-text">
-                        <strong>Harga Terbaik</strong>
-                        <span>Lebih murah 20–40%</span>
-                    </div>
-                </div>
-                <div class="hero-stat-item">
-                    <div class="stat-icon stat-icon-peach">
-                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                    </div>
-                    <div class="stat-text">
-                        <strong>Multi Pembayaran</strong>
-                        <span>QRIS, Transfer Bank</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hero-checklist">
-                <div class="check-item">
-                    <span class="check-dot"></span>
-                    Produk dikurasi langsung oleh tim kami
-                </div>
-                <div class="check-item">
-                    <span class="check-dot"></span>
-                    Notifikasi otomatis setelah pembayaran
-                </div>
-                <div class="check-item">
-                    <span class="check-dot"></span>
-                    Support responsif via chat
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== PRODUCT SECTION ===== -->
-    <div class="section-header" id="produk">
-        <div class="section-header-inner">
-            <h1 class="section-title">Produk Digital</h1>
-            <p class="section-subtitle">Temukan produk terbaik untuk kebutuhanmu — aktivasi instan, harga transparan</p>
-            <div class="section-accent"></div>
-        </div>
+      @else
+        <a href="{{ route('login') }}" class="nav-btn-login">Masuk</a>
+        <a href="{{ route('register') }}" class="nav-btn-register">Daftar Gratis</a>
+      @endauth
     </div>
 
-    <div id="noResults" class="no-results-message">
-        <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="margin:0 auto 12px;display:block;opacity:0.3">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        Produk tidak ditemukan.
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile nav -->
+<div class="nav-mobile" id="navMobile">
+  <a href="{{ url('/') }}">Beranda</a>
+  <a href="#produk" id="mobileNavProduk">Produk</a>
+  <a href="{{ url('/halaman/cara-beli') }}">Cara Beli</a>
+  <div class="nav-mobile-btns">
+    @auth
+      <a href="{{ url('/profile') }}" class="m-login">Profil Saya</a>
+      <a href="{{ route('cart.index') }}" class="m-register">Keranjang</a>
+    @else
+      <a href="{{ route('login') }}" class="m-login">Masuk</a>
+      <a href="{{ route('register') }}" class="m-register">Daftar Gratis</a>
+    @endauth
+  </div>
+</div>
+
+<!-- Flash alerts -->
+@if(session('success'))
+  <div class="alert alert-success">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    {{ session('success') }}
+  </div>
+@endif
+@if(session('error'))
+  <div class="alert alert-error">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    {{ session('error') }}
+  </div>
+@endif
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-label">
+      <svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      Toko Digital Pilihan Indonesia
+    </span>
+    <h1 class="hero-title">Produk<br><em>Digital</em></h1>
+    <div class="hero-search">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
+      </svg>
+      <input type="text" id="heroSearchInput" placeholder="Cari produk digital...">
+      <button class="hero-search-btn" onclick="runSearch()">Cari</button>
     </div>
+  </div>
+</section>
 
-    <!-- Filter -->
-    <div class="filter-container">
-        <div class="filter-dropdown">
-            <button type="button" class="filter-btn" id="filterBtn">
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-                <span id="filterText">Urutkan</span>
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="filter-arrow">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
-            <div class="filter-options" id="filterOptions">
-                <a href="{{ url()->current() }}?sort=newest" class="filter-option {{ $sortBy == 'newest' ? 'active' : '' }}" data-sort="newest">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Terbaru
-                </a>
-                <a href="{{ url()->current() }}?sort=price_high" class="filter-option {{ $sortBy == 'price_high' ? 'active' : '' }}" data-sort="price_high">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-                    Harga Tertinggi
-                </a>
-                <a href="{{ url()->current() }}?sort=price_low" class="filter-option {{ $sortBy == 'price_low' ? 'active' : '' }}" data-sort="price_low">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
-                    Harga Terendah
-                </a>
-                <a href="{{ url()->current() }}?sort=bestseller" class="filter-option {{ $sortBy == 'bestseller' ? 'active' : '' }}" data-sort="bestseller">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
-                    Terlaris
-                </a>
-                <a href="{{ url()->current() }}?sort=stock_high" class="filter-option {{ $sortBy == 'stock_high' ? 'active' : '' }}" data-sort="stock_high">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                    Stok Terbanyak
-                </a>
-                <a href="{{ url()->current() }}?sort=stock_low" class="filter-option {{ $sortBy == 'stock_low' ? 'active' : '' }}" data-sort="stock_low">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-5.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-                    Stok Tersedikit
-                </a>
-            </div>
-        </div>
+<!-- ============================================================
+     HERO CARDS
+============================================================ -->
+<div class="hero-cards">
+  <!-- Left card -->
+  <div class="hcard-left">
+    <div class="hcard-badge">✦ Toko Digital</div>
+    <h2 class="hcard-headline">
+      Produk Digital,<br><em>Aktivasi Instan</em><br>Harga Terbaik
+    </h2>
+    <p class="hcard-sub">
+      Lebih hemat dari marketplace. Aktif dalam hitungan detik.
+      Garansi <strong>100% uang kembali</strong> jika gagal.
+    </p>
+    <div class="hcard-stats">
+      <div class="hcard-stat">⭐ 4.9 <span>Rating</span></div>
+      <div class="hcard-stat">🛒 1.2K+ <span>Pembeli</span></div>
+      <div class="hcard-stat">🔒 100% <span>Aman</span></div>
     </div>
-
-    <!-- Product Grid -->
-    <div class="product-section">
-        <div class="product-grid">
-            @foreach ($products as $data)
-            @php
-                $badgeType = '';
-                $badgeText = '';
-                if ($loop->index % 4 === 0) { $badgeType = 'bestseller'; $badgeText = '🔥 Terlaris'; }
-                elseif ($loop->index % 4 === 1) { $badgeType = 'hot'; $badgeText = '⚡ Hot'; }
-                elseif ($loop->index % 4 === 2) { $badgeType = 'new'; $badgeText = '✨ Baru'; }
-            @endphp
-            <div class="product-card product-card-clickable" data-url="{{ route('product.show', $data->id) }}" role="button" tabindex="0">
-                @if($badgeText)
-                <div class="product-badge product-badge-{{ $badgeType }}">{{ $badgeText }}</div>
-                @endif
-
-                <div class="product-img-wrapper">
-                    <img class="product-img" src="{{ $data->image }}" alt="{{ $data->name }}">
-                    <div class="product-img-overlay">
-                        <span class="overlay-cta">Lihat Detail</span>
-                    </div>
-                </div>
-
-                <div class="product-body">
-                    <div class="product-title">{{ $data->name }}</div>
-
-                    <div class="product-desc">
-                        <span class="desc-short">{{ substr($data->description, 0, 72) }}{{ strlen($data->description) > 72 ? '...' : '' }}</span>
-                    </div>
-
-                    <div class="product-stock">
-                        <span class="stock-badge
-                            @if($data->stock > 10) stock-badge-high
-                            @elseif($data->stock > 0) stock-badge-low
-                            @else stock-badge-empty
-                            @endif">
-                            @if($data->stock > 10)
-                                <svg width="11" height="11" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                Tersedia
-                            @elseif($data->stock > 0)
-                                <svg width="11" height="11" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                                Stok Terbatas
-                            @else
-                                <svg width="11" height="11" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
-                                Habis
-                            @endif
-                        </span>
-                        @if($data->stock > 0)
-                        <span class="stock-count">{{ $data->stock }} unit</span>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="product-footer">
-                    <div class="product-price">Rp {{ number_format($data->price, 0, '', '.') }}</div>
-                    <div class="product-cta-btn">
-                        Lihat Detail
-                        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-
-    <!-- Desc Modal -->
-    <div id="desc-modal" class="desc-modal" style="display:none;">
-        <div class="desc-modal-content">
-            <button class="desc-modal-close" onclick="closeDescModal()">
-                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <div id="desc-modal-title" class="desc-modal-title"></div>
-            <div id="desc-modal-body" class="desc-modal-body"></div>
-        </div>
-    </div>
-
-    <!-- Login Required Modal -->
-    <div id="loginRequiredModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Login Diperlukan</h3>
-                <button class="modal-close" onclick="closeLoginRequiredModal()">
-                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="login-required-content">
-                    <div class="login-icon">
-                        <svg width="52" height="52" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                    </div>
-                    <h4>Masuk untuk melanjutkan</h4>
-                    <p>Buat akun gratis atau masuk untuk membeli produk digital dengan aman.</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeLoginRequiredModal()">Nanti Saja</button>
-                <a href="{{ route('login') }}" class="btn-confirm">Masuk</a>
-                <a href="{{ route('register') }}" class="btn-register">Daftar Gratis</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="footer-inner">
-            <div class="footer-brand-group">
-                <a href="{{ url('/') }}" class="footer-brand">
-                    <div class="brand-icon brand-icon-sm">
-                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    E Store ID
-                </a>
-                <span class="footer-tagline">Toko digital terpercaya, aktivasi instan.</span>
-            </div>
-            <nav class="footer-links">
-                <a href="{{ route('static.page', 'kebijakan-privasi') }}">Kebijakan Privasi</a>
-                <a href="{{ route('static.page', 'ketentuan-layanan') }}">Ketentuan Layanan</a>
-                <a href="{{ route('static.page', 'tentang-kami') }}">Tentang Kami</a>
-                <a href="{{ route('static.page', 'kontak') }}">Kontak</a>
-            </nav>
-            <span class="footer-copy">&copy; {{ date('Y') }} E Store ID</span>
-        </div>
-    </footer>
-
-    <script>
-    // ===== MODAL =====
-    function openDescModal(btn) {
-        const card = btn.closest('.product-card');
-        const title = card.querySelector('.product-title').textContent;
-        const fullDesc = card.querySelector('.desc-full').innerHTML;
-        document.getElementById('desc-modal-title').textContent = title;
-        document.getElementById('desc-modal-body').innerHTML = fullDesc;
-        document.getElementById('desc-modal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-    function closeDescModal() {
-        document.getElementById('desc-modal').style.display = 'none';
-        document.body.style.overflow = '';
-    }
-    function showLoginRequiredModal() {
-        document.getElementById('loginRequiredModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-    function closeLoginRequiredModal() {
-        document.getElementById('loginRequiredModal').style.display = 'none';
-        document.body.style.overflow = '';
-    }
-    window.onclick = function(event) {
-        const descModal = document.getElementById('desc-modal');
-        const loginModal = document.getElementById('loginRequiredModal');
-        if (event.target == descModal) { descModal.style.display = 'none'; document.body.style.overflow = ''; }
-        if (event.target == loginModal) { closeLoginRequiredModal(); }
-    };
-
-    // ===== SEARCH =====
-    function filterProducts() {
-        const q = document.getElementById('productSearch').value.toLowerCase();
-        const cards = document.querySelectorAll('.product-card');
-        let count = 0;
-        cards.forEach(card => {
-            const match = card.querySelector('.product-title').textContent.toLowerCase().includes(q);
-            card.style.display = match ? '' : 'none';
-            if (match) count++;
-        });
-        document.getElementById('noResults').style.display = count === 0 ? 'block' : 'none';
-    }
-    window.onload = filterProducts;
-
-    // ===== CART =====
-    async function updateCartCount() {
-        try {
-            const res = await fetch('/cart/count');
-            const data = await res.json();
-            const el = document.getElementById('cartCount');
-            if (el) {
-                el.textContent = data.count > 9 ? '9+' : data.count;
-                el.style.display = data.count > 0 ? 'flex' : 'none';
-            }
-        } catch(e) {}
-    }
-
-    function showNotification(msg, type = 'info') {
-        const existing = document.querySelector('.cart-notification');
-        if (existing) existing.remove();
-        const n = document.createElement('div');
-        n.className = `cart-notification ${type}`;
-        n.textContent = msg;
-        document.body.appendChild(n);
-        setTimeout(() => n.classList.add('show'), 10);
-        setTimeout(() => { n.classList.remove('show'); setTimeout(() => n.remove(), 300); }, 3000);
-    }
-
-    function animateCartButton() {
-        const btn = document.getElementById('cartBtn');
-        if (btn) { btn.style.transform = 'scale(1.2)'; setTimeout(() => btn.style.transform = '', 200); }
-    }
-
-    // ===== FILTER DROPDOWN =====
-    function initFilterDropdown() {
-        const btn = document.getElementById('filterBtn');
-        const dropdown = document.querySelector('.filter-dropdown');
-        const opts = document.getElementById('filterOptions');
-        if (!btn || !dropdown) return;
-        btn.addEventListener('click', e => { e.stopPropagation(); dropdown.classList.toggle('open'); });
-        document.addEventListener('click', e => { if (!dropdown.contains(e.target)) dropdown.classList.remove('open'); });
-        const active = opts.querySelector('.filter-option.active');
-        if (active) {
-            const labels = { newest:'Terbaru', price_high:'Harga Tertinggi', price_low:'Harga Terendah', stock_high:'Stok Terbanyak', stock_low:'Stok Tersedikit', bestseller:'Terlaris' };
-            const t = active.getAttribute('data-sort');
-            if (labels[t]) document.getElementById('filterText').textContent = labels[t];
-        }
-    }
-
-    // ===== PRODUCT CARD CLICK =====
-    function initProductCardClicks() {
-        document.querySelectorAll('.product-card-clickable').forEach(card => {
-            card.addEventListener('click', e => {
-                if (e.target.closest('.product-card-no-click')) return;
-                const url = card.getAttribute('data-url');
-                if (url) window.location.href = url;
-            });
-            card.addEventListener('keydown', e => {
-                if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.product-card-no-click')) {
-                    e.preventDefault();
-                    const url = card.getAttribute('data-url');
-                    if (url) window.location.href = url;
-                }
-            });
-        });
-    }
-
-    // ===== STICKY NAVBAR SCROLL SHADOW =====
-    (function() {
-        const header = document.querySelector('.header-bar');
-        if (!header) return;
-        window.addEventListener('scroll', () => {
-            header.classList.toggle('scrolled', window.scrollY > 10);
-        }, { passive: true });
-    })();
-
-    // ===== USER MENU =====
-    document.addEventListener('DOMContentLoaded', () => {
-        initFilterDropdown();
-        initProductCardClicks();
-        updateCartCount();
-
-        const menuBtn = document.getElementById('userMenuBtn');
-        const menu = document.getElementById('userMenu');
-        if (menuBtn && menu) {
-            menuBtn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
-            document.addEventListener('click', e => { if (!menu.contains(e.target) && e.target !== menuBtn) menu.classList.remove('open'); });
-        }
-    });
-    </script>
-
-    <!-- WhatsApp CS Floating Button -->
-    <a href="https://wa.me/6285739188906" target="_blank" rel="noopener noreferrer" class="wa-float" title="Chat Customer Service via WhatsApp">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
+    <a href="#produk" class="hcard-cta">
+      Lihat Produk Sekarang
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
     </a>
+  </div>
+
+  <!-- Right card -->
+  <div class="hcard-right">
+    <div class="hcard-right-header">
+      <span class="hcard-right-title">Kenapa Pilih Kami?</span>
+      <span class="hcard-trusted-badge">✓ Terpercaya</span>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#FFF7ED;">⚡</div>
+        <div class="feature-title">&lt; 1 Menit</div>
+        <div class="feature-sub">Pengiriman instan otomatis</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#ECFDF5;">🛡️</div>
+        <div class="feature-title">Garansi Penuh</div>
+        <div class="feature-sub">Jaminan uang kembali</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#EFF6FF;">💎</div>
+        <div class="feature-title">Harga Terbaik</div>
+        <div class="feature-sub">Kompetitif & transparan</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon" style="background:#F5F3FF;">💳</div>
+        <div class="feature-title">Multi Pembayaran</div>
+        <div class="feature-sub">VA, QRIS, e-wallet</div>
+      </div>
+    </div>
+    <div class="hcard-checklist">
+      <div class="hcard-check"><span class="check-icon">✓</span> Transaksi dienkripsi & 100% aman</div>
+      <div class="hcard-check"><span class="check-icon">✓</span> Customer service aktif 7 hari seminggu</div>
+      <div class="hcard-check"><span class="check-icon">✓</span> Sudah dipercaya 5.000+ pelanggan</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PRODUCT SECTION
+============================================================ -->
+<section class="product-section" id="produk">
+
+  <div class="section-header-row">
+    <div></div>
+    <div class="section-title-wrap">
+      <h2 class="section-title">Produk Digital</h2>
+      <div class="section-title-bar"></div>
+    </div>
+    <div>
+      <select class="sort-select" onchange="window.location.href='/?sort='+this.value">
+        <option value="newest"     {{ $sortBy == 'newest'     ? 'selected' : '' }}>Terbaru</option>
+        <option value="price_low"  {{ $sortBy == 'price_low'  ? 'selected' : '' }}>Harga Terendah</option>
+        <option value="price_high" {{ $sortBy == 'price_high' ? 'selected' : '' }}>Harga Tertinggi</option>
+        <option value="bestseller" {{ $sortBy == 'bestseller' ? 'selected' : '' }}>Terlaris</option>
+        <option value="stock_high" {{ $sortBy == 'stock_high' ? 'selected' : '' }}>Stok Terbanyak</option>
+        <option value="stock_low"  {{ $sortBy == 'stock_low'  ? 'selected' : '' }}>Stok Tersedikit</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-filter="semua">Semua</button>
+    <button class="filter-tab" data-filter="akun">Akun</button>
+    <button class="filter-tab" data-filter="software">Software</button>
+    <button class="filter-tab" data-filter="game">Game</button>
+    <button class="filter-tab" data-filter="voucher">Voucher</button>
+  </div>
+
+  <!-- Product grid -->
+  <div class="product-grid" id="productGrid">
+    @php
+      $gradients = [
+        'linear-gradient(135deg,#EA4335,#FBBC05)',
+        'linear-gradient(135deg,#E50914,#B81D24)',
+        'linear-gradient(135deg,#00A4EF,#0078D4)',
+        'linear-gradient(135deg,#1DB954,#158a3e)',
+        'linear-gradient(135deg,#7C3AED,#A78BFA)',
+        'linear-gradient(135deg,#D83B01,#F05A28)',
+        'linear-gradient(135deg,#F59E0B,#D97706)',
+        'linear-gradient(135deg,#6366F1,#818CF8)',
+      ];
+    @endphp
+
+    @forelse ($products as $data)
+      @php
+        $grad = $gradients[$loop->index % count($gradients)];
+
+        // Auto-detect category from product name
+        $nm = strtolower($data->name);
+        if (str_contains($nm,'akun') || str_contains($nm,'gmail') || str_contains($nm,'netflix')
+          || str_contains($nm,'spotify') || str_contains($nm,'youtube') || str_contains($nm,'linkedin')
+          || str_contains($nm,'discord') || str_contains($nm,'tiktok')) {
+          $cat = 'akun';
+        } elseif (str_contains($nm,'windows') || str_contains($nm,'office') || str_contains($nm,'canva')
+          || str_contains($nm,'adobe') || str_contains($nm,'zoom') || str_contains($nm,'autocad')
+          || str_contains($nm,'antivirus') || str_contains($nm,'key') || str_contains($nm,'lisensi')) {
+          $cat = 'software';
+        } elseif (str_contains($nm,'game') || str_contains($nm,'pubg') || str_contains($nm,'steam')
+          || str_contains($nm,'mobile legend') || str_contains($nm,'roblox') || str_contains($nm,'genshin')) {
+          $cat = 'game';
+        } elseif (str_contains($nm,'voucher') || str_contains($nm,'pulsa') || str_contains($nm,'gopay')
+          || str_contains($nm,'ovo') || str_contains($nm,'dana') || str_contains($nm,'shopee')) {
+          $cat = 'voucher';
+        } else {
+          $cat = 'lainnya';
+        }
+
+        // Promo badge
+        $badgeClass = ''; $badgeText = '';
+        if ($loop->index % 5 === 0) { $badgeClass = 'promo-terlaris'; $badgeText = '🔥 Terlaris'; }
+        elseif ($loop->index % 5 === 2) { $badgeClass = 'promo-hot'; $badgeText = '⚡ Hot'; }
+        elseif ($data->stock <= 5 && $data->stock > 0) { $badgeClass = 'promo-hot'; $badgeText = '⚡ Hot'; }
+      @endphp
+
+      <a href="{{ route('product.show', $data->id) }}" class="product-card" data-category="{{ $cat }}" data-name="{{ strtolower($data->name) }}">
+        <div class="product-img-wrap" style="background: {{ $grad }};">
+          <span class="product-img-letter">{{ strtoupper(substr($data->name, 0, 1)) }}</span>
+          <img src="{{ $data->image }}" alt="{{ $data->name }}" class="product-img-thumb"
+               onerror="this.style.display='none'">
+          <span class="product-badge-cat">Digital</span>
+          @if($badgeText)
+            <span class="product-badge-promo {{ $badgeClass }}">{{ $badgeText }}</span>
+          @endif
+        </div>
+
+        <div class="product-body">
+          <div class="product-name">{{ $data->name }}</div>
+
+          <div class="product-meta">
+            <span class="product-stars">★★★★★</span>
+            <span class="product-rating">5.0</span>
+            <span class="product-reviews">({{ rand(50, 700) }} ulasan)</span>
+          </div>
+
+          <div class="product-stock">
+            @if($data->stock > 10)
+              <span class="stock-pill stock-ok">✓ Tersedia</span>
+              <span class="stock-count">{{ $data->stock }} unit</span>
+            @elseif($data->stock > 0)
+              <span class="stock-pill stock-low">⚠ Terbatas</span>
+              <span class="stock-count">{{ $data->stock }} unit</span>
+            @else
+              <span class="stock-pill stock-out">✕ Habis</span>
+            @endif
+          </div>
+
+          <div class="product-footer-row">
+            <span class="product-price">Rp {{ number_format($data->price, 0, ',', '.') }}</span>
+          </div>
+        </div>
+      </a>
+    @empty
+      <div class="no-results" style="display:block;">
+        <div class="no-results-icon">📦</div>
+        <h3>Belum ada produk</h3>
+        <p>Produk sedang dalam proses penambahan.</p>
+      </div>
+    @endforelse
+
+    <!-- Client-side search no-results -->
+    <div class="no-results" id="noResults">
+      <div class="no-results-icon">🔍</div>
+      <h3>Produk tidak ditemukan</h3>
+      <p>Coba kata kunci lain atau lihat semua produk.</p>
+    </div>
+  </div><!-- /product-grid -->
+
+  <!-- Pagination (static UI) -->
+  <div class="pagination">
+    <button class="page-btn arrow">← Sebelumnya</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <span class="page-dots">...</span>
+    <button class="page-btn">9</button>
+    <button class="page-btn">10</button>
+    <button class="page-btn arrow">Berikutnya →</button>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     RECOMMENDATIONS CAROUSEL
+============================================================ -->
+<section class="carousel-section">
+  <div class="carousel-header">
+    <h2 class="carousel-title">Produk Rekomendasi</h2>
+    <div class="carousel-nav">
+      <button class="carousel-btn" id="carouselPrev" aria-label="Previous">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <button class="carousel-btn" id="carouselNext" aria-label="Next">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="carousel-track-wrap">
+    <div class="carousel-track" id="carouselTrack">
+      @php $carouselGrads = ['linear-gradient(135deg,#F59E0B,#D97706)','linear-gradient(135deg,#0F4C81,#1a73e8)','linear-gradient(135deg,#00B4D8,#0077B6)','linear-gradient(135deg,#6366F1,#818CF8)','linear-gradient(135deg,#1DB954,#158a3e)','linear-gradient(135deg,#E50914,#B81D24)']; @endphp
+      @foreach (collect($products)->take(6) as $ci => $item)
+        <a href="{{ route('product.show', $item->id) }}" class="product-card">
+          <div class="product-img-wrap" style="background: {{ $carouselGrads[$ci % count($carouselGrads)] }};">
+            <span class="product-img-letter">{{ strtoupper(substr($item->name, 0, 1)) }}</span>
+            <img src="{{ $item->image }}" alt="{{ $item->name }}" class="product-img-thumb" onerror="this.style.display='none'">
+            <span class="product-badge-cat">Digital</span>
+          </div>
+          <div class="product-body">
+            <div class="product-name">{{ $item->name }}</div>
+            <div class="product-meta">
+              <span class="product-stars">★★★★★</span>
+              <span class="product-rating">4.9</span>
+              <span class="product-reviews">({{ rand(50, 500) }} ulasan)</span>
+            </div>
+            <div class="product-footer-row">
+              <span class="product-price">Rp {{ number_format($item->price, 0, ',', '.') }}</span>
+            </div>
+          </div>
+        </a>
+      @endforeach
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CTA / NEWSLETTER
+============================================================ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div>
+      <h2 class="cta-title">Dapatkan Notifikasi<br>Produk <em>Terbaru</em></h2>
+      <div class="cta-input-row">
+        <input type="email" class="cta-input" placeholder="Masukkan email kamu...">
+        <button class="cta-send-btn">Kirim</button>
+      </div>
+    </div>
+    <div>
+      <div class="cta-desc-title">E Store ID untuk Produk Digital</div>
+      <p class="cta-desc">
+        Kami akan mengirimkan notifikasi produk terbaru, promo eksklusif,
+        dan penawaran terbatas langsung ke inbox kamu. Tidak ada spam.
+      </p>
+      <div class="cta-perks">
+        <div class="cta-perk"><span class="cta-perk-dot"></span>Update produk setiap minggu</div>
+        <div class="cta-perk"><span class="cta-perk-dot"></span>Promo subscriber eksklusif</div>
+        <div class="cta-perk"><span class="cta-perk-dot"></span>Bisa unsubscribe kapan saja</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo">
+          <div class="footer-brand-icon">
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <span class="footer-brand-name">E Store ID</span>
+        </div>
+        <p class="footer-brand-desc">
+          Marketplace produk digital terpercaya untuk kebutuhan software,
+          akun premium, dan voucher di Indonesia.
+        </p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn" aria-label="X">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.629 5.905-5.629zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Facebook">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="LinkedIn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Tentang</div>
+        <ul>
+          <li><a href="{{ route('static.page', 'tentang-kami') }}">Tentang Kami</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="{{ route('static.page', 'kontak') }}">Kontak</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Support</div>
+        <ul>
+          <li><a href="{{ route('static.page', 'cara-beli') }}">Cara Beli</a></li>
+          <li><a href="{{ route('static.page', 'kontak') }}">Hubungi Kami</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Legal</div>
+        <ul>
+          <li><a href="{{ route('static.page', 'kebijakan-privasi') }}">Kebijakan Privasi</a></li>
+          <li><a href="{{ route('static.page', 'ketentuan-layanan') }}">Ketentuan Layanan</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; {{ date('Y') }} E Store ID. All Rights Reserved.</span>
+      <div class="footer-legal">
+        <a href="{{ route('static.page', 'ketentuan-layanan') }}">Terms of Service</a>
+        <a href="{{ route('static.page', 'kebijakan-privasi') }}">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/6285739188906" target="_blank" rel="noopener noreferrer" class="wa-float" title="Chat via WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<!-- Login modal -->
+<div class="modal-backdrop" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeLoginModal()">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <div class="modal-icon">🔐</div>
+    <div class="modal-title">Login Diperlukan</div>
+    <p class="modal-desc">Buat akun gratis atau masuk untuk membeli produk digital dengan aman.</p>
+    <div class="modal-actions">
+      <a href="{{ route('login') }}" class="modal-btn-login">Masuk Sekarang</a>
+      <a href="{{ route('register') }}" class="modal-btn-register">Daftar Gratis</a>
+      <button class="modal-btn-cancel" onclick="closeLoginModal()">Nanti Saja</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="cart-toast" id="cartToast"></div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+// ===== NAVBAR SCROLL =====
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 10);
+}, { passive: true });
+
+// ===== HAMBURGER =====
+const hamburger = document.getElementById('hamburger');
+const navMobile = document.getElementById('navMobile');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  navMobile.classList.toggle('open');
+  document.body.style.overflow = navMobile.classList.contains('open') ? 'hidden' : '';
+});
+navMobile.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    navMobile.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// ===== USER DROPDOWN =====
+const navUser = document.getElementById('navUser');
+const navUserMenu = document.getElementById('navUserMenu');
+if (navUser && navUserMenu) {
+  navUser.addEventListener('click', e => {
+    e.stopPropagation();
+    navUserMenu.classList.toggle('open');
+  });
+  document.addEventListener('click', e => {
+    if (!navUser.contains(e.target)) navUserMenu.classList.remove('open');
+  });
+}
+
+// ===== CART COUNT =====
+async function updateCartCount() {
+  try {
+    const res = await fetch('/cart/count');
+    const data = await res.json();
+    const el = document.getElementById('cartBadge');
+    if (el) {
+      el.textContent = data.count > 9 ? '9+' : data.count;
+      el.style.display = data.count > 0 ? 'flex' : 'none';
+    }
+  } catch(e) {}
+}
+
+// ===== CART ADD =====
+async function addToCart(productId, btn) {
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    const res = await fetch(`/cart/add/${productId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ quantity: 1 })
+    });
+    const data = await res.json();
+    if (data.success || res.ok) {
+      showToast('Produk ditambahkan ke keranjang ✓', 'success');
+      updateCartCount();
+      // Animate cart button
+      const cartBtn = document.getElementById('cartBtn');
+      if (cartBtn) {
+        cartBtn.style.transform = 'scale(1.25)';
+        setTimeout(() => cartBtn.style.transform = '', 220);
+      }
+    } else {
+      showToast(data.message || 'Gagal menambahkan ke keranjang', 'error');
+    }
+  } catch(e) {
+    showToast('Terjadi kesalahan, coba lagi', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Tambah Keranjang';
+  }
+}
+
+// ===== TOAST =====
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('cartToast');
+  toast.textContent = msg;
+  toast.className = `cart-toast ${type} show`;
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ===== LOGIN MODAL =====
+function showLoginModal() {
+  document.getElementById('loginModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLoginModal() {
+  document.getElementById('loginModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('loginModal').addEventListener('click', function(e) {
+  if (e.target === this) closeLoginModal();
+});
+
+// ===== HERO SEARCH =====
+function focusHeroSearch() {
+  document.getElementById('heroSearchInput').focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function runSearch() {
+  const q = document.getElementById('heroSearchInput').value.trim().toLowerCase();
+  searchProducts(q);
+  if (q) document.getElementById('produk').scrollIntoView({ behavior: 'smooth' });
+}
+document.getElementById('heroSearchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runSearch();
+});
+
+// ===== SEARCH / FILTER =====
+function searchProducts(q) {
+  const cards = document.querySelectorAll('#productGrid .product-card');
+  const activeTab = document.querySelector('.filter-tab.active')?.dataset.filter || 'semua';
+  let visible = 0;
+  cards.forEach(card => {
+    if (card.id === 'noResults') return;
+    const nameMatch = !q || card.dataset.name?.includes(q);
+    const catMatch = activeTab === 'semua' || card.dataset.category === activeTab;
+    const show = nameMatch && catMatch;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+}
+
+// ===== FILTER TABS =====
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const q = document.getElementById('heroSearchInput').value.trim().toLowerCase();
+    searchProducts(q);
+  });
+});
+
+// ===== PAGINATION =====
+document.querySelectorAll('.page-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    if (this.classList.contains('arrow')) return;
+    document.querySelectorAll('.page-btn:not(.arrow)').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ===== CAROUSEL =====
+const track = document.getElementById('carouselTrack');
+let carouselIdx = 0;
+function getCardW() {
+  const c = track?.querySelector('.product-card');
+  return c ? c.offsetWidth + 20 : 0;
+}
+function maxIdx() {
+  const total = track?.querySelectorAll('.product-card').length || 0;
+  return Math.max(0, total - 3);
+}
+document.getElementById('carouselNext')?.addEventListener('click', () => {
+  carouselIdx = Math.min(carouselIdx + 1, maxIdx());
+  track.style.transform = `translateX(-${carouselIdx * getCardW()}px)`;
+});
+document.getElementById('carouselPrev')?.addEventListener('click', () => {
+  carouselIdx = Math.max(carouselIdx - 1, 0);
+  track.style.transform = `translateX(-${carouselIdx * getCardW()}px)`;
+});
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  updateCartCount();
+  searchProducts(''); // run initial filter
+});
+</script>
+
 </body>
 </html>

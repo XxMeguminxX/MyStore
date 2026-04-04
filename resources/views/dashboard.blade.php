@@ -298,12 +298,8 @@
                 <div class="product-body">
                     <div class="product-title">{{ $data->name }}</div>
 
-                    <div class="product-desc product-card-no-click">
+                    <div class="product-desc">
                         <span class="desc-short">{{ substr($data->description, 0, 72) }}{{ strlen($data->description) > 72 ? '...' : '' }}</span>
-                        <span class="desc-full" style="display:none;">{!! nl2br(e($data->description)) !!}</span>
-                        @if(strlen($data->description) > 72)
-                        <button type="button" class="btn-desc-toggle" onclick="openDescModal(this); event.stopPropagation();">Selengkapnya</button>
-                        @endif
                     </div>
 
                     <div class="product-stock">

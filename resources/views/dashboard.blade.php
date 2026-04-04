@@ -22,6 +22,12 @@
             <span>E Store ID</span>
         </a>
 
+        <nav class="header-nav">
+            <a href="{{ url('/') }}" class="header-nav-link active">Beranda</a>
+            <a href="#produk" class="header-nav-link">Produk</a>
+            <a href="{{ url('/halaman/cara-beli') }}" class="header-nav-link">Cara Beli</a>
+        </nav>
+
         <div class="search-container">
             <div class="search-wrapper">
                 <svg class="search-icon-svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -46,6 +52,7 @@
                             <circle cx="12" cy="8" r="4" stroke-width="2" />
                             <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4" />
                         </svg>
+                        <span class="user-greeting">{{ Str::limit(auth()->user()->name, 12) }}</span>
                     </button>
                     <div class="user-menu" id="userMenu">
                         <a href="{{ url('/profile') }}" class="user-menu-item">

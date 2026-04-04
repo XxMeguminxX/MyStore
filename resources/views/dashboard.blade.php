@@ -460,7 +460,7 @@
             const data = await res.json();
             const el = document.getElementById('cartCount');
             if (el) {
-                el.textContent = data.count;
+                el.textContent = data.count > 9 ? '9+' : data.count;
                 el.style.display = data.count > 0 ? 'flex' : 'none';
             }
         } catch(e) {}
@@ -515,6 +515,15 @@
             });
         });
     }
+
+    // ===== STICKY NAVBAR SCROLL SHADOW =====
+    (function() {
+        const header = document.querySelector('.header-bar');
+        if (!header) return;
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 10);
+        }, { passive: true });
+    })();
 
     // ===== USER MENU =====
     document.addEventListener('DOMContentLoaded', () => {

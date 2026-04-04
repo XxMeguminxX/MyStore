@@ -59,15 +59,27 @@ body {
   justify-content: space-between;
   padding: 0 40px;
   height: 64px;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #ffffff;
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-sm);
   gap: 20px;
+  transition: box-shadow 0.25s ease;
+}
+
+@supports (backdrop-filter: blur(12px)) {
+  .header-bar {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+.header-bar.scrolled {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-bottom-color: transparent;
 }
 
 /* Brand */
@@ -143,8 +155,8 @@ body {
 
 /* Search */
 .search-container {
-  flex: 1;
-  max-width: 400px;
+  flex: 0 0 auto;
+  width: 280px;
 }
 
 .search-wrapper {
@@ -223,15 +235,17 @@ body {
   right: -6px;
   background: var(--grad-primary);
   color: white;
-  border-radius: 50%;
-  width: 18px;
+  border-radius: 999px;
+  min-width: 18px;
   height: 18px;
+  padding: 0 4px;
   display: none;
   align-items: center;
   justify-content: center;
   font-size: 0.68em;
   font-weight: 700;
   border: 2px solid white;
+  line-height: 1;
 }
 
 .btn-header-login {

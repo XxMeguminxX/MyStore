@@ -331,17 +331,7 @@
     </div>
   </div><!-- /product-grid -->
 
-  <!-- Pagination (static UI) -->
-  <div class="pagination">
-    <button class="page-btn arrow">← Sebelumnya</button>
-    <button class="page-btn active">1</button>
-    <button class="page-btn">2</button>
-    <button class="page-btn">3</button>
-    <span class="page-dots">...</span>
-    <button class="page-btn">9</button>
-    <button class="page-btn">10</button>
-    <button class="page-btn arrow">Berikutnya →</button>
-  </div>
+  {{ $products->links('vendor.pagination.custom') }}
 
 </section>
 
@@ -367,7 +357,7 @@
   <div class="carousel-track-wrap">
     <div class="carousel-track" id="carouselTrack">
       @php $carouselGrads = ['linear-gradient(135deg,#F59E0B,#D97706)','linear-gradient(135deg,#0F4C81,#1a73e8)','linear-gradient(135deg,#00B4D8,#0077B6)','linear-gradient(135deg,#6366F1,#818CF8)','linear-gradient(135deg,#1DB954,#158a3e)','linear-gradient(135deg,#E50914,#B81D24)']; @endphp
-      @foreach (collect($products)->take(6) as $ci => $item)
+      @foreach ($products->getCollection()->take(6) as $ci => $item)
         <a href="{{ route('product.show', $item->id) }}" class="product-card">
           <div class="product-img-wrap" style="background: {{ $carouselGrads[$ci % count($carouselGrads)] }};">
             <span class="product-img-letter">{{ strtoupper(substr($item->name, 0, 1)) }}</span>
@@ -663,15 +653,6 @@ document.querySelectorAll('.filter-tab').forEach(tab => {
     tab.classList.add('active');
     const q = document.getElementById('heroSearchInput').value.trim().toLowerCase();
     searchProducts(q);
-  });
-});
-
-// ===== PAGINATION =====
-document.querySelectorAll('.page-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    if (this.classList.contains('arrow')) return;
-    document.querySelectorAll('.page-btn:not(.arrow)').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
   });
 });
 

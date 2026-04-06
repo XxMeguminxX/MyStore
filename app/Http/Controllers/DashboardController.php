@@ -40,7 +40,7 @@ class DashboardController extends Controller
                 break;
         }
 
-        $products = $query->get();
+        $products = $query->paginate(12)->appends(['sort' => $sortBy]);
 
         return view('dashboard', compact('products', 'sortBy'));
     }

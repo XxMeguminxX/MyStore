@@ -13,13 +13,19 @@ class Product extends Model
         'name',
         'price',
         'description',
-        'stock'
+        'stock',
+        'category_id',
     ];
 
     protected $casts = [
         'stock' => 'integer',
         'price' => 'integer'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     /**
      * Check if product is in stock

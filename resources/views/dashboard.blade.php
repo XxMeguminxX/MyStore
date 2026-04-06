@@ -212,7 +212,7 @@
       <div class="section-title-bar"></div>
     </div>
     <div>
-      <select class="sort-select" onchange="window.location.href='/?sort='+this.value">
+      <select class="sort-select" onchange="window.location.href='/?sort='+this.value+'{{ $categoryId ? '&category='.$categoryId : '' }}'">
         <option value="newest"     {{ $sortBy == 'newest'     ? 'selected' : '' }}>Terbaru</option>
         <option value="price_low"  {{ $sortBy == 'price_low'  ? 'selected' : '' }}>Harga Terendah</option>
         <option value="price_high" {{ $sortBy == 'price_high' ? 'selected' : '' }}>Harga Tertinggi</option>
@@ -225,11 +225,12 @@
 
   <!-- Filter tabs -->
   <div class="filter-tabs">
-    <button class="filter-tab active" data-filter="semua">Semua</button>
-    <button class="filter-tab" data-filter="akun">Akun</button>
-    <button class="filter-tab" data-filter="software">Software</button>
-    <button class="filter-tab" data-filter="game">Game</button>
-    <button class="filter-tab" data-filter="voucher">Voucher</button>
+    <a href="{{ url('/') }}?sort={{ $sortBy }}" class="filter-tab {{ !$categoryId ? 'active' : '' }}">Semua</a>
+    @foreach($categories as $cat)
+      <a href="{{ url('/') }}?sort={{ $sortBy }}&category={{ $cat->id }}" class="filter-tab {{ $categoryId == $cat->id ? 'active' : '' }}">
+        {{ $cat->name }}
+      </a>
+    @endforeach
   </div>
 
   <!-- Product grid -->
@@ -251,26 +252,6 @@
       @php
         $grad = $gradients[$loop->index % count($gradients)];
 
-        // Auto-detect category from product name
-        $nm = strtolower($data->name);
-        if (str_contains($nm,'akun') || str_contains($nm,'gmail') || str_contains($nm,'netflix')
-          || str_contains($nm,'spotify') || str_contains($nm,'youtube') || str_contains($nm,'linkedin')
-          || str_contains($nm,'discord') || str_contains($nm,'tiktok')) {
-          $cat = 'akun';
-        } elseif (str_contains($nm,'windows') || str_contains($nm,'office') || str_contains($nm,'canva')
-          || str_contains($nm,'adobe') || str_contains($nm,'zoom') || str_contains($nm,'autocad')
-          || str_contains($nm,'antivirus') || str_contains($nm,'key') || str_contains($nm,'lisensi')) {
-          $cat = 'software';
-        } elseif (str_contains($nm,'game') || str_contains($nm,'pubg') || str_contains($nm,'steam')
-          || str_contains($nm,'mobile legend') || str_contains($nm,'roblox') || str_contains($nm,'genshin')) {
-          $cat = 'game';
-        } elseif (str_contains($nm,'voucher') || str_contains($nm,'pulsa') || str_contains($nm,'gopay')
-          || str_contains($nm,'ovo') || str_contains($nm,'dana') || str_contains($nm,'shopee')) {
-          $cat = 'voucher';
-        } else {
-          $cat = 'lainnya';
-        }
-
         // Promo badge
         $badgeClass = ''; $badgeText = '';
         if ($loop->index % 5 === 0) { $badgeClass = 'promo-terlaris'; $badgeText = '🔥 Terlaris'; }
@@ -278,7 +259,7 @@
         elseif ($data->stock <= 5 && $data->stock > 0) { $badgeClass = 'promo-hot'; $badgeText = '⚡ Hot'; }
       @endphp
 
-      <a href="{{ route('product.show', $data->id) }}" class="product-card" data-category="{{ $cat }}" data-name="{{ strtolower($data->name) }}">
+      <a href="{{ route('product.show', $data->id) }}" class="product-card" data-category="{{ $data->category_id ?? '' }}" data-name="{{ strtolower($data->name) }}">
         <div class="product-img-wrap" style="background: {{ $grad }};">
           <span class="product-img-letter">{{ strtoupper(substr($data->name, 0, 1)) }}</span>
           <img src="{{ $data->image }}" alt="{{ $data->name }}" class="product-img-thumb"

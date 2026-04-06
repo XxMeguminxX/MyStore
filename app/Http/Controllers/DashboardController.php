@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,9 +11,14 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $sortBy = $request->get('sort', 'newest');
+        $sortBy     = $request->get('sort', 'newest');
+        $categoryId = $request->get('category');
 
-        $query = Product::query();
+        $query = Product::with('category');
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
 
         switch ($sortBy) {
             case 'price_high':
@@ -36,13 +42,14 @@ class DashboardController extends Controller
                 break;
             case 'newest':
             default:
-                $query->orderBy('created_at', 'desc');
+                $query->orderBy('product.created_at', 'desc');
                 break;
         }
 
-        $products = $query->paginate(12)->appends(['sort' => $sortBy]);
+        $products   = $query->paginate(12)->appends($request->only(['sort', 'category']));
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
 
-        return view('dashboard', compact('products', 'sortBy'));
+        return view('dashboard', compact('products', 'sortBy', 'categories', 'categoryId'));
     }
 }
 

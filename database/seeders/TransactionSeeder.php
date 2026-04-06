@@ -60,7 +60,7 @@ class TransactionSeeder extends Seeder
             ],
             [
                 'merchant_ref' => 'REF' . time() . '004',
-                'product_id' => 3, // Donasi ID (Boba)
+                'product_id' => 1,
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,
                 'customer_phone' => '081234567890',
@@ -72,7 +72,7 @@ class TransactionSeeder extends Seeder
             ],
             [
                 'merchant_ref' => 'REF' . time() . '005',
-                'product_id' => 1, // Product ID (POCO F6)
+                'product_id' => 1,
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,
                 'customer_phone' => '081234567890',
@@ -84,7 +84,7 @@ class TransactionSeeder extends Seeder
             ],
             [
                 'merchant_ref' => 'REF' . time() . '006',
-                'product_id' => 4, // Donasi ID (Sandwich)
+                'product_id' => 2,
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,
                 'customer_phone' => '081234567890',

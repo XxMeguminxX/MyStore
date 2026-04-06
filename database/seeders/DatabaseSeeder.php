@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ProductSeeder::class,
             TransactionSeeder::class,
+            UpdateProductStockSeeder::class,
+            UpdateUsersPhoneSeeder::class,
         ]);
     }
 }

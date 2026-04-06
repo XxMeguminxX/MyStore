@@ -267,12 +267,12 @@
       </div>
       <div class="form-group">
         <label class="form-label">Email</label>
-        <input type="email" class="form-input" value="{{ $user->email }}" readonly style="background:var(--bg-card);color:var(--text-2);">
+        <input type="email" name="email" class="form-input" value="{{ $user->email }}" readonly style="background:var(--bg-card);color:var(--text-2);">
         <span class="form-input-hint">Email tidak dapat diubah.</span>
       </div>
       <div class="form-group">
         <label class="form-label">Nomor Telepon</label>
-        <input type="tel" name="phone" class="form-input" value="{{ $user->phone }}" placeholder="08xxxxxxxxxx">
+        <input type="tel" name="phone" class="form-input" value="{{ $user->phone }}" placeholder="08xxxxxxxxxx" maxlength="13">
       </div>
       <div class="modal-actions">
         <button type="submit" class="btn-modal-save">Simpan Perubahan</button>

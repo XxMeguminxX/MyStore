@@ -36,9 +36,12 @@ return [
     ],
 
     'tripay' => [
-        'api_key' => env('TRIPAY_API_KEY'),
+        'api_key'       => env('TRIPAY_API_KEY'),
         'merchant_code' => env('TRIPAY_MERCHANT_CODE'),
-        'private_key' => env('TRIPAY_PRIVATE_KEY'),
+        'private_key'   => env('TRIPAY_PRIVATE_KEY'),
+        'base_url'      => env('TRIPAY_MODE', 'sandbox') === 'production'
+                            ? 'https://tripay.co.id/api'
+                            : 'https://tripay.co.id/api-sandbox',
     ],
 
     'tripay_h2h' => [

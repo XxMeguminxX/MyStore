@@ -16,7 +16,7 @@ class TripayService
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/merchant/payment-channel',
+            CURLOPT_URL            => config('services.tripay.base_url') . '/merchant/payment-channel',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => false,
             CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $apiKey],
@@ -55,7 +55,7 @@ class TripayService
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/transaction/create',
+            CURLOPT_URL            => config('services.tripay.base_url') . '/transaction/create',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => false,
             CURLOPT_HTTPHEADER     => [

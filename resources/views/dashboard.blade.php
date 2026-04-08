@@ -31,6 +31,7 @@
     <div class="nav-links">
       <a href="{{ url('/') }}" class="active">Beranda</a>
       <a href="#produk">Produk</a>
+      <a href="#pulsa">Beli Pulsa</a>
       <a href="{{ url('/halaman/cara-beli') }}">Cara Beli</a>
     </div>
 
@@ -315,6 +316,156 @@
   {{ $products->links('vendor.pagination.custom') }}
 
 </section>
+
+<!-- ============================================================
+     PULSA SECTION
+============================================================ -->
+<section class="product-section" id="pulsa">
+
+  <div class="section-header-row">
+    <div></div>
+    <div class="section-title-wrap">
+      <h2 class="section-title">Beli Pulsa</h2>
+      <div class="section-title-bar"></div>
+    </div>
+    <div></div>
+  </div>
+
+  <!-- Filter operator tabs (diisi dinamis oleh JS) -->
+  <div class="filter-tabs" id="pulsaOperatorTabs">
+    <button class="filter-tab active" data-operator="all" onclick="filterPulsa('all', this)">Semua</button>
+  </div>
+
+  <!-- Product grid pulsa -->
+  <div class="product-grid" id="pulsaGrid">
+    <!-- Skeleton loader -->
+    @for ($i = 0; $i < 8; $i++)
+      <div class="product-card pulsa-skeleton">
+        <div class="product-img-wrap" style="background: #e5e7eb;">
+          <span class="product-img-letter" style="color:#d1d5db;">⚡</span>
+        </div>
+        <div class="product-body">
+          <div style="height:14px;background:#e5e7eb;border-radius:6px;margin-bottom:8px;"></div>
+          <div style="height:12px;background:#f3f4f6;border-radius:6px;width:60%;margin-bottom:12px;"></div>
+          <div style="height:20px;background:#e5e7eb;border-radius:6px;width:50%;"></div>
+        </div>
+      </div>
+    @endfor
+  </div>
+
+  <div id="pulsaError" style="display:none;" class="no-results">
+    <div class="no-results-icon">📡</div>
+    <h3>Gagal memuat produk pulsa</h3>
+    <p id="pulsaErrorMsg">Coba refresh halaman.</p>
+  </div>
+
+</section>
+
+<script>
+(function () {
+  let allPulsaProducts = [];
+  const pulsaProductMap = {};  // code → item, untuk lookup di openPulsaCheckout
+  window._pulsaProductMap = pulsaProductMap;
+
+  const operatorImages = {
+    'S':   '{{ asset("assets/img/operators/telkomsel.png") }}',
+    'X':   '{{ asset("assets/img/operators/xl.png") }}',
+    'AX':  '{{ asset("assets/img/operators/axis.png") }}',
+    'I':   '{{ asset("assets/img/operators/indosat.png") }}',
+    'T':   '{{ asset("assets/img/operators/tri.png") }}',
+    'SM':  '{{ asset("assets/img/operators/smartfren.png") }}',
+    'BYU': '{{ asset("assets/img/operators/byu.png") }}',
+  };
+
+  const operatorColors = {
+    'S':   '#FEE2E2',
+    'X':   '#DBEAFE',
+    'AX':  '#F3F4F6',
+    'I':   '#FEF3C7',
+    'T':   '#EDE9FE',
+    'SM':  '#FFEDD5',
+    'BYU': '#D1FAE5',
+  };
+
+  function formatRupiah(num) {
+    return 'Rp ' + Number(num).toLocaleString('id-ID');
+  }
+
+  function renderCards(products) {
+    const grid = document.getElementById('pulsaGrid');
+    if (!products.length) {
+      grid.innerHTML = '<div class="no-results" style="display:block;"><div class="no-results-icon">📦</div><h3>Tidak ada produk</h3><p>Operator ini belum tersedia.</p></div>';
+      return;
+    }
+
+    grid.innerHTML = products.map(item => {
+      const imgSrc = operatorImages[item.operator_id] || '';
+      const bgColor = operatorColors[item.operator_id] || '#F3F4F6';
+      const letter  = (item.operator || item.name || 'P').charAt(0).toUpperCase();
+      const imgHtml = imgSrc
+        ? `<img src="${imgSrc}" alt="${item.operator}" class="product-img-thumb" style="object-fit:contain;padding:12px;">`
+        : `<span class="product-img-letter">${letter}</span>`;
+      return `
+        <div class="product-card" data-operator="${item.operator_id}" style="cursor:pointer;" onclick="openPulsaCheckout('${item.code}')">
+          <div class="product-img-wrap" style="background:${bgColor};">
+            ${imgHtml}
+            <span class="product-badge-cat">Pulsa</span>
+          </div>
+          <div class="product-body">
+            <div class="product-name">${item.name}</div>
+            <div class="product-meta">
+              <span style="font-size:11px;color:#6b7280;">${item.operator}</span>
+            </div>
+            <div class="product-stock">
+              <span class="stock-pill stock-ok">✓ Tersedia</span>
+            </div>
+            <div class="product-footer-row">
+              <span class="product-price">${formatRupiah(item.price)}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function buildOperatorTabs(operators) {
+    const container = document.getElementById('pulsaOperatorTabs');
+    operators.forEach(op => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-tab';
+      btn.dataset.operator = op.id;
+      btn.textContent = op.name;
+      btn.onclick = function () { filterPulsa(op.id, this); };
+      container.appendChild(btn);
+    });
+  }
+
+  window.filterPulsa = function (operatorId, btn) {
+    document.querySelectorAll('#pulsaOperatorTabs .filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const filtered = operatorId === 'all'
+      ? allPulsaProducts
+      : allPulsaProducts.filter(p => p.operator_id === operatorId);
+
+    renderCards(filtered);
+  };
+
+  fetch('/api/kategori')
+    .then(r => r.json())
+    .then(res => {
+      if (!res.success) throw new Error(res.message || 'Gagal memuat data');
+      allPulsaProducts = res.products || [];
+      allPulsaProducts.forEach(p => { pulsaProductMap[p.code] = p; });
+      buildOperatorTabs(res.operators || []);
+      renderCards(allPulsaProducts);
+    })
+    .catch(err => {
+      document.getElementById('pulsaGrid').style.display = 'none';
+      document.getElementById('pulsaError').style.display = 'block';
+      document.getElementById('pulsaErrorMsg').textContent = err.message;
+    });
+})();
+</script>
 
 <!-- ============================================================
      RECOMMENDATIONS CAROUSEL
@@ -661,6 +812,261 @@ document.getElementById('carouselPrev')?.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
   updateCartCount();
   searchProducts(''); // run initial filter
+});
+</script>
+
+<!-- ============================================================
+     PULSA CHECKOUT MODAL
+============================================================ -->
+<style>
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; display:flex; align-items:center; justify-content:center; padding:16px; }
+.checkout-modal-box { background:#fff; border-radius:16px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; }
+.checkout-modal-header { display:flex; justify-content:space-between; align-items:center; padding:20px 24px 0; }
+.checkout-modal-header h3 { font-size:18px; font-weight:700; margin:0; }
+.checkout-modal-close { background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280; }
+.checkout-modal-body { padding:20px 24px 24px; }
+.order-summary-box { display:flex; align-items:center; gap:12px; background:#f9fafb; border-radius:10px; padding:14px; margin-bottom:20px; }
+.order-summary-box img { width:48px; height:48px; object-fit:contain; }
+.order-summary-name { font-weight:600; font-size:15px; }
+.order-summary-price { color:#6b7280; font-size:13px; margin-top:2px; }
+.checkout-field { margin-bottom:14px; }
+.checkout-field label { display:block; font-size:13px; font-weight:600; margin-bottom:5px; color:#374151; }
+.checkout-field input, .checkout-field select { width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:14px; outline:none; box-sizing:border-box; }
+.checkout-field input:focus, .checkout-field select:focus { border-color:#6366f1; }
+.checkout-error { background:#fef2f2; color:#dc2626; border-radius:8px; padding:10px 14px; font-size:13px; margin-bottom:12px; display:none; }
+.checkout-submit-btn { width:100%; padding:13px; background:#6366f1; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; margin-top:4px; }
+.checkout-submit-btn:disabled { opacity:0.6; cursor:not-allowed; }
+.payment-info-box { text-align:center; padding:8px 0 16px; }
+.payment-info-product { font-size:15px; color:#374151; margin-bottom:4px; }
+.payment-info-amount { font-size:28px; font-weight:800; color:#111827; margin:8px 0 20px; }
+.payment-url-btn { display:inline-block; padding:13px 28px; background:#6366f1; color:#fff; border-radius:10px; font-weight:700; font-size:15px; text-decoration:none; }
+.payment-back-btn { background:none; border:none; color:#6b7280; font-size:13px; cursor:pointer; margin-top:12px; }
+</style>
+
+<div id="pulsaCheckoutModal" class="modal-overlay" style="display:none;">
+  <div class="checkout-modal-box">
+
+    <!-- Step 1: Form -->
+    <div id="checkoutStep1">
+      <div class="checkout-modal-header">
+        <h3>Beli Pulsa</h3>
+        <button class="checkout-modal-close" onclick="closePulsaModal()" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="checkout-modal-body">
+        <!-- Order summary -->
+        <div class="order-summary-box">
+          <img id="modalOperatorImg" src="" alt="Operator" style="display:none;">
+          <div>
+            <div class="order-summary-name" id="modalProductName"></div>
+            <div class="order-summary-price" id="modalProductPrice"></div>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <form id="pulsaCheckoutForm" onsubmit="return false;">
+          <div class="checkout-field">
+            <label for="checkoutPhone">Nomor HP Tujuan</label>
+            <input type="tel" id="checkoutPhone" placeholder="08xxx" autocomplete="tel">
+          </div>
+          <div class="checkout-field">
+            <label for="checkoutName">Nama Pembeli</label>
+            <input type="text" id="checkoutName" value="{{ auth()->check() ? auth()->user()->name : '' }}" readonly style="background:#f3f4f6;cursor:not-allowed;color:#6b7280;">
+          </div>
+          <div class="checkout-field">
+            <label for="checkoutEmail">Email</label>
+            <input type="email" id="checkoutEmail" value="{{ auth()->check() ? auth()->user()->email : '' }}" readonly style="background:#f3f4f6;cursor:not-allowed;color:#6b7280;">
+          </div>
+          <div class="checkout-field">
+            <label for="checkoutPaymentMethod">Metode Pembayaran</label>
+            <select id="checkoutPaymentMethod" disabled>
+              <option value="">Memuat metode pembayaran...</option>
+            </select>
+          </div>
+
+          <div id="checkoutError" class="checkout-error"></div>
+
+          <button type="button" id="checkoutSubmitBtn" class="checkout-submit-btn" onclick="submitPulsaCheckout()">
+            Bayar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Step 2: Payment link -->
+    <div id="checkoutStep2" style="display:none;">
+      <div class="checkout-modal-header">
+        <h3>Selesaikan Pembayaran</h3>
+        <button class="checkout-modal-close" onclick="closePulsaModal()" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="checkout-modal-body">
+        <div class="payment-info-box">
+          <div class="payment-info-product" id="paymentProductSummary"></div>
+          <div class="payment-info-amount" id="paymentAmountDisplay"></div>
+
+          <!-- Pay code (VA / kode bayar) -->
+          <div id="payCodeBox" style="display:none;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:10px;padding:14px 18px;margin-bottom:18px;text-align:left;">
+            <div style="font-size:12px;color:#6b7280;margin-bottom:4px;" id="payCodeLabel">Nomor Virtual Account</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span id="payCodeValue" style="font-size:22px;font-weight:700;letter-spacing:2px;color:#111827;"></span>
+              <button onclick="copyPayCode()" style="padding:4px 10px;border:1.5px solid #6366f1;border-radius:6px;background:#fff;color:#6366f1;font-size:12px;font-weight:600;cursor:pointer;">Salin</button>
+            </div>
+          </div>
+
+          <a id="paymentUrlBtn" href="#" target="_blank" rel="noopener" class="payment-url-btn">Lihat Instruksi Pembayaran &rarr;</a>
+          <p style="font-size:12px;color:#9ca3af;margin-top:10px;">Link akan terbuka di tab baru (halaman pembayaran TriPay)</p>
+        </div>
+        <div style="text-align:center;">
+          <button class="payment-back-btn" onclick="closePulsaModal(); location.reload();">Kembali ke Beranda</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let currentPulsaItem = null;
+
+function openPulsaCheckout(code) {
+  const item = window._pulsaProductMap[code];
+  if (!item) return;
+  currentPulsaItem = item;
+
+  // Reset ke step 1
+  document.getElementById('checkoutStep1').style.display = 'block';
+  document.getElementById('checkoutStep2').style.display = 'none';
+  document.getElementById('checkoutError').style.display = 'none';
+  document.getElementById('checkoutPhone').value = '';
+
+  // Operator image
+  const imgMap = {
+    'S':   '{{ asset("assets/img/operators/telkomsel.png") }}',
+    'X':   '{{ asset("assets/img/operators/xl.png") }}',
+    'AX':  '{{ asset("assets/img/operators/axis.png") }}',
+    'I':   '{{ asset("assets/img/operators/indosat.png") }}',
+    'T':   '{{ asset("assets/img/operators/tri.png") }}',
+    'SM':  '{{ asset("assets/img/operators/smartfren.png") }}',
+    'BYU': '{{ asset("assets/img/operators/byu.png") }}',
+  };
+  const imgSrc = imgMap[item.operator_id] || '';
+  const imgEl  = document.getElementById('modalOperatorImg');
+  if (imgSrc) { imgEl.src = imgSrc; imgEl.style.display = 'block'; }
+  else { imgEl.style.display = 'none'; }
+
+  document.getElementById('modalProductName').textContent  = item.name;
+  document.getElementById('modalProductPrice').textContent = 'Rp ' + Number(item.price).toLocaleString('id-ID');
+  document.getElementById('checkoutSubmitBtn').textContent = 'Bayar Rp ' + Number(item.price).toLocaleString('id-ID');
+
+  loadPaymentChannels();
+
+  document.getElementById('pulsaCheckoutModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closePulsaModal() {
+  document.getElementById('pulsaCheckoutModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function loadPaymentChannels() {
+  const sel = document.getElementById('checkoutPaymentMethod');
+  sel.innerHTML = '<option value="">Memuat metode pembayaran...</option>';
+  sel.disabled = true;
+
+  fetch('/api/payment-channels')
+    .then(r => r.json())
+    .then(channels => {
+      sel.innerHTML = '<option value="">-- Pilih Metode Pembayaran --</option>';
+      (Array.isArray(channels) ? channels : []).forEach(ch => {
+        const opt = document.createElement('option');
+        opt.value = ch.code;
+        opt.textContent = ch.name + (ch.fee_flat ? ' (+Rp ' + Number(ch.fee_flat).toLocaleString('id-ID') + ')' : '');
+        sel.appendChild(opt);
+      });
+      sel.disabled = false;
+    })
+    .catch(() => {
+      sel.innerHTML = '<option value="">Gagal memuat, coba lagi</option>';
+      sel.disabled = false;
+    });
+}
+
+function submitPulsaCheckout() {
+  const phone   = document.getElementById('checkoutPhone').value.trim();
+  const name    = document.getElementById('checkoutName').value.trim();
+  const email   = document.getElementById('checkoutEmail').value.trim();
+  const method  = document.getElementById('checkoutPaymentMethod').value;
+  const errorEl = document.getElementById('checkoutError');
+
+  errorEl.style.display = 'none';
+
+  if (!phone || phone.length < 9)  { showCheckoutError('Nomor HP tujuan tidak valid.'); return; }
+  if (!name)                        { showCheckoutError('Nama pembeli wajib diisi.'); return; }
+  if (!email)                       { showCheckoutError('Email wajib diisi.'); return; }
+  if (!method)                      { showCheckoutError('Pilih metode pembayaran terlebih dahulu.'); return; }
+
+  const btn = document.getElementById('checkoutSubmitBtn');
+  btn.disabled    = true;
+  btn.textContent = 'Memproses...';
+
+  fetch('/api/transaksi', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+    },
+    body: JSON.stringify({
+      product_code:   currentPulsaItem.code,
+      phone,
+      payment_method: method,
+      customer_name:  name,
+      customer_email: email,
+    }),
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success) throw new Error(res.message || 'Gagal membuat transaksi');
+
+    // Tampilkan step 2
+    document.getElementById('checkoutStep1').style.display = 'none';
+    document.getElementById('checkoutStep2').style.display = 'block';
+
+    document.getElementById('paymentProductSummary').textContent = res.data.product_name + ' \u2192 ' + res.data.phone;
+    document.getElementById('paymentAmountDisplay').textContent  = 'Rp ' + Number(res.data.amount).toLocaleString('id-ID');
+    document.getElementById('paymentUrlBtn').href = res.data.payment_url || '#';
+
+    // Tampilkan pay_code jika ada (VA / kode bayar)
+    if (res.data.pay_code) {
+      document.getElementById('payCodeLabel').textContent = res.data.payment_name || 'Kode Pembayaran';
+      document.getElementById('payCodeValue').textContent = res.data.pay_code;
+      document.getElementById('payCodeBox').style.display = 'block';
+    }
+  })
+  .catch(err => {
+    showCheckoutError(err.message);
+    btn.disabled    = false;
+    btn.textContent = 'Bayar Rp ' + Number(currentPulsaItem.price).toLocaleString('id-ID');
+  });
+}
+
+function copyPayCode() {
+  const code = document.getElementById('payCodeValue').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Tersalin!';
+    setTimeout(() => { btn.textContent = 'Salin'; }, 2000);
+  });
+}
+
+function showCheckoutError(msg) {
+  const el = document.getElementById('checkoutError');
+  el.textContent     = msg;
+  el.style.display   = 'block';
+}
+
+// Tutup modal ketika klik overlay
+document.getElementById('pulsaCheckoutModal').addEventListener('click', function(e) {
+  if (e.target === this) closePulsaModal();
 });
 </script>
 

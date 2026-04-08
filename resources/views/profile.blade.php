@@ -222,7 +222,12 @@
                   </div>
                   <div class="transaction-item-body">
                     <div>
-                      <div class="transaction-product">{{ $tx->getProductName() }}</div>
+                      <div class="transaction-product">
+                        {{ $tx->getProductName() }}
+                        @if($tx instanceof \App\Models\PulsaTransaction)
+                          <span style="font-size:10px;font-weight:700;background:#EDE9FE;color:#7C3AED;border-radius:4px;padding:1px 6px;margin-left:4px;">PULSA</span>
+                        @endif
+                      </div>
                       <div class="transaction-meta">
                         {{ $tx->quantity ?? 1 }} item · {{ $tx->payment_method ?? '-' }}
                       </div>

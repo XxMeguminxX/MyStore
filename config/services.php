@@ -41,4 +41,11 @@ return [
         'private_key' => env('TRIPAY_PRIVATE_KEY'),
     ],
 
+    'tripay_h2h' => [
+        'api_key' => env('TRIPAY_H2H_API_KEY'),
+        'pin'     => env('TRIPAY_H2H_PIN'),
+        'url'     => env('TRIPAY_H2H_URL', 'https://tripay.id/api-sandbox/v2'),
+        'markup'  => env('TRIPAY_H2H_MARKUP', 0),
+    ],
+
 ];

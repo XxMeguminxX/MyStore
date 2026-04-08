@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Transaction;
+use App\Models\PulsaTransaction;
 
 class ProfileController extends Controller
 {
@@ -22,10 +23,17 @@ class ProfileController extends Controller
             return redirect()->route('login');
         }
 
-        $transactions = Transaction::with(['product'])
+        $productTransactions = Transaction::with(['product'])
             ->where('customer_email', $user->email)
-            ->orderBy('created_at', 'desc')
             ->get();
+
+        $pulsaTransactions = PulsaTransaction::where('customer_email', $user->email)
+            ->get();
+
+        $transactions = $productTransactions
+            ->concat($pulsaTransactions)
+            ->sortByDesc('created_at')
+            ->values();
 
         return view('profile', compact('user', 'transactions'));
     }

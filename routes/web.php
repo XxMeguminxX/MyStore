@@ -12,6 +12,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StaticPageController;
+use App\Http\Controllers\PulsaController;
+use App\Http\Controllers\PulsaTransactionController;
 
 
 // Rute untuk Login dan Register (bisa diakses tanpa login)
@@ -43,6 +45,15 @@ Route::get('/halaman/{slug}', [StaticPageController::class, 'show'])->name('stat
 // Rute Dashboard (bisa diakses tanpa login)
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// Rute Pulsa — API endpoint
+Route::get('/api/kategori', [PulsaController::class, 'getPricelist'])->name('pulsa.pricelist');
+
+// Pulsa topup routes
+Route::get('/api/payment-channels', [PulsaTransactionController::class, 'paymentChannels']);
+Route::post('/api/transaksi', [PulsaTransactionController::class, 'store'])->middleware('auth');
+Route::post('/api/callback', [PulsaTransactionController::class, 'callback'])
+    ->withoutMiddleware(['web', VerifyCsrfToken::class, \App\Http\Middleware\VerifyCsrfToken::class]);
 // Rute Detail Produk (bisa diakses tanpa login, untuk lihat detail & lanjut beli)
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 

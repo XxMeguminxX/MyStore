@@ -146,7 +146,7 @@ class TripayController extends Controller
         $originalStock = $product->stock;
 
         // Gunakan database transaction untuk atomic operation
-        \Illuminate\Support\Facades\DB::transaction(function () use ($product, &$reservedStock) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($product, &$reservedStock, $quantity) {
             // Lock row produk untuk mencegah concurrent access
             $product = $product->lockForUpdate()->find($product->id);
 

@@ -91,15 +91,26 @@ ul { list-style: none; }
 .nav-links {
   display: flex; align-items: center; gap: 2px;
   flex: 1; justify-content: center;
+  position: relative;
+}
+.nav-pill {
+  position: absolute;
+  background: var(--badge-bg);
+  border-radius: var(--r-pill);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), top 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 0;
 }
 .nav-links a {
   padding: 6px 14px;
   border-radius: var(--r-pill);
   font-size: 14px; font-weight: 500;
   color: var(--text-2);
-  transition: all var(--t);
+  transition: color 0.2s;
+  position: relative; z-index: 1;
 }
-.nav-links a:hover, .nav-links a.active { color: #111; background: var(--badge-bg); }
+.nav-links a:hover { color: #111; }
+.nav-links a.active { color: #111; }
 
 /* Right */
 .nav-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }

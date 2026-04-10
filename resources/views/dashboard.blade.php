@@ -54,8 +54,9 @@
       <span class="nav-logo-name">E Store ID</span>
     </a>
 
-    <div class="nav-links">
-      <a href="{{ url('/') }}" class="active">Beranda</a>
+    <div class="nav-links" id="navLinks">
+      <span class="nav-pill" id="navPill"></span>
+      <a href="#beranda" class="active">Beranda</a>
       <a href="#produk">Produk</a>
       <a href="#pulsa">Beli Pulsa</a>
       <a href="{{ url('/halaman/cara-beli') }}">Cara Beli</a>
@@ -114,7 +115,7 @@
 
 <!-- Mobile nav -->
 <div class="nav-mobile" id="navMobile">
-  <a href="{{ url('/') }}">Beranda</a>
+  <a href="#beranda">Beranda</a>
   <a href="#produk" id="mobileNavProduk">Produk</a>
   <a href="#pulsa">Beli Pulsa</a>
   <a href="{{ url('/halaman/cara-beli') }}">Cara Beli</a>
@@ -146,7 +147,7 @@
 <!-- ============================================================
      HERO
 ============================================================ -->
-<section class="hero">
+<section class="hero" id="beranda">
   <div class="hero-bg"></div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
@@ -712,6 +713,52 @@ const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
   navbar.classList.toggle('scrolled', window.scrollY > 10);
 }, { passive: true });
+
+// ===== ANIMATED NAV PILL =====
+(function() {
+  const navLinks = document.getElementById('navLinks');
+  const pill = document.getElementById('navPill');
+  if (!navLinks || !pill) return;
+
+  function movePillTo(el) {
+    const parentRect = navLinks.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    pill.style.left   = (elRect.left - parentRect.left) + 'px';
+    pill.style.top    = (elRect.top  - parentRect.top)  + 'px';
+    pill.style.width  = elRect.width  + 'px';
+    pill.style.height = elRect.height + 'px';
+  }
+
+  const links = navLinks.querySelectorAll('a');
+
+  // Init pill on active link (no transition)
+  const activeLink = navLinks.querySelector('a.active');
+  if (activeLink) {
+    pill.style.transition = 'none';
+    movePillTo(activeLink);
+    // Re-enable transition after paint
+    requestAnimationFrame(() => {
+      pill.style.transition = '';
+    });
+  }
+
+  links.forEach(link => {
+    link.addEventListener('click', function() {
+      links.forEach(l => l.classList.remove('active'));
+      this.classList.add('active');
+      movePillTo(this);
+    });
+
+    link.addEventListener('mouseenter', function() {
+      movePillTo(this);
+    });
+
+    link.addEventListener('mouseleave', function() {
+      const current = navLinks.querySelector('a.active');
+      if (current) movePillTo(current);
+    });
+  });
+})();
 
 // ===== HAMBURGER =====
 const hamburger = document.getElementById('hamburger');

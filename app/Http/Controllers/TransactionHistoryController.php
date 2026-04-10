@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
+use App\Models\PulsaTransaction;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class TransactionHistoryController extends Controller
 {
@@ -20,6 +22,70 @@ class TransactionHistoryController extends Controller
             ->get();
 
         return view('transaction-history', compact('transactions'));
+    }
+
+    public function show($merchantRef)
+    {
+        $userEmail = Auth::user()->email;
+
+        $transaction = Transaction::with('product')
+            ->where('merchant_ref', $merchantRef)
+            ->where('customer_email', $userEmail)
+            ->first();
+
+        $isPulsa = false;
+        if (!$transaction) {
+            $transaction = PulsaTransaction::where('merchant_ref', $merchantRef)
+                ->where('customer_email', $userEmail)
+                ->first();
+            if ($transaction) $isPulsa = true;
+        }
+
+        abort_if(!$transaction, 404);
+
+        $response     = $isPulsa ? ($transaction->tripay_response ?? []) : ($transaction->response ?? []);
+        $data         = $response['data'] ?? [];
+        $callbackData = $isPulsa ? ($transaction->callback_data ?? []) : ($response['callback_data'] ?? []);
+
+        $tripayRef   = $data['reference'] ?? ($callbackData['reference'] ?? '-');
+        $paymentName = $data['payment_name'] ?? $transaction->payment_method ?? '-';
+
+        $expiredTimestamp = $data['expired_time'] ?? null;
+        $expiredTime = $expiredTimestamp
+            ? Carbon::createFromTimestamp($expiredTimestamp)->format('d-m-Y H:i:s')
+            : null;
+
+        if ($isPulsa && $transaction->paid_at) {
+            $paidAt = $transaction->paid_at->format('d-m-Y H:i:s');
+        } elseif (!empty($callbackData['paid_at'])) {
+            $paidAt = Carbon::createFromTimestamp($callbackData['paid_at'])->format('d-m-Y H:i:s');
+        } else {
+            $paidAt = null;
+        }
+
+        $feeMerchant    = $callbackData['fee_merchant']   ?? $data['fee_merchant']   ?? null;
+        $feeCustomer    = $callbackData['fee_customer']   ?? $data['fee_customer']   ?? null;
+        $amountReceived = $callbackData['amount_received'] ?? $data['amount_received'] ?? null;
+        $totalFee       = ($feeMerchant !== null && $feeCustomer !== null)
+            ? ($feeMerchant + $feeCustomer)
+            : ($data['total_fee'] ?? null);
+
+        $orderItems = $data['order_items'] ?? [];
+
+        $statusMap = [
+            'PAID'    => 'Lunas',
+            'UNPAID'  => 'Menunggu Pembayaran',
+            'FAILED'  => 'Gagal',
+            'EXPIRED' => 'Kedaluwarsa',
+            'SETTLED' => 'Selesai',
+        ];
+        $statusLabel = $statusMap[strtoupper($transaction->status)] ?? $transaction->status;
+
+        return view('transaction-detail', compact(
+            'transaction', 'isPulsa', 'tripayRef', 'paymentName',
+            'expiredTime', 'paidAt', 'feeMerchant', 'feeCustomer',
+            'totalFee', 'amountReceived', 'statusLabel', 'orderItems'
+        ));
     }
 
     public function updateStatus(Request $request)

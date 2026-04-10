@@ -107,6 +107,7 @@ Route::get('/beli/{id}', [CheckoutController::class, 'beli'])->name('beli');
 Route::get('/transaction-history', function () {
     return redirect()->route('profile', ['tab' => 'transactions']);
 })->name('transaction.history');
+Route::get('/transaction/{merchantRef}', [TransactionHistoryController::class, 'show'])->name('transaction.detail');
 Route::post('/transaction/update-status', [TransactionHistoryController::class, 'updateStatus'])->name('transaction.update-status');
 Route::post('/transaction/manual-update-status', [TransactionHistoryController::class, 'manualUpdateStatus'])->name('transaction.manual-update-status');
 Route::get('/callback-logs', [TransactionHistoryController::class, 'viewCallbackLogs'])->name('callback.logs');

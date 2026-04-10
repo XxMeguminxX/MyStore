@@ -215,9 +215,23 @@
                   ];
                   $st = $statusMap[strtoupper($tx->status)] ?? ['label' => $tx->status, 'class' => 'status-unpaid'];
                 @endphp
-                <div class="transaction-item" data-search="{{ strtolower($tx->merchant_ref . ' ' . $tx->getProductName()) }}">
+                <div class="transaction-item"
+                  data-search="{{ strtolower($tx->merchant_ref . ' ' . $tx->getProductName()) }}"
+                  data-status-raw="{{ strtoupper($tx->status) }}"
+                  data-timestamp="{{ $tx->created_at->timestamp }}"
+                  data-ref="{{ $tx->merchant_ref }}"
+                  data-product="{{ $tx->getProductName() }}"
+                  data-qty="{{ $tx->quantity ?? 1 }}"
+                  data-amount="Rp {{ number_format($tx->amount, 0, ',', '.') }}"
+                  data-method="{{ $tx->payment_method ?? '-' }}"
+                  data-date="{{ $tx->created_at->format('d M Y, H:i') }}"
+                  data-status-label="{{ $st['label'] }}"
+                  data-status-class="{{ $st['class'] }}"
+                  data-payment-url="{{ $tx->payment_url ?? '' }}"
+                  onclick="window.location.href='/transaction/'+this.dataset.ref"
+                >
                   <div class="transaction-item-header">
-                    <a class="transaction-ref" href="{{ route('payment.thank-you') }}?merchant_ref={{ $tx->merchant_ref }}">#{{ $tx->merchant_ref }}</a>
+                    <span class="transaction-ref">#{{ $tx->merchant_ref }}</span>
                     <span class="transaction-date">{{ $tx->created_at->format('d M Y, H:i') }}</span>
                   </div>
                   <div class="transaction-item-body">

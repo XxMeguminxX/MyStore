@@ -136,9 +136,10 @@
 .transaction-item {
   border: 1.5px solid var(--border); border-radius: 12px;
   overflow: hidden; margin-bottom: 12px;
-  transition: border-color var(--t);
+  transition: border-color var(--t), box-shadow var(--t);
+  cursor: pointer;
 }
-.transaction-item:hover { border-color: #ccc; }
+.transaction-item:hover { border-color: #bbb; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 .transaction-item:last-child { margin-bottom: 0; }
 .transaction-item-header {
   display: flex; align-items: center; justify-content: space-between;

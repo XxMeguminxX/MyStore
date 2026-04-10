@@ -8,10 +8,36 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v=1.0.0">
   <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
+
+  <style>
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; display:flex; align-items:center; justify-content:center; padding:16px; }
+  .checkout-modal-box { background:#fff; border-radius:16px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; }
+  .checkout-modal-header { display:flex; justify-content:space-between; align-items:center; padding:20px 24px 0; }
+  .checkout-modal-header h3 { font-size:18px; font-weight:700; margin:0; }
+  .checkout-modal-close { background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280; }
+  .checkout-modal-body { padding:20px 24px 24px; }
+  .order-summary-box { display:flex; align-items:center; gap:12px; background:#f9fafb; border-radius:10px; padding:14px; margin-bottom:20px; }
+  .order-summary-box img { width:48px; height:48px; object-fit:contain; }
+  .order-summary-name { font-weight:600; font-size:15px; }
+  .order-summary-price { color:#6b7280; font-size:13px; margin-top:2px; }
+  .checkout-field { margin-bottom:14px; }
+  .checkout-field label { display:block; font-size:13px; font-weight:600; margin-bottom:5px; color:#374151; }
+  .checkout-field input, .checkout-field select { width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:14px; outline:none; box-sizing:border-box; }
+  .checkout-field input:focus, .checkout-field select:focus { border-color:#6366f1; }
+  .checkout-error { background:#fef2f2; color:#dc2626; border-radius:8px; padding:10px 14px; font-size:13px; margin-bottom:12px; display:none; }
+  .checkout-submit-btn { width:100%; padding:13px; background:#6366f1; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; margin-top:4px; }
+  .checkout-submit-btn:disabled { opacity:0.6; cursor:not-allowed; }
+  .payment-info-box { text-align:center; padding:8px 0 16px; }
+  .payment-info-product { font-size:15px; color:#374151; margin-bottom:4px; }
+  .payment-info-amount { font-size:28px; font-weight:800; color:#111827; margin:8px 0 20px; }
+  .payment-url-btn { display:inline-block; padding:13px 28px; background:#6366f1; color:#fff; border-radius:10px; font-weight:700; font-size:15px; text-decoration:none; }
+  .payment-back-btn { background:none; border:none; color:#6b7280; font-size:13px; cursor:pointer; margin-top:12px; }
+  </style>
 </head>
 <body>
+@php $authUser = auth()->user(); @endphp
 
 <!-- ============================================================
      NAVBAR
@@ -51,8 +77,8 @@
         </a>
 
         <div class="nav-user" id="navUser">
-          <div class="nav-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-          <span class="nav-user-name">{{ Str::limit(auth()->user()->name, 12) }}</span>
+          <div class="nav-user-avatar">{{ strtoupper(substr($authUser->name, 0, 1)) }}</div>
+          <span class="nav-user-name">{{ Str::limit($authUser->name, 12) }}</span>
           <svg class="nav-user-caret" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
           </svg>
@@ -90,6 +116,7 @@
 <div class="nav-mobile" id="navMobile">
   <a href="{{ url('/') }}">Beranda</a>
   <a href="#produk" id="mobileNavProduk">Produk</a>
+  <a href="#pulsa">Beli Pulsa</a>
   <a href="{{ url('/halaman/cara-beli') }}">Cara Beli</a>
   <div class="nav-mobile-btns">
     @auth
@@ -144,7 +171,7 @@
 <div class="hero-cards">
   <!-- Left card -->
   <div class="hcard-left">
-    <div class="hcard-badge">✦ Toko Digital</div>
+    <div class="hcard-badge">Toko Digital</div>
     <h2 class="hcard-headline">
       Produk Digital,<br><em>Aktivasi Instan</em><br>Harga Terbaik
     </h2>
@@ -153,9 +180,9 @@
       Garansi <strong>100% uang kembali</strong> jika gagal.
     </p>
     <div class="hcard-stats">
-      <div class="hcard-stat">⭐ 4.9 <span>Rating</span></div>
-      <div class="hcard-stat">🛒 1.2K+ <span>Pembeli</span></div>
-      <div class="hcard-stat">🔒 100% <span>Aman</span></div>
+      <div class="hcard-stat">4.9 <span>Rating</span></div>
+      <div class="hcard-stat">1.2K+ <span>Pembeli</span></div>
+      <div class="hcard-stat">100% <span>Aman</span></div>
     </div>
     <a href="#produk" class="hcard-cta">
       Lihat Produk Sekarang
@@ -169,34 +196,34 @@
   <div class="hcard-right">
     <div class="hcard-right-header">
       <span class="hcard-right-title">Kenapa Pilih Kami?</span>
-      <span class="hcard-trusted-badge">✓ Terpercaya</span>
+      <span class="hcard-trusted-badge">Terpercaya</span>
     </div>
     <div class="feature-grid">
       <div class="feature-item">
-        <div class="feature-icon" style="background:#FFF7ED;">⚡</div>
+        <div class="feature-icon" style="background:#FFF7ED;"></div>
         <div class="feature-title">&lt; 1 Menit</div>
         <div class="feature-sub">Pengiriman instan otomatis</div>
       </div>
       <div class="feature-item">
-        <div class="feature-icon" style="background:#ECFDF5;">🛡️</div>
+        <div class="feature-icon" style="background:#ECFDF5;"></div>
         <div class="feature-title">Garansi Penuh</div>
         <div class="feature-sub">Jaminan uang kembali</div>
       </div>
       <div class="feature-item">
-        <div class="feature-icon" style="background:#EFF6FF;">💎</div>
+        <div class="feature-icon" style="background:#EFF6FF;"></div>
         <div class="feature-title">Harga Terbaik</div>
         <div class="feature-sub">Kompetitif & transparan</div>
       </div>
       <div class="feature-item">
-        <div class="feature-icon" style="background:#F5F3FF;">💳</div>
+        <div class="feature-icon" style="background:#F5F3FF;"></div>
         <div class="feature-title">Multi Pembayaran</div>
         <div class="feature-sub">VA, QRIS, e-wallet</div>
       </div>
     </div>
     <div class="hcard-checklist">
-      <div class="hcard-check"><span class="check-icon">✓</span> Transaksi dienkripsi & 100% aman</div>
-      <div class="hcard-check"><span class="check-icon">✓</span> Customer service aktif 7 hari seminggu</div>
-      <div class="hcard-check"><span class="check-icon">✓</span> Sudah dipercaya 5.000+ pelanggan</div>
+      <div class="hcard-check"><span class="check-icon"></span> Transaksi dienkripsi & 100% aman</div>
+      <div class="hcard-check"><span class="check-icon"></span> Customer service aktif 7 hari seminggu</div>
+      <div class="hcard-check"><span class="check-icon"></span> Sudah dipercaya 5.000+ pelanggan</div>
     </div>
   </div>
 </div>
@@ -255,9 +282,9 @@
 
         // Promo badge
         $badgeClass = ''; $badgeText = '';
-        if ($loop->index % 5 === 0) { $badgeClass = 'promo-terlaris'; $badgeText = '🔥 Terlaris'; }
-        elseif ($loop->index % 5 === 2) { $badgeClass = 'promo-hot'; $badgeText = '⚡ Hot'; }
-        elseif ($data->stock <= 5 && $data->stock > 0) { $badgeClass = 'promo-hot'; $badgeText = '⚡ Hot'; }
+        if ($loop->index % 5 === 0) { $badgeClass = 'promo-terlaris'; $badgeText = 'Terlaris'; }
+        elseif ($loop->index % 5 === 2) { $badgeClass = 'promo-hot'; $badgeText = 'Hot'; }
+        elseif ($data->stock <= 5 && $data->stock > 0) { $badgeClass = 'promo-hot'; $badgeText = 'Hot'; }
       @endphp
 
       <a href="{{ route('product.show', $data->id) }}" class="product-card" data-category="{{ $data->category_id ?? '' }}" data-name="{{ strtolower($data->name) }}">
@@ -274,21 +301,16 @@
         <div class="product-body">
           <div class="product-name">{{ $data->name }}</div>
 
-          <div class="product-meta">
-            <span class="product-stars">★★★★★</span>
-            <span class="product-rating">5.0</span>
-            <span class="product-reviews">({{ rand(50, 700) }} ulasan)</span>
-          </div>
 
           <div class="product-stock">
             @if($data->stock > 10)
-              <span class="stock-pill stock-ok">✓ Tersedia</span>
+              <span class="stock-pill stock-ok">Tersedia</span>
               <span class="stock-count">{{ $data->stock }} unit</span>
             @elseif($data->stock > 0)
-              <span class="stock-pill stock-low">⚠ Terbatas</span>
+              <span class="stock-pill stock-low">Terbatas</span>
               <span class="stock-count">{{ $data->stock }} unit</span>
             @else
-              <span class="stock-pill stock-out">✕ Habis</span>
+              <span class="stock-pill stock-out">Habis</span>
             @endif
           </div>
 
@@ -299,7 +321,6 @@
       </a>
     @empty
       <div class="no-results" style="display:block;">
-        <div class="no-results-icon">📦</div>
         <h3>Belum ada produk</h3>
         <p>Produk sedang dalam proses penambahan.</p>
       </div>
@@ -307,7 +328,6 @@
 
     <!-- Client-side search no-results -->
     <div class="no-results" id="noResults">
-      <div class="no-results-icon">🔍</div>
       <h3>Produk tidak ditemukan</h3>
       <p>Coba kata kunci lain atau lihat semua produk.</p>
     </div>
@@ -342,7 +362,7 @@
     @for ($i = 0; $i < 8; $i++)
       <div class="product-card pulsa-skeleton">
         <div class="product-img-wrap" style="background: #e5e7eb;">
-          <span class="product-img-letter" style="color:#d1d5db;">⚡</span>
+          <span class="product-img-letter" style="color:#d1d5db;"></span>
         </div>
         <div class="product-body">
           <div style="height:14px;background:#e5e7eb;border-radius:6px;margin-bottom:8px;"></div>
@@ -354,7 +374,6 @@
   </div>
 
   <div id="pulsaError" style="display:none;" class="no-results">
-    <div class="no-results-icon">📡</div>
     <h3>Gagal memuat produk pulsa</h3>
     <p id="pulsaErrorMsg">Coba refresh halaman.</p>
   </div>
@@ -362,30 +381,31 @@
 </section>
 
 <script>
+// ===== SHARED OPERATOR CONSTANTS (used by both pulsa grid & checkout modal) =====
+const OPERATOR_IMAGES = {
+  'S':   '{{ asset("assets/img/operators/telkomsel.png") }}',
+  'X':   '{{ asset("assets/img/operators/xl.png") }}',
+  'AX':  '{{ asset("assets/img/operators/axis.png") }}',
+  'I':   '{{ asset("assets/img/operators/indosat.png") }}',
+  'T':   '{{ asset("assets/img/operators/tri.png") }}',
+  'SM':  '{{ asset("assets/img/operators/smartfren.png") }}',
+  'BYU': '{{ asset("assets/img/operators/byu.png") }}',
+};
+
+const OPERATOR_COLORS = {
+  'S':   '#FEE2E2',
+  'X':   '#DBEAFE',
+  'AX':  '#F3F4F6',
+  'I':   '#FEF3C7',
+  'T':   '#EDE9FE',
+  'SM':  '#FFEDD5',
+  'BYU': '#D1FAE5',
+};
+
 (function () {
   let allPulsaProducts = [];
-  const pulsaProductMap = {};  // code → item, untuk lookup di openPulsaCheckout
+  const pulsaProductMap = {};
   window._pulsaProductMap = pulsaProductMap;
-
-  const operatorImages = {
-    'S':   '{{ asset("assets/img/operators/telkomsel.png") }}',
-    'X':   '{{ asset("assets/img/operators/xl.png") }}',
-    'AX':  '{{ asset("assets/img/operators/axis.png") }}',
-    'I':   '{{ asset("assets/img/operators/indosat.png") }}',
-    'T':   '{{ asset("assets/img/operators/tri.png") }}',
-    'SM':  '{{ asset("assets/img/operators/smartfren.png") }}',
-    'BYU': '{{ asset("assets/img/operators/byu.png") }}',
-  };
-
-  const operatorColors = {
-    'S':   '#FEE2E2',
-    'X':   '#DBEAFE',
-    'AX':  '#F3F4F6',
-    'I':   '#FEF3C7',
-    'T':   '#EDE9FE',
-    'SM':  '#FFEDD5',
-    'BYU': '#D1FAE5',
-  };
 
   function formatRupiah(num) {
     return 'Rp ' + Number(num).toLocaleString('id-ID');
@@ -393,38 +413,86 @@
 
   function renderCards(products) {
     const grid = document.getElementById('pulsaGrid');
+    grid.innerHTML = '';
+
     if (!products.length) {
-      grid.innerHTML = '<div class="no-results" style="display:block;"><div class="no-results-icon">📦</div><h3>Tidak ada produk</h3><p>Operator ini belum tersedia.</p></div>';
+      const msg = document.createElement('div');
+      msg.className = 'no-results';
+      msg.style.display = 'block';
+      const h3 = document.createElement('h3');
+      h3.textContent = 'Tidak ada produk';
+      const p = document.createElement('p');
+      p.textContent = 'Operator ini belum tersedia.';
+      msg.append(h3, p);
+      grid.appendChild(msg);
       return;
     }
 
-    grid.innerHTML = products.map(item => {
-      const imgSrc = operatorImages[item.operator_id] || '';
-      const bgColor = operatorColors[item.operator_id] || '#F3F4F6';
-      const letter  = (item.operator || item.name || 'P').charAt(0).toUpperCase();
-      const imgHtml = imgSrc
-        ? `<img src="${imgSrc}" alt="${item.operator}" class="product-img-thumb" style="object-fit:contain;padding:12px;">`
-        : `<span class="product-img-letter">${letter}</span>`;
-      return `
-        <div class="product-card" data-operator="${item.operator_id}" style="cursor:pointer;" onclick="openPulsaCheckout('${item.code}')">
-          <div class="product-img-wrap" style="background:${bgColor};">
-            ${imgHtml}
-            <span class="product-badge-cat">Pulsa</span>
-          </div>
-          <div class="product-body">
-            <div class="product-name">${item.name}</div>
-            <div class="product-meta">
-              <span style="font-size:11px;color:#6b7280;">${item.operator}</span>
-            </div>
-            <div class="product-stock">
-              <span class="stock-pill stock-ok">✓ Tersedia</span>
-            </div>
-            <div class="product-footer-row">
-              <span class="product-price">${formatRupiah(item.price)}</span>
-            </div>
-          </div>
-        </div>`;
-    }).join('');
+    products.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.dataset.operator = item.operator_id;
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => openPulsaCheckout(item.code));
+
+      // Image wrap
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'product-img-wrap';
+      imgWrap.style.background = OPERATOR_COLORS[item.operator_id] || '#F3F4F6';
+
+      const imgSrc = OPERATOR_IMAGES[item.operator_id];
+      if (imgSrc) {
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.alt = item.operator || '';
+        img.className = 'product-img-thumb';
+        img.style.cssText = 'object-fit:contain;padding:12px;';
+        imgWrap.appendChild(img);
+      } else {
+        const letter = document.createElement('span');
+        letter.className = 'product-img-letter';
+        letter.textContent = (item.operator || item.name || 'P').charAt(0).toUpperCase();
+        imgWrap.appendChild(letter);
+      }
+
+      const badgeCat = document.createElement('span');
+      badgeCat.className = 'product-badge-cat';
+      badgeCat.textContent = 'Pulsa';
+      imgWrap.appendChild(badgeCat);
+
+      // Body
+      const body = document.createElement('div');
+      body.className = 'product-body';
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'product-name';
+      nameEl.textContent = item.name;
+
+      const meta = document.createElement('div');
+      meta.className = 'product-meta';
+      const opSpan = document.createElement('span');
+      opSpan.style.cssText = 'font-size:11px;color:#6b7280;';
+      opSpan.textContent = item.operator || '';
+      meta.appendChild(opSpan);
+
+      const stockDiv = document.createElement('div');
+      stockDiv.className = 'product-stock';
+      const stockPill = document.createElement('span');
+      stockPill.className = 'stock-pill stock-ok';
+      stockPill.textContent = 'Tersedia';
+      stockDiv.appendChild(stockPill);
+
+      const footer = document.createElement('div');
+      footer.className = 'product-footer-row';
+      const priceEl = document.createElement('span');
+      priceEl.className = 'product-price';
+      priceEl.textContent = formatRupiah(item.price);
+      footer.appendChild(priceEl);
+
+      body.append(nameEl, meta, stockDiv, footer);
+      card.append(imgWrap, body);
+      grid.appendChild(card);
+    });
   }
 
   function buildOperatorTabs(operators) {
@@ -498,11 +566,6 @@
           </div>
           <div class="product-body">
             <div class="product-name">{{ $item->name }}</div>
-            <div class="product-meta">
-              <span class="product-stars">★★★★★</span>
-              <span class="product-rating">4.9</span>
-              <span class="product-reviews">({{ rand(50, 500) }} ulasan)</span>
-            </div>
             <div class="product-footer-row">
               <span class="product-price">Rp {{ number_format($item->price, 0, ',', '.') }}</span>
             </div>
@@ -627,7 +690,6 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
       </svg>
     </button>
-    <div class="modal-icon">🔐</div>
     <div class="modal-title">Login Diperlukan</div>
     <p class="modal-desc">Buat akun gratis atau masuk untuk membeli produk digital dengan aman.</p>
     <div class="modal-actions">
@@ -708,7 +770,7 @@ async function addToCart(productId, btn) {
     });
     const data = await res.json();
     if (data.success || res.ok) {
-      showToast('Produk ditambahkan ke keranjang ✓', 'success');
+      showToast('Produk ditambahkan ke keranjang', 'success');
       updateCartCount();
       // Animate cart button
       const cartBtn = document.getElementById('cartBtn');
@@ -778,10 +840,10 @@ function searchProducts(q) {
   document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
 }
 
-// ===== FILTER TABS =====
-document.querySelectorAll('.filter-tab').forEach(tab => {
+// ===== FILTER TABS (scoped to product section only) =====
+document.querySelectorAll('#produk .filter-tab').forEach(tab => {
   tab.addEventListener('click', () => {
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#produk .filter-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     const q = document.getElementById('heroSearchInput').value.trim().toLowerCase();
     searchProducts(q);
@@ -818,31 +880,6 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- ============================================================
      PULSA CHECKOUT MODAL
 ============================================================ -->
-<style>
-.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; display:flex; align-items:center; justify-content:center; padding:16px; }
-.checkout-modal-box { background:#fff; border-radius:16px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; }
-.checkout-modal-header { display:flex; justify-content:space-between; align-items:center; padding:20px 24px 0; }
-.checkout-modal-header h3 { font-size:18px; font-weight:700; margin:0; }
-.checkout-modal-close { background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280; }
-.checkout-modal-body { padding:20px 24px 24px; }
-.order-summary-box { display:flex; align-items:center; gap:12px; background:#f9fafb; border-radius:10px; padding:14px; margin-bottom:20px; }
-.order-summary-box img { width:48px; height:48px; object-fit:contain; }
-.order-summary-name { font-weight:600; font-size:15px; }
-.order-summary-price { color:#6b7280; font-size:13px; margin-top:2px; }
-.checkout-field { margin-bottom:14px; }
-.checkout-field label { display:block; font-size:13px; font-weight:600; margin-bottom:5px; color:#374151; }
-.checkout-field input, .checkout-field select { width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:14px; outline:none; box-sizing:border-box; }
-.checkout-field input:focus, .checkout-field select:focus { border-color:#6366f1; }
-.checkout-error { background:#fef2f2; color:#dc2626; border-radius:8px; padding:10px 14px; font-size:13px; margin-bottom:12px; display:none; }
-.checkout-submit-btn { width:100%; padding:13px; background:#6366f1; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; margin-top:4px; }
-.checkout-submit-btn:disabled { opacity:0.6; cursor:not-allowed; }
-.payment-info-box { text-align:center; padding:8px 0 16px; }
-.payment-info-product { font-size:15px; color:#374151; margin-bottom:4px; }
-.payment-info-amount { font-size:28px; font-weight:800; color:#111827; margin:8px 0 20px; }
-.payment-url-btn { display:inline-block; padding:13px 28px; background:#6366f1; color:#fff; border-radius:10px; font-weight:700; font-size:15px; text-decoration:none; }
-.payment-back-btn { background:none; border:none; color:#6b7280; font-size:13px; cursor:pointer; margin-top:12px; }
-</style>
-
 <div id="pulsaCheckoutModal" class="modal-overlay" style="display:none;">
   <div class="checkout-modal-box">
 
@@ -870,11 +907,11 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="checkout-field">
             <label for="checkoutName">Nama Pembeli</label>
-            <input type="text" id="checkoutName" value="{{ auth()->check() ? auth()->user()->name : '' }}" readonly style="background:#f3f4f6;cursor:not-allowed;color:#6b7280;">
+            <input type="text" id="checkoutName" value="{{ $authUser ? $authUser->name : '' }}" readonly style="background:#f3f4f6;cursor:not-allowed;color:#6b7280;">
           </div>
           <div class="checkout-field">
             <label for="checkoutEmail">Email</label>
-            <input type="email" id="checkoutEmail" value="{{ auth()->check() ? auth()->user()->email : '' }}" readonly style="background:#f3f4f6;cursor:not-allowed;color:#6b7280;">
+            <input type="email" id="checkoutEmail" value="{{ $authUser ? $authUser->email : '' }}" readonly style="background:#f3f4f6;cursor:not-allowed;color:#6b7280;">
           </div>
           <div class="checkout-field">
             <label for="checkoutPaymentMethod">Metode Pembayaran</label>
@@ -908,7 +945,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="font-size:12px;color:#6b7280;margin-bottom:4px;" id="payCodeLabel">Nomor Virtual Account</div>
             <div style="display:flex;align-items:center;gap:10px;">
               <span id="payCodeValue" style="font-size:22px;font-weight:700;letter-spacing:2px;color:#111827;"></span>
-              <button onclick="copyPayCode()" style="padding:4px 10px;border:1.5px solid #6366f1;border-radius:6px;background:#fff;color:#6366f1;font-size:12px;font-weight:600;cursor:pointer;">Salin</button>
+              <button onclick="copyPayCode(this)" style="padding:4px 10px;border:1.5px solid #6366f1;border-radius:6px;background:#fff;color:#6366f1;font-size:12px;font-weight:600;cursor:pointer;">Salin</button>
             </div>
           </div>
 
@@ -938,17 +975,8 @@ function openPulsaCheckout(code) {
   document.getElementById('checkoutError').style.display = 'none';
   document.getElementById('checkoutPhone').value = '';
 
-  // Operator image
-  const imgMap = {
-    'S':   '{{ asset("assets/img/operators/telkomsel.png") }}',
-    'X':   '{{ asset("assets/img/operators/xl.png") }}',
-    'AX':  '{{ asset("assets/img/operators/axis.png") }}',
-    'I':   '{{ asset("assets/img/operators/indosat.png") }}',
-    'T':   '{{ asset("assets/img/operators/tri.png") }}',
-    'SM':  '{{ asset("assets/img/operators/smartfren.png") }}',
-    'BYU': '{{ asset("assets/img/operators/byu.png") }}',
-  };
-  const imgSrc = imgMap[item.operator_id] || '';
+  // Operator image (uses global OPERATOR_IMAGES)
+  const imgSrc = OPERATOR_IMAGES[item.operator_id] || '';
   const imgEl  = document.getElementById('modalOperatorImg');
   if (imgSrc) { imgEl.src = imgSrc; imgEl.style.display = 'block'; }
   else { imgEl.style.display = 'none'; }
@@ -968,22 +996,35 @@ function closePulsaModal() {
   document.body.style.overflow = '';
 }
 
+let _cachedChannels = null;
+
+function populateChannelSelect(sel, channels) {
+  sel.innerHTML = '<option value="">-- Pilih Metode Pembayaran --</option>';
+  channels.forEach(ch => {
+    const opt = document.createElement('option');
+    opt.value = ch.code;
+    opt.textContent = ch.name + (ch.fee_flat ? ' (+Rp ' + Number(ch.fee_flat).toLocaleString('id-ID') + ')' : '');
+    sel.appendChild(opt);
+  });
+  sel.disabled = false;
+}
+
 function loadPaymentChannels() {
   const sel = document.getElementById('checkoutPaymentMethod');
+
+  if (_cachedChannels) {
+    populateChannelSelect(sel, _cachedChannels);
+    return;
+  }
+
   sel.innerHTML = '<option value="">Memuat metode pembayaran...</option>';
   sel.disabled = true;
 
   fetch('/api/payment-channels')
     .then(r => r.json())
     .then(channels => {
-      sel.innerHTML = '<option value="">-- Pilih Metode Pembayaran --</option>';
-      (Array.isArray(channels) ? channels : []).forEach(ch => {
-        const opt = document.createElement('option');
-        opt.value = ch.code;
-        opt.textContent = ch.name + (ch.fee_flat ? ' (+Rp ' + Number(ch.fee_flat).toLocaleString('id-ID') + ')' : '');
-        sel.appendChild(opt);
-      });
-      sel.disabled = false;
+      _cachedChannels = Array.isArray(channels) ? channels : [];
+      populateChannelSelect(sel, _cachedChannels);
     })
     .catch(() => {
       sel.innerHTML = '<option value="">Gagal memuat, coba lagi</option>';
@@ -1000,7 +1041,7 @@ function submitPulsaCheckout() {
 
   errorEl.style.display = 'none';
 
-  if (!phone || phone.length < 9)  { showCheckoutError('Nomor HP tujuan tidak valid.'); return; }
+  if (!phone || !/^08[0-9]{7,12}$/.test(phone)) { showCheckoutError('Nomor HP tujuan tidak valid. Gunakan format 08xx.'); return; }
   if (!name)                        { showCheckoutError('Nama pembeli wajib diisi.'); return; }
   if (!email)                       { showCheckoutError('Email wajib diisi.'); return; }
   if (!method)                      { showCheckoutError('Pilih metode pembayaran terlebih dahulu.'); return; }
@@ -1049,10 +1090,9 @@ function submitPulsaCheckout() {
   });
 }
 
-function copyPayCode() {
+function copyPayCode(btn) {
   const code = document.getElementById('payCodeValue').textContent;
   navigator.clipboard.writeText(code).then(() => {
-    const btn = event.target;
     btn.textContent = 'Tersalin!';
     setTimeout(() => { btn.textContent = 'Salin'; }, 2000);
   });

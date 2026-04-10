@@ -143,29 +143,8 @@
     <div class="pd-info">
       <div class="pd-info-card">
 
-        <!-- Social proof -->
-        <div class="pd-social-row">
-          <span class="pd-badge pd-badge-fire">🔥 200+ terjual minggu ini</span>
-          <span class="pd-badge pd-badge-eye">👀 <span id="viewers-count">5</span> orang sedang melihat</span>
-        </div>
-
         <!-- Title -->
         <h1 class="pd-title">{{ $product->name }}</h1>
-
-        <!-- Rating -->
-        <div class="pd-rating-row">
-          <div class="pd-stars">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" style="clip-path:inset(0 20% 0 0)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
-          <span class="pd-rating-score">4.8</span>
-          <span class="pd-rating-count">(1.200 ulasan)</span>
-          <span class="pd-divider-dot">·</span>
-          <span class="pd-sold-count">2.500+ terjual</span>
-        </div>
 
         <!-- Price -->
         <div class="pd-price-wrap">

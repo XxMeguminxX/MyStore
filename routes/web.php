@@ -32,6 +32,7 @@ Route::post('/tripay/callback', [TripayController::class, 'handleCallback'])
 
 // Rute halaman terima kasih setelah kembali dari pembayaran
 Route::get('/payment/thank-you', [TripayController::class, 'thankYou'])->name('payment.thank-you');
+Route::get('/payment/check-status', [TripayController::class, 'checkPaymentStatus'])->name('payment.check-status');
 
 // Rute quantity/stock produk (bisa diakses tanpa login untuk get info, but admin access for updates)
 Route::post('/products/{id}/update-quantity', [ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');

@@ -17,11 +17,29 @@ class TripayController extends Controller
         $merchantRef = $request->query('merchant_ref');
         $transaction = null;
         if ($merchantRef) {
-            $transaction = Transaction::where('merchant_ref', $merchantRef)->first();
+            $transaction = Transaction::with('product')->where('merchant_ref', $merchantRef)->first();
         }
         return view('thank-you', [
             'transaction' => $transaction,
             'merchant_ref' => $merchantRef,
+        ]);
+    }
+
+    public function checkPaymentStatus(Request $request)
+    {
+        $merchantRef = $request->query('merchant_ref');
+        if (!$merchantRef) {
+            return response()->json(['error' => 'merchant_ref diperlukan'], 400);
+        }
+
+        $transaction = Transaction::where('merchant_ref', $merchantRef)->first();
+        if (!$transaction) {
+            return response()->json(['error' => 'Transaksi tidak ditemukan'], 404);
+        }
+
+        return response()->json([
+            'status'  => $transaction->status,
+            'paid_at' => $transaction->updated_at?->toISOString(),
         ]);
     }
 

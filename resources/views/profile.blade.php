@@ -217,7 +217,7 @@
                 @endphp
                 <div class="transaction-item" data-search="{{ strtolower($tx->merchant_ref . ' ' . $tx->getProductName()) }}">
                   <div class="transaction-item-header">
-                    <span class="transaction-ref">#{{ $tx->merchant_ref }}</span>
+                    <a class="transaction-ref" href="{{ route('payment.thank-you') }}?merchant_ref={{ $tx->merchant_ref }}">#{{ $tx->merchant_ref }}</a>
                     <span class="transaction-date">{{ $tx->created_at->format('d M Y, H:i') }}</span>
                   </div>
                   <div class="transaction-item-body">

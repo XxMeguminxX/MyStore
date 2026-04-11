@@ -155,9 +155,16 @@ class CartController extends Controller
     /**
      * Clear all items from cart
      */
-    public function clear(): RedirectResponse
+    public function clear(Request $request): JsonResponse|RedirectResponse
     {
         Cart::where('user_id', Auth::id())->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Keranjang berhasil dikosongkan'
+            ]);
+        }
 
         return back()->with('success', 'Keranjang berhasil dikosongkan');
     }

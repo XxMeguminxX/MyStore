@@ -289,6 +289,7 @@ async function changeQty(cartId, delta) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
       },
       body: JSON.stringify({ quantity: newQty })
@@ -323,7 +324,10 @@ async function removeItem(cartId, name) {
   try {
     const res = await fetch(`/cart/remove/${cartId}`, {
       method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        'Accept': 'application/json'
+      }
     });
     const data = await res.json();
     if (data.success) {
@@ -342,7 +346,10 @@ async function clearCart() {
   try {
     const res = await fetch('/cart/clear', {
       method: 'POST',
-      headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        'Accept': 'application/json'
+      }
     });
     const data = await res.json();
     if (data.success) {

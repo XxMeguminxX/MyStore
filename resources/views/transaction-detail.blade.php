@@ -12,15 +12,7 @@
   <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
   <style>
     /* ===== TRANSACTION DETAIL PAGE ===== */
-    .tx-page-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px; flex-wrap: wrap; gap: 8px;
-    }
-    .tx-page-title { font-size: 22px; font-weight: 800; color: var(--text); }
-    .tx-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-3); }
-    .tx-breadcrumb a { color: var(--text-2); text-decoration: none; transition: color var(--t); }
-    .tx-breadcrumb a:hover { color: var(--text); }
-    .tx-breadcrumb-sep { color: #ddd; }
+    .tx-page-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 20px; }
 
     /* Summary bar */
     .tx-summary {
@@ -52,7 +44,7 @@
       border-radius: var(--r-card); margin-bottom: 20px; overflow: hidden;
     }
     .detail-section-header { padding: 16px 24px; border-bottom: 1px solid var(--border); }
-    .detail-section-title { font-size: 15px; font-weight: 700; color: #0ea5e9; }
+    .detail-section-title { font-size: 15px; font-weight: 700; color: var(--text); }
     .detail-section-body { padding: 0 24px; }
 
     /* Two-column grid */
@@ -216,16 +208,14 @@
 <div class="page-wrap">
 
   <!-- Page header -->
-  <div class="tx-page-header">
-    <h1 class="tx-page-title">Detail Transaksi</h1>
-    <div class="tx-breadcrumb">
-      <a href="{{ url('/') }}">Beranda</a>
-      <span class="tx-breadcrumb-sep">›</span>
-      <a href="{{ route('profile') }}?tab=transactions">Histori Transaksi</a>
-      <span class="tx-breadcrumb-sep">›</span>
-      <span>Detail</span>
-    </div>
+  <div class="breadcrumb">
+    <a href="{{ url('/') }}">Beranda</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="{{ route('profile') }}?tab=transactions">Histori Transaksi</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-cur">Detail</span>
   </div>
+  <h1 class="tx-page-title">Detail Transaksi</h1>
 
   <!-- Summary bar -->
   <div class="tx-summary">

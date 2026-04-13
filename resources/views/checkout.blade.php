@@ -10,6 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('assets/css/checkout.css') }}?v={{ time() }}">
   <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css">
 </head>
 <body>
 
@@ -18,16 +21,12 @@
   <div class="checkout-header-inner">
     <a href="{{ url('/') }}" class="checkout-logo">
       <div class="checkout-logo-icon">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-        </svg>
+        <i class="ph-bold ph-lightning"></i>
       </div>
       <span class="checkout-logo-name">E Store ID</span>
     </a>
     <a href="{{ url('/') }}" class="checkout-back">
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-      </svg>
+      <i class="ph-bold ph-caret-left"></i>
       Kembali
     </a>
   </div>
@@ -55,9 +54,7 @@
 @if(isset($error))
 <div style="max-width:900px;margin:0 auto;padding:0 24px;">
   <div class="co-alert co-alert-error">
-    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-    </svg>
+    <i class="ph-bold ph-warning-circle" style="flex-shrink:0;"></i>
     {{ $error }}
   </div>
 </div>
@@ -164,9 +161,7 @@
           </div>
         @else
           <div class="co-alert co-alert-warning">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
+            <i class="ph-bold ph-warning" style="flex-shrink:0;"></i>
             Metode pembayaran tidak tersedia saat ini. Coba lagi nanti.
           </div>
         @endif
@@ -201,23 +196,21 @@
       <!-- Submit -->
       <div class="co-submit-area">
         <button class="btn-pay" id="btnPay" onclick="submitPayment()" {{ $product->stock == 0 ? 'disabled' : '' }}>
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-          </svg>
+          <i class="ph-bold ph-shield-check"></i>
           Bayar Sekarang
         </button>
 
         <div class="trust-row-co">
           <div class="trust-co-item">
-            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <i class="ph-bold ph-lock"></i>
             Pembayaran dienkripsi SSL
           </div>
           <div class="trust-co-item">
-            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <i class="ph-bold ph-lightning"></i>
             Aktivasi produk instan
           </div>
           <div class="trust-co-item">
-            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <i class="ph-bold ph-check-circle"></i>
             Garansi uang kembali
           </div>
         </div>
@@ -322,7 +315,7 @@ function resetBtn() {
   const btn = document.getElementById('btnPay');
   btn.disabled = false;
   btn.classList.remove('loading');
-  btn.innerHTML = `<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Bayar Sekarang`;
+  btn.innerHTML = `<i class="ph-bold ph-shield-check"></i> Bayar Sekarang`;
 }
 
 // Spinner animation

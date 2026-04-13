@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
   <link rel="stylesheet" href="{{ asset('assets/css/product-detail.css') }}?v={{ time() }}">
   <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css">
 </head>
 <body>
 
@@ -22,9 +25,7 @@
 
     <a href="{{ url('/') }}" class="nav-logo">
       <div class="nav-logo-icon">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-        </svg>
+        <i class="ph-bold ph-lightning"></i>
       </div>
       <span class="nav-logo-name">E Store ID</span>
     </a>
@@ -38,31 +39,27 @@
     <div class="nav-actions">
       @auth
         <a href="{{ route('cart.index') }}" class="nav-icon-btn" id="cartBtn" title="Keranjang">
-          <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
-          </svg>
+          <i class="ph-bold ph-shopping-bag"></i>
           <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
         </a>
 
         <div class="nav-user" id="navUser">
           <div class="nav-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
           <span class="nav-user-name">{{ Str::limit(auth()->user()->name, 12) }}</span>
-          <svg class="nav-user-caret" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-          </svg>
+          <i class="ph-bold ph-caret-down nav-user-caret"></i>
           <div class="nav-user-menu" id="navUserMenu">
             <a href="{{ url('/profile') }}">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4"/></svg>
+              <i class="ph-bold ph-user"></i>
               Profil
             </a>
             <a href="{{ route('transaction.history') }}">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              <i class="ph-bold ph-clock-counter-clockwise"></i>
               Histori Transaksi
             </a>
             <form method="POST" action="{{ route('logout') }}">
               @csrf
               <button type="submit" class="logout-btn">
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <i class="ph-bold ph-sign-out"></i>
                 Logout
               </button>
             </form>
@@ -99,13 +96,13 @@
 <!-- Flash alerts -->
 @if(session('success'))
   <div class="flash-alert flash-success">
-    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <i class="ph-bold ph-check-circle"></i>
     {{ session('success') }}
   </div>
 @endif
 @if(session('error'))
   <div class="flash-alert flash-error">
-    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <i class="ph-bold ph-warning-circle"></i>
     {{ session('error') }}
   </div>
 @endif
@@ -113,10 +110,10 @@
 <!-- Breadcrumb -->
 <div class="breadcrumb-bar">
   <a href="{{ route('dashboard') }}" class="breadcrumb-link">
-    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    <i class="ph-bold ph-house"></i>
     Beranda
   </a>
-  <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="breadcrumb-sep"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+  <i class="ph-bold ph-caret-right breadcrumb-sep"></i>
   <span class="breadcrumb-current">{{ $product->name }}</span>
 </div>
 
@@ -133,7 +130,7 @@
              src="{{ asset($product->image) }}"
              alt="{{ $product->name }}">
         <div class="pd-img-zoom-hint">
-          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+          <i class="ph-bold ph-magnifying-glass-plus"></i>
           Zoom
         </div>
       </div>
@@ -161,7 +158,7 @@
             </div>
           @elseif($product->stock > 0)
             <div class="pd-stock pd-stock-low">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+              <i class="ph-bold ph-warning"></i>
               Tersisa <strong>{{ $product->stock }} unit</strong> — Segera habis!
             </div>
             <div class="pd-urgency-bar">
@@ -169,7 +166,7 @@
             </div>
           @else
             <div class="pd-stock pd-stock-out">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <i class="ph-bold ph-x-circle"></i>
               Stok Habis
             </div>
           @endif
@@ -193,24 +190,24 @@
           @auth
             @if($product->isInStock())
               <a href="{{ route('beli', ['id' => $product->id]) }}" id="btn-beli-sekarang" class="pd-btn-primary">
-                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <i class="ph-bold ph-lightning"></i>
                 Beli Sekarang
               </a>
               <p class="pd-microcopy">⚡ Proses instan, tanpa ribet</p>
               <button type="button" class="pd-btn-secondary" id="btn-tambah-keranjang">
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5-5m-2.5 5L9.5 18M17 13l-2.5 5M9.5 18l-2.5-2M9.5 18h6.5"/></svg>
+                <i class="ph-bold ph-shopping-cart"></i>
                 Masukkan Keranjang
               </button>
             @else
               <button type="button" class="pd-btn-disabled" disabled>
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <i class="ph-bold ph-x-circle"></i>
                 Stok Habis
               </button>
             @endif
           @else
             @if($product->isInStock())
               <a href="{{ route('login') }}" class="pd-btn-primary">
-                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                <i class="ph-bold ph-sign-in"></i>
                 Login untuk Membeli
               </a>
               <p class="pd-microcopy">⚡ Proses instan setelah login</p>
@@ -224,7 +221,7 @@
         <div class="pd-trust-grid">
           <div class="pd-trust-item">
             <div class="pd-trust-icon">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              <i class="ph-bold ph-lock"></i>
             </div>
             <div>
               <p class="pd-trust-title">Pembayaran Aman</p>
@@ -233,7 +230,7 @@
           </div>
           <div class="pd-trust-item">
             <div class="pd-trust-icon">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              <i class="ph-bold ph-shield-check"></i>
             </div>
             <div>
               <p class="pd-trust-title">Garansi 100%</p>
@@ -242,7 +239,7 @@
           </div>
           <div class="pd-trust-item">
             <div class="pd-trust-icon">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <i class="ph-bold ph-lightning"></i>
             </div>
             <div>
               <p class="pd-trust-title">Aktivasi Instan</p>
@@ -258,7 +255,7 @@
   <!-- ========== DESCRIPTION ========== -->
   <div class="pd-desc-section">
     <div class="pd-section-header">
-      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <i class="ph-bold ph-file-text"></i>
       Deskripsi Produk
     </div>
     <div class="pd-desc-content">{!! nl2br(e($product->description)) !!}</div>
@@ -271,7 +268,7 @@
       <h2 class="pd-related-title">Produk Lainnya</h2>
       <a href="{{ route('dashboard') }}" class="pd-related-see-all">
         Lihat Semua
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <i class="ph-bold ph-caret-right"></i>
       </a>
     </div>
     <div class="pd-related-grid">
@@ -314,7 +311,7 @@
 <!-- Image Zoom Overlay -->
 <div class="pd-zoom-overlay" id="pdZoomOverlay">
   <button class="pd-zoom-close" id="pdZoomClose" aria-label="Tutup">
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    <i class="ph-bold ph-x"></i>
   </button>
   <img class="pd-zoom-img" id="pdZoomImg" src="" alt="">
 </div>
@@ -384,7 +381,7 @@
     } finally {
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5-5m-2.5 5L9.5 18M17 13l-2.5 5M9.5 18l-2.5-2M9.5 18h6.5"/></svg> Masukkan Keranjang';
+        btn.innerHTML = '<i class="ph-bold ph-shopping-cart"></i> Masukkan Keranjang';
       }
     }
   }
@@ -412,8 +409,8 @@
     var n = document.createElement('div');
     n.className = 'pd-notification pd-notification-' + type;
     n.innerHTML = (type === 'success'
-      ? '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
-      : '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+      ? '<i class="ph-bold ph-check-circle"></i>'
+      : '<i class="ph-bold ph-warning-circle"></i>'
     ) + ' ' + msg;
     document.body.appendChild(n);
     setTimeout(function() { n.classList.add('show'); }, 10);

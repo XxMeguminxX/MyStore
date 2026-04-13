@@ -6,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Histori Transaksi - E Store ID</title>
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('assets/css/transaction-history.css') }}">
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css">
 </head>
 
 <body class="body-background-3d page-account">

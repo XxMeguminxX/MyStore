@@ -142,6 +142,9 @@
       .tx-page-header { flex-direction: column; align-items: flex-start; }
     }
   </style>
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css">
 </head>
 <body>
 
@@ -150,9 +153,7 @@
   <div class="nav-inner">
     <a href="{{ url('/') }}" class="nav-logo">
       <div class="nav-logo-icon">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-        </svg>
+        <i class="ph-bold ph-lightning"></i>
       </div>
       <span class="nav-logo-name">E Store ID</span>
     </a>
@@ -163,29 +164,25 @@
     </div>
     <div class="nav-actions">
       <a href="{{ route('cart.index') }}" class="nav-icon-btn" title="Keranjang">
-        <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
-        </svg>
+        <i class="ph-bold ph-shopping-bag"></i>
       </a>
       <div class="nav-user" id="navUser">
         <div class="nav-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
         <span class="nav-user-name">{{ Str::limit(auth()->user()->name, 12) }}</span>
-        <svg class="nav-user-caret" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-        </svg>
+        <i class="ph-bold ph-caret-down nav-user-caret"></i>
         <div class="nav-user-menu" id="navUserMenu">
           <a href="{{ url('/profile') }}">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4"/></svg>
+            <i class="ph-bold ph-user"></i>
             Profil
           </a>
           <a href="{{ route('transaction.history') }}">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <i class="ph-bold ph-clock-counter-clockwise"></i>
             Histori Transaksi
           </a>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="logout-btn">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              <i class="ph-bold ph-sign-out"></i>
               Logout
             </button>
           </form>
@@ -242,9 +239,7 @@
   <div class="pay-banner">
     <div class="pay-banner-left">
       <div class="pay-banner-icon">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
+        <i class="ph-bold ph-clock" style="color:#d97706;font-size:20px;"></i>
       </div>
       <div>
         <div class="pay-banner-title">Menunggu Pembayaran</div>
@@ -252,9 +247,7 @@
       </div>
     </div>
     <a href="{{ $transaction->payment_url }}" target="_blank" rel="noopener noreferrer" class="btn-pay-banner">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-      </svg>
+      <i class="ph-bold ph-credit-card"></i>
       Bayar Sekarang
     </a>
   </div>

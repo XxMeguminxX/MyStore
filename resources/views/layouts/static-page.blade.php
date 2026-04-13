@@ -15,10 +15,10 @@
         .static-page-container a { color: var(--primary-color); text-decoration: none; }
         .static-page-container a:hover { text-decoration: underline; }
         .static-page-container .updated { font-size: 0.875rem; color: var(--text-light); margin-bottom: 1.5rem; }
-        .header-title { flex: 1; text-align: center; font-weight: 600; font-size: 1rem; }
-        .btn-kembali { display: inline-flex; align-items: center; gap: 8px; color: var(--primary-color); text-decoration: none; font-weight: 500; }
-        .btn-kembali:hover { text-decoration: underline; }
     </style>
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css">
 </head>
 <body class="body-background-3d">
     <div class="header-bar">

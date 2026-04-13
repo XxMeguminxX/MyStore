@@ -47,7 +47,8 @@ Route::get('/halaman/{slug}', [StaticPageController::class, 'show'])->name('stat
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-// Rute Pulsa — API endpoint
+// Rute Pulsa — halaman & API endpoint
+Route::get('/beli-pulsa', [PulsaController::class, 'page'])->name('pulsa.page');
 Route::get('/api/kategori', [PulsaController::class, 'getPricelist'])->name('pulsa.pricelist');
 
 // Pulsa topup routes

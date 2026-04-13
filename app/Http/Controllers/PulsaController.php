@@ -31,6 +31,11 @@ class PulsaController extends Controller
         return (isset($decoded['success']) && $decoded['success']) ? $decoded : null;
     }
 
+    public function page()
+    {
+        return view('beli-pulsa');
+    }
+
     public function getPricelist()
     {
         $result = Cache::remember('tripay_pulsa_pricelist', 3600, function () {

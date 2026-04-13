@@ -339,6 +339,9 @@
       .timer-value { font-size: 17px; }
     }
   </style>
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css">
 </head>
 <body>
 
@@ -364,9 +367,7 @@
   <!-- Logo -->
   <div class="logo">
     <div class="logo-icon">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-      </svg>
+      <i class="ph-bold ph-lightning"></i>
     </div>
     <span class="logo-name">E Store ID</span>
   </div>
@@ -397,7 +398,7 @@
 
     @if($isPending && $expiredTime)
       <div class="timer-row">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 6v6l4 2"/></svg>
+        <i class="ph-bold ph-clock"></i>
         <span class="timer-label">Bayar dalam</span>
         <span class="timer-value" id="timerValue">--:--:--</span>
       </div>
@@ -421,13 +422,13 @@
     <div class="pay-card">
       <div class="pay-card-header">
         @if($isQris)
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path stroke-linecap="round" d="M14 14h2m2 0h1m-3 2v1m0 2v1m2-3h1m0 2v1"/></svg>
+          <i class="ph-bold ph-qr-code"></i>
           Scan QR — {{ $payMethod }}
         @elseif($payCode)
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <i class="ph-bold ph-credit-card"></i>
           Kode Bayar — {{ $payMethod }}
         @else
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <i class="ph-bold ph-info"></i>
           {{ $payMethod }}
         @endif
       </div>
@@ -455,23 +456,23 @@
   <div class="cta-block">
     @if($isPending && $payUrl)
       <a href="{{ $payUrl }}" class="btn-primary" target="_blank" rel="noopener">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <i class="ph-bold ph-credit-card"></i>
         Bayar Sekarang
       </a>
       @if($isQris && $qrUrl)
         <a href="{{ $qrUrl }}" class="btn-text" download>
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <i class="ph-bold ph-download-simple"></i>
           Unduh QR
         </a>
       @endif
     @elseif($isSuccess)
       <a href="{{ route('transaction.history') }}" class="btn-primary success-btn">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <i class="ph-bold ph-clock-counter-clockwise"></i>
         Lihat Riwayat Transaksi
       </a>
     @elseif($isExpired)
       <a href="{{ url('/') }}" class="btn-primary expired-btn">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <i class="ph-bold ph-house"></i>
         Kembali ke Beranda
       </a>
     @endif
@@ -482,9 +483,7 @@
   <div class="accordion">
     <button class="accordion-trigger" id="accBtn" aria-expanded="false" onclick="toggleAcc()">
       <span>Detail Transaksi</span>
-      <svg class="acc-chevron" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-      </svg>
+      <i class="ph-bold ph-caret-down acc-chevron"></i>
     </button>
     <div class="accordion-body" id="accBody">
       @if($productName)
@@ -516,12 +515,12 @@
   <!-- ⑤ Footer Links -->
   <div class="footer-links">
     <a href="{{ url('/') }}" class="footer-link">
-      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <i class="ph-bold ph-house"></i>
       Beranda
     </a>
     <span class="footer-sep">·</span>
     <a href="{{ route('transaction.history') }}" class="footer-link">
-      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      <i class="ph-bold ph-clock-counter-clockwise"></i>
       Riwayat Transaksi
     </a>
   </div>

@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
   <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}?v={{ time() }}">
   <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css">
 </head>
 <body>
 
@@ -19,9 +22,7 @@
   <div class="nav-inner">
     <a href="{{ url('/') }}" class="nav-logo">
       <div class="nav-logo-icon">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-        </svg>
+        <i class="ph-bold ph-lightning"></i>
       </div>
       <span class="nav-logo-name">E Store ID</span>
     </a>
@@ -32,29 +33,25 @@
     </div>
     <div class="nav-actions">
       <a href="{{ route('cart.index') }}" class="nav-icon-btn" title="Keranjang">
-        <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
-        </svg>
+        <i class="ph-bold ph-shopping-bag"></i>
       </a>
       <div class="nav-user" id="navUser">
         <div class="nav-user-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
         <span class="nav-user-name">{{ Str::limit($user->name, 12) }}</span>
-        <svg class="nav-user-caret" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-        </svg>
+        <i class="ph-bold ph-caret-down nav-user-caret"></i>
         <div class="nav-user-menu" id="navUserMenu">
           <a href="{{ url('/profile') }}">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4"/></svg>
+            <i class="ph-bold ph-user"></i>
             Profil
           </a>
           <a href="{{ route('transaction.history') }}">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <i class="ph-bold ph-clock-counter-clockwise"></i>
             Histori Transaksi
           </a>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="logout-btn">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              <i class="ph-bold ph-sign-out"></i>
               Logout
             </button>
           </form>
@@ -100,15 +97,11 @@
       <!-- Nav -->
       <div class="sidebar-nav-card">
         <button class="sidebar-nav-btn active" id="tabBtnProfile" onclick="switchTab('profile', this)">
-          <svg class="sidebar-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-2.21 3.58-4 8-4s8 1.79 8 4"/>
-          </svg>
+          <i class="ph-bold ph-user sidebar-nav-icon"></i>
           Profil Saya
         </button>
         <button class="sidebar-nav-btn" id="tabBtnTransactions" onclick="switchTab('transactions', this)">
-          <svg class="sidebar-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-          </svg>
+          <i class="ph-bold ph-clock-counter-clockwise sidebar-nav-icon"></i>
           Histori Transaksi
           @if($transactions->count() > 0)
             <span style="margin-left:auto;background:#111;color:#fff;border-radius:999px;font-size:10px;font-weight:700;padding:1px 7px;">{{ $transactions->count() }}</span>
@@ -121,9 +114,7 @@
         <form method="POST" action="{{ route('logout') }}" class="sidebar-logout-form">
           @csrf
           <button type="submit" class="sidebar-logout-btn">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-            </svg>
+            <i class="ph-bold ph-sign-out"></i>
             Keluar
           </button>
         </form>
@@ -146,13 +137,13 @@
           <div class="profile-card-body">
             @if(session('success'))
               <div class="profile-alert profile-alert-success">
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <i class="ph-bold ph-check-circle"></i>
                 {{ session('success') }}
               </div>
             @endif
             @if(session('error'))
               <div class="profile-alert profile-alert-error">
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <i class="ph-bold ph-warning-circle"></i>
                 {{ session('error') }}
               </div>
             @endif
@@ -273,9 +264,7 @@
     <div class="modal-box-header">
       <span class="modal-box-title">Edit Profil</span>
       <button class="modal-close-btn" onclick="closeEditModal()">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
+        <i class="ph-bold ph-x"></i>
       </button>
     </div>
     <form method="POST" action="{{ route('profile.update') }}" class="modal-form" id="editForm">

@@ -136,7 +136,7 @@
 
     <!-- Hero Banner -->
     <div class="hero-banner">
-<div class="hero-bottom">
+      <div class="hero-bottom">
         <p class="hero-eyebrow">Spesialis Produk Digital</p>
         <h3 class="hero-headline">Temukan Produk Digital Terpercaya &amp; Bergaransi Hanya Di Sini.</h3>
       </div>
@@ -316,7 +316,7 @@
         <h2 class="cta-title">Mau Dapet Update Promo &amp; Info <em>Terbaru</em> Dari Kita?</h2>
         <div class="cta-input-row">
           <input type="email" class="cta-input" placeholder="Email kamu...">
-          <button class="cta-send-btn">Kirim</button>
+          <button class="cta-send-btn" disabled>Kirim</button>
         </div>
       </div>
       <div class="cta-right">
@@ -543,18 +543,6 @@ function showToast(msg, type = 'success') {
 function showLoginModal() { document.getElementById('loginModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeLoginModal() { document.getElementById('loginModal').classList.remove('open'); document.body.style.overflow = ''; }
 document.getElementById('loginModal').addEventListener('click', function(e) { if (e.target === this) closeLoginModal(); });
-
-// ===== HERO SEARCH =====
-function focusHeroSearch() {
-  document.getElementById('heroSearchInput').focus();
-  document.getElementById('beranda').scrollIntoView({ behavior: 'smooth' });
-}
-function runSearch() {
-  const q = document.getElementById('heroSearchInput').value.trim().toLowerCase();
-  searchProducts(q);
-  if (q) document.getElementById('produk').scrollIntoView({ behavior: 'smooth' });
-}
-document.getElementById('heroSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
 
 // ===== SEARCH / FILTER =====
 function searchProducts(q) {

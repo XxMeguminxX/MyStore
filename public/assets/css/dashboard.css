@@ -707,6 +707,7 @@ ul { list-style: none; }
   cursor: pointer; transition: background var(--t); white-space: nowrap;
 }
 .cta-send-btn:hover { background: #F0F0F0; }
+.cta-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .cta-desc-title {
   font-size: 10px; text-transform: uppercase;
   letter-spacing: 0.5em; color: rgba(255,255,255,0.35);

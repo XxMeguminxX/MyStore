@@ -140,8 +140,7 @@
 
     <!-- Hero Banner -->
     <div class="hero-banner">
-      <h2 class="hero-big-text">Shop</h2>
-      <div class="hero-bottom">
+<div class="hero-bottom">
         <p class="hero-eyebrow">Spesialis Produk Digital</p>
         <h3 class="hero-headline">Temukan Produk Digital Terpercaya &amp; Bergaransi Hanya Di Sini.</h3>
       </div>

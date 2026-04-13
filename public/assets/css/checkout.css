@@ -116,7 +116,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; bac
 .co-product-img img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
 .co-product-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; line-height: 1.4; }
 .co-product-meta { font-size: 12.5px; color: var(--text-2); margin-bottom: 12px; }
-.co-product-price { font-size: 20px; font-weight: 800; }
+.co-product-price { font-size: 20px; font-weight: 700; }
 
 /* Qty picker */
 .co-qty-row { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
@@ -195,7 +195,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; bac
 .order-row-val { font-weight: 600; }
 .order-divider { height: 1px; background: var(--border); margin: 12px 0; }
 .order-total-label { font-size: 14px; font-weight: 700; color: var(--text); }
-.order-total-val { font-size: 20px; font-weight: 800; }
+.order-total-val { font-size: 20px; font-weight: 700; }
 
 /* Submit */
 .co-submit-area { padding: 0 20px 20px; }

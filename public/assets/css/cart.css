@@ -92,7 +92,7 @@
   line-height: 30px; user-select: none;
 }
 
-.cart-item-subtotal { font-size: 15px; font-weight: 800; color: var(--text); text-align: right; white-space: nowrap; }
+.cart-item-subtotal { font-size: 15px; font-weight: 700; color: var(--text); text-align: right; white-space: nowrap; }
 
 .btn-remove-item {
   width: 32px; height: 32px; border-radius: 8px;
@@ -129,7 +129,7 @@
 .summary-row-val { font-weight: 600; color: var(--text); }
 .summary-divider { height: 1px; background: var(--border); margin: 4px 0; }
 .summary-total .summary-row-label { font-size: 14px; font-weight: 700; color: var(--text); }
-.summary-total .summary-row-val { font-size: 18px; font-weight: 800; }
+.summary-total .summary-row-val { font-size: 18px; font-weight: 700; }
 .cart-summary-footer { padding: 0 24px 24px; display: flex; flex-direction: column; gap: 8px; }
 
 .btn-checkout {

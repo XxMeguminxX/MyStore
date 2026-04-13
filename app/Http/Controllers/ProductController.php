@@ -19,9 +19,17 @@ class ProductController extends Controller
         }
 
         $relatedProducts = Product::where('id', '!=', $id)
+            ->where('category_id', $product->category_id)
             ->inRandomOrder()
             ->limit(6)
             ->get();
+
+        if ($relatedProducts->isEmpty()) {
+            $relatedProducts = Product::where('id', '!=', $id)
+                ->inRandomOrder()
+                ->limit(6)
+                ->get();
+        }
 
         return view('product-detail', compact('product', 'relatedProducts'));
     }

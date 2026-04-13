@@ -7,9 +7,9 @@
   <title>{{ $product->name }} — E Store ID</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
-  <link rel="stylesheet" href="{{ asset('assets/css/product-detail.css') }}?v={{ time() }}">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ filemtime(public_path('assets/css/dashboard.css')) }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/product-detail.css') }}?v={{ filemtime(public_path('assets/css/product-detail.css')) }}">
   <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
   <!-- Phosphor Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
@@ -20,19 +20,17 @@
 <!-- ============================================================
      NAVBAR
 ============================================================ -->
-<nav class="navbar" id="navbar">
-  <div class="nav-inner">
+<div class="navbar-wrap" id="navbarWrap">
+  <nav class="navbar" id="navbar">
 
     <a href="{{ url('/') }}" class="nav-logo">
-      <div class="nav-logo-icon">
-        <i class="ph-bold ph-lightning"></i>
-      </div>
       <span class="nav-logo-name">E Store ID</span>
     </a>
 
     <div class="nav-links">
+      <span class="nav-pill" id="navPill"></span>
       <a href="{{ url('/') }}">Beranda</a>
-      <a href="{{ url('/') }}#produk">Produk</a>
+      <a href="{{ url('/') }}#produk" class="active">Produk</a>
       <a href="{{ url('/halaman/cara-beli') }}">Cara Beli</a>
     </div>
 
@@ -74,8 +72,9 @@
     <button class="nav-hamburger" id="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-  </div>
-</nav>
+
+  </nav>
+</div>
 
 <!-- Mobile nav -->
 <div class="nav-mobile" id="navMobile">
@@ -92,6 +91,9 @@
     @endauth
   </div>
 </div>
+
+<!-- Page top spacer (clears fixed navbar: 16px top + 72px height + 16px gap) -->
+<div class="pd-nav-spacer"></div>
 
 <!-- Flash alerts -->
 @if(session('success'))
@@ -146,7 +148,6 @@
         <!-- Price -->
         <div class="pd-price-wrap">
           <span class="pd-price">Rp {{ number_format($product->price, 0, '', '.') }}</span>
-          <span class="pd-price-note">Harga sudah termasuk pajak</span>
         </div>
 
         <!-- Stock -->
@@ -190,12 +191,11 @@
           @auth
             @if($product->isInStock())
               <a href="{{ route('beli', ['id' => $product->id]) }}" id="btn-beli-sekarang" class="pd-btn-primary">
-                <i class="ph-bold ph-lightning"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 Beli Sekarang
               </a>
-              <p class="pd-microcopy">⚡ Proses instan, tanpa ribet</p>
               <button type="button" class="pd-btn-secondary" id="btn-tambah-keranjang">
-                <i class="ph-bold ph-shopping-cart"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
                 Masukkan Keranjang
               </button>
             @else
@@ -210,7 +210,6 @@
                 <i class="ph-bold ph-sign-in"></i>
                 Login untuk Membeli
               </a>
-              <p class="pd-microcopy">⚡ Proses instan setelah login</p>
             @else
               <button type="button" class="pd-btn-disabled" disabled>Stok Habis</button>
             @endif
@@ -255,8 +254,8 @@
   <!-- ========== DESCRIPTION ========== -->
   <div class="pd-desc-section">
     <div class="pd-section-header">
-      <i class="ph-bold ph-file-text"></i>
-      Deskripsi Produk
+      <div class="pd-section-bar"></div>
+      <span class="pd-section-label">Deskripsi Produk</span>
     </div>
     <div class="pd-desc-content">{!! nl2br(e($product->description)) !!}</div>
   </div>
@@ -265,13 +264,16 @@
   @if($relatedProducts->isNotEmpty())
   <div class="pd-related-section">
     <div class="pd-related-header">
-      <h2 class="pd-related-title">Produk Lainnya</h2>
+      <div>
+        <h2 class="pd-related-title">Cek Juga Yang Ini</h2>
+        <p class="pd-related-subtitle">Lengkapi kebutuhan digitalmu dalam satu checkout.</p>
+      </div>
       <a href="{{ route('dashboard') }}" class="pd-related-see-all">
-        Lihat Semua
+        Katalog Utama
         <i class="ph-bold ph-caret-right"></i>
       </a>
     </div>
-    <div class="pd-related-grid">
+    <div class="pd-related-track">
       @foreach($relatedProducts as $related)
       <a href="{{ route('product.show', $related->id) }}" class="pd-related-card">
         <div class="pd-related-img-wrap">
@@ -438,7 +440,15 @@
     document.body.style.overflow = '';
   }
 
-  /* ---- Navbar ---- */
+  /* ---- Navbar scroll ---- */
+  var navbarWrap = document.getElementById('navbarWrap');
+  if (navbarWrap) {
+    window.addEventListener('scroll', function() {
+      navbarWrap.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+  }
+
+  /* ---- Navbar interactions ---- */
   var navUser    = document.getElementById('navUser');
   var navMenu    = document.getElementById('navUserMenu');
   var hamburger  = document.getElementById('hamburger');
@@ -454,19 +464,15 @@
     hamburger.addEventListener('click', function() {
       hamburger.classList.toggle('open');
       navMobile.classList.toggle('open');
+      document.body.style.overflow = navMobile.classList.contains('open') ? 'hidden' : '';
     });
-  }
-
-  /* ---- Viewers randomize ---- */
-  var vEl = document.getElementById('viewers-count');
-  if (vEl) {
-    var count = Math.floor(Math.random() * 8) + 3;
-    vEl.textContent = count;
-    setInterval(function() {
-      var delta = Math.random() > 0.5 ? 1 : -1;
-      count = Math.max(2, Math.min(15, count + delta));
-      vEl.textContent = count;
-    }, 8000);
+    navMobile.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        hamburger.classList.remove('open');
+        navMobile.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
   }
 
   /* ---- Init ---- */

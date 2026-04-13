@@ -7,7 +7,7 @@
   <title>E Store ID — Produk Digital Terpercaya</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ filemtime(public_path('assets/css/dashboard.css')) }}">
   <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
   <!-- Phosphor Icons -->
@@ -148,7 +148,7 @@
       <div class="search-box">
         <i class="ph-bold ph-magnifying-glass"></i>
         <input type="text" id="heroSearchInput" placeholder="Search on E Store ID...">
-        <button class="search-btn" onclick="runSearch()">Search</button>
+        <button class="search-btn" onclick="searchProducts(document.getElementById('heroSearchInput').value.toLowerCase().trim())">Search</button>
       </div>
     </div>
 
@@ -225,7 +225,7 @@
                 <span class="product-img-letter">{{ strtoupper(substr($data->name, 0, 1)) }}</span>
                 <img src="{{ $data->image }}" alt="{{ $data->name }}" class="product-img-thumb"
                      onerror="this.style.display='none'">
-                <span class="product-badge-cat">Digital</span>
+                <span class="product-badge-cat">{{ $data->category->name ?? 'Digital' }}</span>
                 @if($badgeText)
                   <span class="product-badge-promo {{ $badgeClass }}">{{ $badgeText }}</span>
                 @endif
@@ -575,6 +575,13 @@ document.getElementById('carouselPrev')?.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
   updateCartCount();
   searchProducts('');
+
+  const heroInput = document.getElementById('heroSearchInput');
+  if (heroInput) {
+    heroInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') searchProducts(heroInput.value.toLowerCase().trim());
+    });
+  }
 });
 </script>
 

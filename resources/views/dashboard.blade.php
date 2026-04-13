@@ -60,11 +60,7 @@
     </div>
 
     <div class="nav-actions">
-      <button class="nav-icon-btn" onclick="focusHeroSearch()" title="Cari">
-        <i class="ph-bold ph-magnifying-glass"></i>
-      </button>
-
-      @auth
+@auth
         <a href="{{ route('cart.index') }}" class="nav-icon-btn" id="cartBtn" title="Keranjang">
           <i class="ph-bold ph-shopping-bag"></i>
           <span class="cart-badge" id="cartBadge" style="display:none;">0</span>

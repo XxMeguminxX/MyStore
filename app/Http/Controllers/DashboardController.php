@@ -42,7 +42,7 @@ class DashboardController extends Controller
                 break;
             case 'newest':
             default:
-                $query->orderBy('product.created_at', 'desc');
+                $query->orderBy('created_at', 'desc');
                 break;
         }
 

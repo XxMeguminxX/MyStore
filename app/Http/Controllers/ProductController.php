@@ -12,7 +12,7 @@ class ProductController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $product = Product::find($id);
+        $product = Product::with('category')->find($id);
 
         if (!$product) {
             return redirect()->route('dashboard')->with('error', 'Produk tidak ditemukan.');

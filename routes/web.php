@@ -95,7 +95,7 @@ Route::get('/test-cart', function () {
 // --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
 Route::middleware(['auth'])->group(function () {
     // Rute Beli Produk
-Route::get('/beli/{id}', [CheckoutController::class, 'beli'])->name('beli');
+    Route::get('/beli/{id}', [CheckoutController::class, 'beli'])->name('beli');
     // Rute Keranjang
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{productId}', [CartController::class, 'add'])->name('cart.add');

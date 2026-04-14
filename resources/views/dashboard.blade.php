@@ -212,10 +212,6 @@
           @forelse ($products as $data)
             @php
               $grad = $gradients[$loop->index % count($gradients)];
-              $badgeClass = ''; $badgeText = '';
-              if ($loop->index % 5 === 0)                          { $badgeClass = 'promo-terlaris'; $badgeText = 'Terlaris'; }
-              elseif ($loop->index % 5 === 2)                      { $badgeClass = 'promo-hot';      $badgeText = 'Hot'; }
-              elseif ($data->stock <= 5 && $data->stock > 0)       { $badgeClass = 'promo-hot';      $badgeText = 'Hot'; }
             @endphp
 
             <a href="{{ route('product.show', $data->id) }}" class="product-card"
@@ -226,9 +222,6 @@
                 <img src="{{ $data->image }}" alt="{{ $data->name }}" class="product-img-thumb"
                      onerror="this.style.display='none'">
                 <span class="product-badge-cat">{{ $data->category->name ?? 'Digital' }}</span>
-                @if($badgeText)
-                  <span class="product-badge-promo {{ $badgeClass }}">{{ $badgeText }}</span>
-                @endif
               </div>
               <div class="product-info">
                 <h5 class="product-name">{{ $data->name }}</h5>

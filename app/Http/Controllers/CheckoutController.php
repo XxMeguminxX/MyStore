@@ -50,6 +50,9 @@ class CheckoutController extends Controller
         if (empty($channels)) {
             $error = 'Gagal memuat metode pembayaran. Silakan coba lagi.';
             Log::warning('Failed to load payment channels for checkout', ['product_id' => $id]);
+        } else {
+            // View menggunakan sintaks object ($ch->active, $ch->code, dst.)
+            $channels = array_map(fn($ch) => (object) $ch, $channels);
         }
 
         $maxQty          = min($product->stock, 100);

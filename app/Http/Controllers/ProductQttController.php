@@ -7,8 +7,6 @@ use App\Models\Product; // Pastikan kamu mengimpor model Product
 
 class ProductQttController extends Controller
 {
-    // ... fungsi-fungsi lain yang sudah ada ...
-
     /**
      * Memperbarui stock produk di database.
      *

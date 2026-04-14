@@ -193,11 +193,11 @@ class PulsaTransactionController extends Controller
 
         $trx = PulsaTransaction::where('merchant_ref', $merchantRef)->first();
         if (!$trx) {
-            // Bukan pulsa transaction — mungkin milik TripayController, kembalikan 200 agar tidak error
+            // Bukan pulsa transaction — mungkin milik TripayController, kembalikan 200 agar tidak retry
             Log::info('Pulsa callback: merchant_ref not found in pulsa_transactions, skipping', [
                 'merchant_ref' => $merchantRef,
             ]);
-            return response()->json(['success' => true, 'message' => 'Transaction not found'], 404);
+            return response()->json(['success' => true, 'message' => 'Transaction not found in pulsa records']);
         }
 
         // Update status

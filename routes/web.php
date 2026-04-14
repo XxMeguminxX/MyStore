@@ -28,17 +28,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rute Tripay Callback (tidak memerlukan autentikasi) - tanpa CSRF & tanpa grup web
 Route::post('/tripay/callback', [TripayController::class, 'handleCallback'])
-    ->withoutMiddleware(['web', VerifyCsrfToken::class, \App\Http\Middleware\VerifyCsrfToken::class]);
+    ->withoutMiddleware(['web', VerifyCsrfToken::class]);
 
 // Rute halaman terima kasih setelah kembali dari pembayaran
 Route::get('/payment/thank-you', [TripayController::class, 'thankYou'])->name('payment.thank-you');
 Route::get('/payment/check-status', [TripayController::class, 'checkPaymentStatus'])->name('payment.check-status');
-
-// Rute quantity/stock produk (bisa diakses tanpa login untuk get info, but admin access for updates)
-Route::post('/products/{id}/update-quantity', [ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');
-Route::get('/products/{id}/stock-info', [ProductQttController::class, 'getStockInfo'])->name('products.stock_info');
-Route::post('/products/{id}/add-stock', [ProductQttController::class, 'addStock'])->name('products.add_stock');
-Route::post('/products/{id}/reduce-stock', [ProductQttController::class, 'reduceStock'])->name('products.reduce_stock');
 
 // Rute Halaman Statis (bisa diakses tanpa login)
 Route::get('/halaman/{slug}', [StaticPageController::class, 'show'])->name('static.page');
@@ -55,47 +49,16 @@ Route::get('/api/kategori', [PulsaController::class, 'getPricelist'])->name('pul
 Route::get('/api/payment-channels', [PulsaTransactionController::class, 'paymentChannels']);
 Route::post('/api/transaksi', [PulsaTransactionController::class, 'store'])->middleware('auth');
 Route::post('/api/callback', [PulsaTransactionController::class, 'callback'])
-    ->withoutMiddleware(['web', VerifyCsrfToken::class, \App\Http\Middleware\VerifyCsrfToken::class]);
+    ->withoutMiddleware(['web', VerifyCsrfToken::class]);
+
 // Rute Detail Produk (bisa diakses tanpa login, untuk lihat detail & lanjut beli)
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
-
-// Test route for cart functionality
-Route::get('/test-cart', function () {
-    try {
-        // Test 1: Check if we can query the carts table
-        $cartCount = \App\Models\Cart::count();
-
-        // Test 2: Check if we can create a cart item (if user is logged in)
-        $testResult = 'No test performed';
-        if (auth()->check()) {
-            $testResult = 'User authenticated, cart ready to use';
-        } else {
-            $testResult = 'User not authenticated, please login first';
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Cart functionality test completed!',
-            'data' => [
-                'total_cart_items' => $cartCount,
-                'authentication_status' => auth()->check() ? 'Logged in' : 'Not logged in',
-                'test_result' => $testResult
-            ]
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'error' => $e->getMessage(),
-            'file' => basename($e->getFile()),
-            'line' => $e->getLine()
-        ]);
-    }
-});
 
 // --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
 Route::middleware(['auth'])->group(function () {
     // Rute Beli Produk
     Route::get('/beli/{id}', [CheckoutController::class, 'beli'])->name('beli');
+
     // Rute Keranjang
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{productId}', [CartController::class, 'add'])->name('cart.add');
@@ -104,22 +67,26 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
 
+    // Rute quantity/stock produk (hanya admin)
+    Route::post('/products/{id}/update-quantity', [ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');
+    Route::get('/products/{id}/stock-info', [ProductQttController::class, 'getStockInfo'])->name('products.stock_info');
+    Route::post('/products/{id}/add-stock', [ProductQttController::class, 'addStock'])->name('products.add_stock');
+    Route::post('/products/{id}/reduce-stock', [ProductQttController::class, 'reduceStock'])->name('products.reduce_stock');
+
     // Rute Histori Transaksi — redirect ke halaman profil tab transaksi
-Route::get('/transaction-history', function () {
-    return redirect()->route('profile', ['tab' => 'transactions']);
-})->name('transaction.history');
-Route::get('/transaction/{merchantRef}', [TransactionHistoryController::class, 'show'])->name('transaction.detail');
-Route::post('/transaction/update-status', [TransactionHistoryController::class, 'updateStatus'])->name('transaction.update-status');
-Route::post('/transaction/manual-update-status', [TransactionHistoryController::class, 'manualUpdateStatus'])->name('transaction.manual-update-status');
-Route::get('/callback-logs', [TransactionHistoryController::class, 'viewCallbackLogs'])->name('callback.logs');
-Route::post('/test-callback/{transactionId}', [TransactionHistoryController::class, 'testCallback'])->name('test.callback');
+    Route::get('/transaction-history', function () {
+        return redirect()->route('profile', ['tab' => 'transactions']);
+    })->name('transaction.history');
+    Route::get('/transaction/{merchantRef}', [TransactionHistoryController::class, 'show'])->name('transaction.detail');
+    Route::post('/transaction/update-status', [TransactionHistoryController::class, 'updateStatus'])->name('transaction.update-status');
+    Route::post('/transaction/manual-update-status', [TransactionHistoryController::class, 'manualUpdateStatus'])->name('transaction.manual-update-status');
+    Route::get('/callback-logs', [TransactionHistoryController::class, 'viewCallbackLogs'])->name('callback.logs');
+    Route::post('/test-callback/{transactionId}', [TransactionHistoryController::class, 'testCallback'])->name('test.callback');
 
     // Rute Tripay Transactions
-Route::post('/tripay/transaction', [TripayController::class, 'createTransaction']);
+    Route::post('/tripay/transaction', [TripayController::class, 'createTransaction']);
 
     // Rute Profil
-Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
-
-// (dihapus duplikat rute quantity produk)

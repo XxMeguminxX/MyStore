@@ -109,7 +109,7 @@
         <div class="cart-item" id="cart-item-{{ $cart->id }}">
           <!-- Image -->
           <div class="cart-item-img" style="background: {{ $grad }};">
-            <img src="{{ $cart->product->image }}" alt="{{ $cart->product->name }}" onerror="this.style.display='none'">
+            <img src="{{ asset($cart->product->image) }}" alt="{{ $cart->product->name }}" onerror="this.style.display='none'">
           </div>
 
           <!-- Info -->

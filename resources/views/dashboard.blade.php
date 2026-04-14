@@ -219,7 +219,7 @@
                data-name="{{ strtolower($data->name) }}">
               <div class="product-img-wrap" style="background: {{ $grad }};">
                 <span class="product-img-letter">{{ strtoupper(substr($data->name, 0, 1)) }}</span>
-                <img src="{{ $data->image }}" alt="{{ $data->name }}" class="product-img-thumb"
+                <img src="{{ asset($data->image) }}" alt="{{ $data->name }}" class="product-img-thumb"
                      onerror="this.style.display='none'">
                 <span class="product-badge-cat">{{ $data->category->name ?? 'Digital' }}</span>
               </div>
@@ -284,7 +284,7 @@
           <a href="{{ route('product.show', $item->id) }}" class="product-card">
             <div class="product-img-wrap" style="background: {{ $carouselGrads[$ci % count($carouselGrads)] }};">
               <span class="product-img-letter">{{ strtoupper(substr($item->name, 0, 1)) }}</span>
-              <img src="{{ $item->image }}" alt="{{ $item->name }}" class="product-img-thumb" onerror="this.style.display='none'">
+              <img src="{{ asset($item->image) }}" alt="{{ $item->name }}" class="product-img-thumb" onerror="this.style.display='none'">
               <span class="product-badge-cat">Digital</span>
             </div>
             <div class="product-info">

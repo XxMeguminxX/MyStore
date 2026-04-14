@@ -75,7 +75,7 @@
       <div class="co-card-body">
         <div class="co-product">
           <div class="co-product-img" style="background:linear-gradient(135deg,#6C63FF,#a78bfa);">
-            <img src="{{ $product->image }}" alt="{{ $product->name }}" onerror="this.style.display='none'">
+            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" onerror="this.style.display='none'">
           </div>
           <div style="flex:1;">
             <div class="co-product-name">{{ $product->name }}</div>

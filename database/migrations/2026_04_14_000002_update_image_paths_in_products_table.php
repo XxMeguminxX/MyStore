@@ -10,10 +10,10 @@ return new class extends Migration
         // Strip domain prefix dari URL absolut, simpan hanya path relatif
         // Contoh: https://admin.erikwahyusaputra.my.id/uploads/products/file.png
         //      → uploads/products/file.png
-        DB::table('products')->get()->each(function ($row) {
+        DB::table('product')->get()->each(function ($row) {
             $updated = preg_replace('#^https?://[^/]+/#', '', $row->image);
             if ($updated !== $row->image) {
-                DB::table('products')->where('id', $row->id)->update(['image' => $updated]);
+                DB::table('product')->where('id', $row->id)->update(['image' => $updated]);
             }
         });
     }

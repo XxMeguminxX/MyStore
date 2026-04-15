@@ -11,38 +11,48 @@
   <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
   <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}?v={{ time() }}">
   <link rel="icon" type="image/png" href="{{ asset('assets/img/icon.png') }}">
-  <!-- Phosphor Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css">
 </head>
 <body>
+
+<!-- CONFIRM MODAL -->
+<div class="prf-confirm-overlay" id="confirmModal">
+  <div class="prf-confirm-backdrop"></div>
+  <div class="prf-confirm-card">
+    <div class="prf-confirm-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+    </div>
+    <div class="prf-confirm-body">
+      <h3 class="prf-confirm-title">Yakin Mau Simpan?</h3>
+      <p class="prf-confirm-desc">Pastiin data yang kamu input udah bener. Perubahan ini bakal langsung disimpan ke sistem.</p>
+    </div>
+    <div class="prf-confirm-actions">
+      <button onclick="submitEditForm()" class="prf-confirm-btn-ok">Simpan Sekarang</button>
+      <button onclick="closeConfirmModal()" class="prf-confirm-btn-cancel">Batal Dulu</button>
+    </div>
+  </div>
+</div>
 
 <!-- NAVBAR -->
 <div class="navbar-wrap" id="navbarWrap">
   <nav class="navbar" id="navbar">
-
     <a href="{{ url('/') }}" class="nav-logo">
       <span class="nav-logo-name">E Store ID</span>
     </a>
-
     <div class="nav-links" id="navLinks">
       <span class="nav-pill" id="navPill"></span>
       <a href="{{ url('/') }}">Beranda</a>
       <a href="{{ url('/#produk') }}">Produk</a>
       <a href="{{ url('/halaman/cara-beli') }}">Cara Beli</a>
     </div>
-
     <div class="nav-actions">
       <a href="{{ route('cart.index') }}" class="nav-icon-btn" title="Keranjang">
         <i class="ph-bold ph-shopping-cart-simple"></i>
       </a>
-
       <div class="nav-user" id="navUser">
         <div class="nav-user-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
         <i class="ph-bold ph-caret-down nav-user-caret"></i>
-
         <div class="nav-user-menu" id="navUserMenu">
-          {{-- Header: avatar + name + email --}}
           <div class="num-header">
             <div class="num-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
             <div class="num-info">
@@ -50,8 +60,6 @@
               <p class="num-email">{{ Str::limit($user->email, 26) }}</p>
             </div>
           </div>
-
-          {{-- Menu links --}}
           <div class="num-links">
             <a href="{{ url('/profile') }}" class="num-link">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
@@ -62,8 +70,6 @@
               Pesanan Saya
             </a>
           </div>
-
-          {{-- Logout --}}
           <div class="num-logout-wrap">
             <form method="POST" action="{{ route('logout') }}">
               @csrf
@@ -76,7 +82,6 @@
         </div>
       </div>
     </div>
-
     <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
   </nav>
 </div>
@@ -90,222 +95,178 @@
 </div>
 
 <!-- MAIN -->
-<div class="page-wrap">
+<div class="prf-wrap">
 
-  <div class="breadcrumb">
-    <a href="{{ url('/') }}">Beranda</a>
-    <span class="breadcrumb-sep">›</span>
-    <span class="breadcrumb-cur">Profil Saya</span>
+  <!-- Page Header -->
+  <div class="prf-page-header" id="pageHeader">
+    <div class="prf-page-icon" id="pageIcon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="pageIconSvg"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+    <div>
+      <h2 class="prf-page-title" id="pageTitle">Profil Saya</h2>
+      <p class="prf-page-subtitle" id="pageSubtitle">Manage Your Digital Identity</p>
+    </div>
   </div>
 
-  <div class="profile-layout">
+  <!-- Layout -->
+  <div class="prf-layout">
 
-    <!-- SIDEBAR -->
-    <aside class="profile-sidebar">
-      <!-- User card -->
-      <div class="sidebar-user-card">
-        <div class="sidebar-user-hero"></div>
-        <div class="sidebar-user-body">
-          <div class="sidebar-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
-          <div class="sidebar-name">{{ $user->name }}</div>
-          <div class="sidebar-email">{{ $user->email }}</div>
-          <div class="sidebar-joined">Bergabung sejak {{ $user->created_at->format('M Y') }}</div>
-        </div>
-      </div>
-
-      <!-- Nav -->
-      <div class="sidebar-nav-card">
-        <button class="sidebar-nav-btn active" id="tabBtnProfile" onclick="switchTab('profile', this)">
-          <i class="ph-bold ph-user sidebar-nav-icon"></i>
-          Profil Saya
-        </button>
-        <button class="sidebar-nav-btn" id="tabBtnTransactions" onclick="switchTab('transactions', this)">
-          <i class="ph-bold ph-clock-counter-clockwise sidebar-nav-icon"></i>
-          Histori Transaksi
-          @if($transactions->count() > 0)
-            <span style="margin-left:auto;background:#111;color:#fff;border-radius:999px;font-size:10px;font-weight:700;padding:1px 7px;">{{ $transactions->count() }}</span>
-          @endif
-        </button>
-      </div>
-
-      <!-- Logout -->
-      <div class="sidebar-logout-card">
-        <form method="POST" action="{{ route('logout') }}" class="sidebar-logout-form">
-          @csrf
-          <button type="submit" class="sidebar-logout-btn">
-            <i class="ph-bold ph-sign-out"></i>
-            Keluar
-          </button>
-        </form>
-      </div>
+    <!-- Sidebar -->
+    <aside class="prf-sidebar">
+      <button class="prf-nav-btn active" id="navBtnProfile" onclick="switchTab('profile', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Edit Profil
+      </button>
+      <button class="prf-nav-btn" id="navBtnTransactions" onclick="switchTab('transactions', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Histori Transaksi
+        @if($transactions->count() > 0)
+          <span class="prf-nav-badge">{{ $transactions->count() }}</span>
+        @endif
+      </button>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="profile-main">
+    <!-- Content -->
+    <div class="prf-content">
 
       <!-- ===== TAB: PROFIL ===== -->
-      <div class="tab-content active" id="tab-profile">
-        <div class="profile-card">
-          <div class="profile-card-header">
-            <span class="profile-card-title">Informasi Akun</span>
-            <button onclick="openEditModal()" style="font-size:13px;font-weight:600;color:#6C63FF;background:none;border:none;cursor:pointer;padding:6px 12px;border-radius:999px;border:1px solid #DDD6FE;transition:all 0.22s;"
-              onmouseover="this.style.background='#F5F3FF'" onmouseout="this.style.background='none'">
+      <div class="prf-tab active" id="tab-profile">
+
+        @if(session('success'))
+          <div class="prf-alert prf-alert-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            {{ session('success') }}
+          </div>
+        @endif
+        @if(session('error'))
+          <div class="prf-alert prf-alert-error">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            {{ session('error') }}
+          </div>
+        @endif
+
+        <div class="prf-card">
+          <div class="prf-card-top">
+            <h3 class="prf-card-heading">Data Pribadi</h3>
+            <button type="button" class="prf-btn-edit" id="btnEditProfile" onclick="enableEditMode()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               Edit Profil
             </button>
           </div>
-          <div class="profile-card-body">
-            @if(session('success'))
-              <div class="profile-alert profile-alert-success">
-                <i class="ph-bold ph-check-circle"></i>
-                {{ session('success') }}
-              </div>
-            @endif
-            @if(session('error'))
-              <div class="profile-alert profile-alert-error">
-                <i class="ph-bold ph-warning-circle"></i>
-                {{ session('error') }}
-              </div>
-            @endif
 
-            <div class="profile-form">
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label">Nama Lengkap</label>
-                  <div class="form-input" style="background:var(--bg-card);color:var(--text-2);">{{ $user->name }}</div>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Email</label>
-                  <div class="form-input" style="background:var(--bg-card);color:var(--text-2);">{{ $user->email }}</div>
-                </div>
+          <form method="POST" action="{{ route('profile.update') }}" id="editForm">
+            @csrf
+
+            <!-- Avatar Row -->
+            <div class="prf-avatar-row">
+              <div class="prf-avatar-wrap">
+                <div class="prf-avatar-circle">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Nomor Telepon</label>
-                <div class="form-input" style="background:var(--bg-card);color:var(--text-2);">
-                  {{ $user->phone ?? 'Belum diisi' }}
-                </div>
-                @if(!$user->phone)
-                  <span class="form-input-hint">Tambahkan nomor telepon untuk mempermudah transaksi.</span>
-                @endif
-              </div>
-              <div class="form-group">
-                <label class="form-label">Bergabung Sejak</label>
-                <div class="form-input" style="background:var(--bg-card);color:var(--text-2);">
-                  {{ $user->created_at->format('d F Y') }}
-                </div>
-              </div>
-              <div>
-                <button onclick="openEditModal()" class="btn-save-profile">Edit Profil</button>
+              <div class="prf-avatar-info">
+                <p class="prf-avatar-label">Foto Profil</p>
+                <p class="prf-avatar-hint">Pake foto yang paling kece biar makin slay!</p>
               </div>
             </div>
-          </div>
+
+            <!-- Fields -->
+            <div class="prf-fields">
+              <div class="prf-field">
+                <label class="prf-field-label">Nama Lengkap</label>
+                <input type="text" name="name" id="inputName" class="prf-field-input prf-field-disabled" value="{{ $user->name }}" placeholder="Nama Lengkap Lo..." required disabled>
+              </div>
+              <div class="prf-fields-row">
+                <div class="prf-field">
+                  <label class="prf-field-label">Email</label>
+                  <input type="email" name="email" class="prf-field-input prf-field-readonly" value="{{ $user->email }}" readonly>
+                  <span class="prf-field-hint">Email tidak dapat diubah.</span>
+                </div>
+                <div class="prf-field">
+                  <label class="prf-field-label">Nomor Telepon</label>
+                  <input type="tel" name="phone" id="inputPhone" class="prf-field-input prf-field-disabled" value="{{ $user->phone }}" placeholder="08xxxxxxxxxx" maxlength="13" disabled>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Actions (hanya muncul saat edit mode) -->
+        <div class="prf-form-actions" id="formActions" style="display:none;">
+          <button type="button" onclick="cancelEditMode()" class="prf-btn-cancel">Batal</button>
+          <button type="button" onclick="openConfirmModal()" class="prf-btn-save">Simpan Data</button>
         </div>
       </div>
 
       <!-- ===== TAB: TRANSAKSI ===== -->
-      <div class="tab-content" id="tab-transactions">
-        <div class="profile-card">
-          <div class="profile-card-header">
-            <span class="profile-card-title">Histori Transaksi</span>
-            <span style="font-size:12.5px;color:var(--text-3);">{{ $transactions->count() }} transaksi</span>
-          </div>
-          <div class="profile-card-body">
-            @if($transactions->count() > 0)
-              <div class="transactions-toolbar">
-                <input type="text" class="transactions-search" id="txSearch" placeholder="Cari transaksi..." oninput="filterTx()">
-              </div>
-              <div id="txList">
-                @foreach($transactions as $tx)
-                @php
-                  $statusMap = [
-                    'PAID'    => ['label' => 'Lunas',    'class' => 'status-paid'],
-                    'UNPAID'  => ['label' => 'Menunggu', 'class' => 'status-unpaid'],
-                    'FAILED'  => ['label' => 'Gagal',    'class' => 'status-failed'],
-                    'EXPIRED' => ['label' => 'Kedaluwarsa','class'=> 'status-expired'],
-                    'REFUND'  => ['label' => 'Refund',   'class' => 'status-refund'],
-                  ];
-                  $st = $statusMap[strtoupper($tx->status)] ?? ['label' => $tx->status, 'class' => 'status-unpaid'];
-                @endphp
-                <div class="transaction-item"
-                  data-search="{{ strtolower($tx->merchant_ref . ' ' . $tx->getProductName()) }}"
-                  data-status-raw="{{ strtoupper($tx->status) }}"
-                  data-timestamp="{{ $tx->created_at->timestamp }}"
-                  data-ref="{{ $tx->merchant_ref }}"
-                  data-product="{{ $tx->getProductName() }}"
-                  data-qty="{{ $tx->quantity ?? 1 }}"
-                  data-amount="Rp {{ number_format($tx->amount, 0, ',', '.') }}"
-                  data-method="{{ $tx->payment_method ?? '-' }}"
-                  data-date="{{ $tx->created_at->format('d M Y, H:i') }}"
-                  data-status-label="{{ $st['label'] }}"
-                  data-status-class="{{ $st['class'] }}"
-                  data-payment-url="{{ $tx->payment_url ?? '' }}"
-                  onclick="window.location.href='/transaction/'+this.dataset.ref"
-                >
-                  <div class="transaction-item-header">
-                    <span class="transaction-ref">#{{ $tx->merchant_ref }}</span>
-                    <span class="transaction-date">{{ $tx->created_at->format('d M Y, H:i') }}</span>
-                  </div>
-                  <div class="transaction-item-body">
-                    <div>
-                      <div class="transaction-product">
-                        {{ $tx->getProductName() }}
-                        @if($tx instanceof \App\Models\PulsaTransaction)
-                          <span style="font-size:10px;font-weight:700;background:#EDE9FE;color:#7C3AED;border-radius:4px;padding:1px 6px;margin-left:4px;">PULSA</span>
-                        @endif
-                      </div>
-                      <div class="transaction-meta">
-                        {{ $tx->quantity ?? 1 }} item · {{ $tx->payment_method ?? '-' }}
-                      </div>
-                    </div>
-                    <div class="transaction-amount">Rp {{ number_format($tx->amount, 0, ',', '.') }}</div>
-                    <span class="transaction-status {{ $st['class'] }}">{{ $st['label'] }}</span>
-                  </div>
-                </div>
-                @endforeach
-              </div>
-            @else
-              <div class="empty-transactions">
-                <div class="empty-transactions-icon">📋</div>
-                <h4>Belum Ada Transaksi</h4>
-                <p>Kamu belum pernah melakukan pembelian.</p>
-              </div>
-            @endif
-          </div>
+      <div class="prf-tab" id="tab-transactions">
+
+        <!-- Filter Tabs -->
+        <div class="prf-filter-tabs" id="filterTabs">
+          <button class="prf-filter-btn active" onclick="filterByStatus('all', this)">Semua</button>
+          <button class="prf-filter-btn" onclick="filterByStatus('PAID', this)">Selesai</button>
+          <button class="prf-filter-btn" onclick="filterByStatus('UNPAID', this)">Proses</button>
+          <button class="prf-filter-btn" onclick="filterByStatus('FAILED', this)">Gagal</button>
         </div>
+
+        <!-- Transaction List -->
+        <div class="prf-tx-list" id="txList">
+          @if($transactions->count() > 0)
+            @foreach($transactions as $tx)
+            @php
+              $statusMap = [
+                'PAID'    => ['label' => 'Lunas',       'class' => 'tx-status-paid'],
+                'UNPAID'  => ['label' => 'Menunggu',    'class' => 'tx-status-unpaid'],
+                'FAILED'  => ['label' => 'Gagal',       'class' => 'tx-status-failed'],
+                'EXPIRED' => ['label' => 'Kedaluwarsa', 'class' => 'tx-status-expired'],
+                'REFUND'  => ['label' => 'Refund',      'class' => 'tx-status-refund'],
+              ];
+              $st = $statusMap[strtoupper($tx->status)] ?? ['label' => $tx->status, 'class' => 'tx-status-unpaid'];
+            @endphp
+            <div class="prf-tx-item"
+              data-status="{{ strtoupper($tx->status) }}"
+              onclick="window.location.href='/transaction/{{ $tx->merchant_ref }}'">
+              <div class="prf-tx-left">
+                <div class="prf-tx-img">
+                  @if($tx instanceof \App\Models\PulsaTransaction)
+                    <span class="prf-tx-img-icon">⚡</span>
+                  @else
+                    <span class="prf-tx-img-icon">📦</span>
+                  @endif
+                </div>
+                <div class="prf-tx-info">
+                  <p class="prf-tx-ref">#{{ $tx->merchant_ref }}</p>
+                  <h4 class="prf-tx-name">
+                    {{ $tx->getProductName() }}
+                    @if($tx instanceof \App\Models\PulsaTransaction)
+                      <span class="prf-tx-tag-pulsa">PULSA</span>
+                    @endif
+                  </h4>
+                  <p class="prf-tx-date">{{ $tx->created_at->format('d M Y') }} · {{ $tx->created_at->format('H:i') }} WIB</p>
+                </div>
+              </div>
+              <div class="prf-tx-right">
+                <div class="prf-tx-amount-wrap">
+                  <p class="prf-tx-amount">Rp {{ number_format($tx->amount, 0, ',', '.') }}</p>
+                  <span class="prf-tx-status {{ $st['class'] }}">{{ $st['label'] }}</span>
+                </div>
+                <button class="prf-tx-arrow" onclick="event.stopPropagation(); window.location.href='/transaction/{{ $tx->merchant_ref }}'">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+              </div>
+            </div>
+            @endforeach
+          @else
+            <div class="prf-tx-empty">
+              <div class="prf-tx-empty-icon">📋</div>
+              <h4 class="prf-tx-empty-title">Belum Ada Transaksi</h4>
+              <p class="prf-tx-empty-desc">Kamu belum pernah melakukan pembelian.</p>
+            </div>
+          @endif
+        </div>
+
       </div>
 
-    </main>
-  </div>
-</div>
-
-<!-- EDIT MODAL -->
-<div class="modal-backdrop" id="editModal">
-  <div class="modal-box">
-    <div class="modal-box-header">
-      <span class="modal-box-title">Edit Profil</span>
-      <button class="modal-close-btn" onclick="closeEditModal()">
-        <i class="ph-bold ph-x"></i>
-      </button>
     </div>
-    <form method="POST" action="{{ route('profile.update') }}" class="modal-form" id="editForm">
-      @csrf
-      <div class="form-group">
-        <label class="form-label">Nama Lengkap</label>
-        <input type="text" name="name" class="form-input" value="{{ $user->name }}" required>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email</label>
-        <input type="email" name="email" class="form-input" value="{{ $user->email }}" readonly style="background:var(--bg-card);color:var(--text-2);">
-        <span class="form-input-hint">Email tidak dapat diubah.</span>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Nomor Telepon</label>
-        <input type="tel" name="phone" class="form-input" value="{{ $user->phone }}" placeholder="08xxxxxxxxxx" maxlength="13">
-      </div>
-      <div class="modal-actions">
-        <button type="submit" class="btn-modal-save">Simpan Perubahan</button>
-        <button type="button" class="btn-modal-cancel" onclick="closeEditModal()">Batal</button>
-      </div>
-    </form>
   </div>
 </div>
 
@@ -317,12 +278,12 @@
 </a>
 
 <script>
-// Navbar
+// Navbar scroll
 window.addEventListener('scroll', () => {
   document.getElementById('navbarWrap').classList.toggle('scrolled', window.scrollY > 20);
 }, { passive: true });
 
-// NAV PILL
+// Nav pill
 (function() {
   const navLinks = document.getElementById('navLinks');
   const pill = document.getElementById('navPill');
@@ -336,80 +297,127 @@ window.addEventListener('scroll', () => {
   }
   const links = navLinks.querySelectorAll('a');
   const activeLink = navLinks.querySelector('a.active');
-  if (activeLink) {
-    pill.style.transition = 'none';
-    movePillTo(activeLink);
-    requestAnimationFrame(() => { pill.style.transition = ''; });
-  }
+  if (activeLink) { pill.style.transition = 'none'; movePillTo(activeLink); requestAnimationFrame(() => { pill.style.transition = ''; }); }
   links.forEach(link => {
     link.addEventListener('mouseenter', () => movePillTo(link));
     link.addEventListener('mouseleave', () => { if (activeLink) movePillTo(activeLink); });
   });
 })();
 
+// Hamburger
 const hamburger = document.getElementById('hamburger');
 const navMobile = document.getElementById('navMobile');
-hamburger?.addEventListener('click', () => {
-  hamburger.classList.toggle('open');
-  navMobile.classList.toggle('open');
-});
+hamburger?.addEventListener('click', () => { hamburger.classList.toggle('open'); navMobile.classList.toggle('open'); });
 
+// Nav user dropdown
 const navUser = document.getElementById('navUser');
 const navUserMenu = document.getElementById('navUserMenu');
 if (navUser && navUserMenu) {
-  navUser.addEventListener('click', e => {
-    e.stopPropagation();
-    if (navUserMenu.contains(e.target)) return;
-    navUserMenu.classList.toggle('open');
-  });
-  document.addEventListener('click', e => {
-    if (!navUser.contains(e.target)) navUserMenu.classList.remove('open');
-  });
+  navUser.addEventListener('click', e => { e.stopPropagation(); if (navUserMenu.contains(e.target)) return; navUserMenu.classList.toggle('open'); });
+  document.addEventListener('click', e => { if (!navUser.contains(e.target)) navUserMenu.classList.remove('open'); });
 }
 
-// Tab switching
+// Tab config
+const tabConfig = {
+  profile: {
+    title: 'Profil Saya',
+    subtitle: 'Manage Your Digital Identity',
+    icon: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'
+  },
+  transactions: {
+    title: 'Histori Transaksi',
+    subtitle: 'Lacak Semua Pesanan Lo Di Sini',
+    icon: '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>'
+  }
+};
+
 function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.sidebar-nav-btn').forEach(el => el.classList.remove('active'));
+  // Hide all tabs
+  document.querySelectorAll('.prf-tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.prf-nav-btn').forEach(el => el.classList.remove('active'));
+  // Show target
   document.getElementById('tab-' + tab).classList.add('active');
   btn.classList.add('active');
+  // Update header
+  const cfg = tabConfig[tab];
+  if (cfg) {
+    document.getElementById('pageTitle').textContent = cfg.title;
+    document.getElementById('pageSubtitle').textContent = cfg.subtitle;
+    document.getElementById('pageIconSvg').innerHTML = cfg.icon;
+  }
   // Update URL
   const url = new URL(window.location);
   url.searchParams.set('tab', tab);
   window.history.replaceState({}, '', url);
 }
 
-// Auto-switch tab from URL
+// Auto-switch from URL
 (function() {
   const tab = new URLSearchParams(window.location.search).get('tab');
   if (tab === 'transactions') {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.sidebar-nav-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-transactions')?.classList.add('active');
-    document.getElementById('tabBtnTransactions')?.classList.add('active');
+    const btn = document.getElementById('navBtnTransactions');
+    if (btn) switchTab('transactions', btn);
   }
 })();
 
-// Transaction search
-function filterTx() {
-  const q = document.getElementById('txSearch').value.toLowerCase();
-  document.querySelectorAll('#txList .transaction-item').forEach(el => {
-    el.style.display = el.dataset.search.includes(q) ? '' : 'none';
+// Edit mode
+const editableInputs = ['inputName', 'inputPhone'];
+const originalValues = {};
+
+function enableEditMode() {
+  editableInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    originalValues[id] = el.value;
+    el.disabled = false;
+    el.classList.remove('prf-field-disabled');
   });
+  document.getElementById('btnEditProfile').style.display = 'none';
+  document.getElementById('formActions').style.display = 'flex';
+  document.getElementById('inputName').focus();
 }
 
-// Edit modal
-function openEditModal() {
-  document.getElementById('editModal').classList.add('open');
+function cancelEditMode() {
+  editableInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value = originalValues[id] ?? el.value;
+    el.disabled = true;
+    el.classList.add('prf-field-disabled');
+  });
+  document.getElementById('btnEditProfile').style.display = '';
+  document.getElementById('formActions').style.display = 'none';
+}
+
+// Confirm modal
+function openConfirmModal() {
+  document.getElementById('confirmModal').classList.add('active');
   document.body.style.overflow = 'hidden';
 }
-function closeEditModal() {
-  document.getElementById('editModal').classList.remove('open');
+function closeConfirmModal() {
+  document.getElementById('confirmModal').classList.remove('active');
   document.body.style.overflow = '';
 }
-document.getElementById('editModal').addEventListener('click', function(e) {
-  if (e.target === this) closeEditModal();
+function submitEditForm() {
+  closeConfirmModal();
+  document.getElementById('editForm').submit();
+}
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this || e.target.classList.contains('prf-confirm-backdrop')) closeConfirmModal();
 });
+
+// Filter transactions by status
+function filterByStatus(status, btn) {
+  document.querySelectorAll('.prf-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.prf-tx-item').forEach(item => {
+    if (status === 'all' || item.dataset.status === status) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
 </script>
 
 </body>

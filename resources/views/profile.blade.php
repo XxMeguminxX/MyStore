@@ -413,12 +413,13 @@ document.getElementById('confirmModal').addEventListener('click', function(e) {
 function filterByStatus(status, btn) {
   document.querySelectorAll('.prf-filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  const failedGroup = ['FAILED', 'EXPIRED'];
   document.querySelectorAll('.prf-tx-item').forEach(item => {
-    if (status === 'all' || item.dataset.status === status) {
-      item.style.display = '';
-    } else {
-      item.style.display = 'none';
-    }
+    const itemStatus = item.dataset.status;
+    const match = status === 'all'
+      || (status === 'FAILED' && failedGroup.includes(itemStatus))
+      || itemStatus === status;
+    item.style.display = match ? '' : 'none';
   });
 }
 </script>

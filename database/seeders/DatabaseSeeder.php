@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'test@test.com'],  // kondisi pencarian
             [
                 'name' => 'admin',
+                'username' => 'admin',
                 'password' => bcrypt('password')
             ]
         );

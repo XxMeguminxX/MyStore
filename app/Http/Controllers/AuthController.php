@@ -63,10 +63,15 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:30', 'alpha_num', 'unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
             'name.required' => 'Nama harus diisi.',
+            'username.required' => 'Username harus diisi.',
+            'username.alpha_num' => 'Username hanya boleh berisi huruf dan angka.',
+            'username.max' => 'Username maksimal 30 karakter.',
+            'username.unique' => 'Username sudah digunakan, coba yang lain.',
             'email.required' => 'Email harus diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
@@ -77,6 +82,7 @@ class AuthController extends Controller
 
         $user = User::create([
             'name' => $request->name,
+            'username' => strtolower($request->username),
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);

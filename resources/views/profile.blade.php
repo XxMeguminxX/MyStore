@@ -174,11 +174,14 @@
                 <label class="prf-field-label">Nama Lengkap</label>
                 <input type="text" name="name" id="inputName" class="prf-field-input prf-field-disabled" value="{{ $user->name }}" placeholder="Nama Lengkap Lo..." required disabled>
               </div>
+              <div class="prf-field">
+                <label class="prf-field-label">Username</label>
+                <input type="text" class="prf-field-input prf-field-readonly" value="{{ $user->username }}" readonly>
+              </div>
               <div class="prf-fields-row">
                 <div class="prf-field">
                   <label class="prf-field-label">Email</label>
                   <input type="email" name="email" class="prf-field-input prf-field-readonly" value="{{ $user->email }}" readonly>
-                  <span class="prf-field-hint">Email tidak dapat diubah.</span>
                 </div>
                 <div class="prf-field">
                   <label class="prf-field-label">Nomor Telepon</label>

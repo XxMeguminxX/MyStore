@@ -67,6 +67,16 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" value="{{ old('username') }}"
+                               placeholder="Huruf dan angka, maks. 30 karakter" required maxlength="30"
+                               pattern="[a-zA-Z0-9]+" title="Hanya huruf dan angka yang diperbolehkan">
+                        @error('username')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
                         <label for="email">Alamat Email</label>
                         <input type="email" id="email" name="email" value="{{ old('email') }}"
                                placeholder="nama@email.com" required>

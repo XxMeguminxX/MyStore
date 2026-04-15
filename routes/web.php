@@ -53,6 +53,7 @@ Route::post('/api/callback', [PulsaTransactionController::class, 'callback'])
 
 // Rute Detail Produk (bisa diakses tanpa login, untuk lihat detail & lanjut beli)
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
 
 // --- Rute yang Membutuhkan Autentikasi (Hanya Bisa Diakses Setelah Login) ---
 Route::middleware(['auth'])->group(function () {
@@ -65,7 +66,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/cart/update/{cartId}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{cartId}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-    Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
 
     // Rute quantity/stock produk (hanya admin)
     Route::post('/products/{id}/update-quantity', [ProductQttController::class, 'updateQuantity'])->name('products.update_quantity');

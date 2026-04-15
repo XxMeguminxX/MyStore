@@ -174,6 +174,10 @@ class CartController extends Controller
      */
     public function count(): JsonResponse
     {
+        if (!Auth::check()) {
+            return response()->json(['count' => 0]);
+        }
+
         return response()->json([
             'count' => $this->getCartCount()
         ]);

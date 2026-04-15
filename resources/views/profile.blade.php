@@ -206,8 +206,8 @@
         <!-- Filter Tabs -->
         <div class="prf-filter-tabs" id="filterTabs">
           <button class="prf-filter-btn active" onclick="filterByStatus('all', this)">Semua</button>
+          <button class="prf-filter-btn" onclick="filterByStatus('UNPAID', this)">Menunggu Pembayaran</button>
           <button class="prf-filter-btn" onclick="filterByStatus('PAID', this)">Selesai</button>
-          <button class="prf-filter-btn" onclick="filterByStatus('UNPAID', this)">Proses</button>
           <button class="prf-filter-btn" onclick="filterByStatus('FAILED', this)">Gagal</button>
         </div>
 

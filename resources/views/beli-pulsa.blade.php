@@ -328,27 +328,41 @@
     <div class="nav-actions">
       @auth
         <a href="{{ route('cart.index') }}" class="nav-icon-btn" id="cartBtn" title="Keranjang">
-          <i class="ph-bold ph-shopping-bag"></i>
+          <i class="ph-bold ph-shopping-cart-simple"></i>
           <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
         </a>
 
         <div class="nav-user" id="navUser">
           <div class="nav-user-avatar">{{ strtoupper(substr($authUser->name, 0, 1)) }}</div>
-          <span class="nav-user-name">{{ Str::limit($authUser->name, 12) }}</span>
           <i class="ph-bold ph-caret-down nav-user-caret"></i>
+
           <div class="nav-user-menu" id="navUserMenu">
-            <a href="{{ url('/profile') }}">
-              <i class="ph-bold ph-user"></i>Profil
-            </a>
-            <a href="{{ route('transaction.history') }}">
-              <i class="ph-bold ph-clock-counter-clockwise"></i>Histori Transaksi
-            </a>
-            <form method="POST" action="{{ route('logout') }}">
-              @csrf
-              <button type="submit" class="logout-btn">
-                <i class="ph-bold ph-sign-out"></i>Logout
-              </button>
-            </form>
+            <div class="num-header">
+              <div class="num-avatar">{{ strtoupper(substr($authUser->name, 0, 1)) }}</div>
+              <div class="num-info">
+                <h4 class="num-name">{{ Str::limit($authUser->name, 20) }}</h4>
+                <p class="num-email">{{ Str::limit($authUser->email, 26) }}</p>
+              </div>
+            </div>
+            <div class="num-links">
+              <a href="{{ url('/profile') }}" class="num-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+                Profil Saya
+              </a>
+              <a href="{{ route('transaction.history') }}" class="num-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Pesanan Saya
+              </a>
+            </div>
+            <div class="num-logout-wrap">
+              <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="num-logout">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                  Log Out
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       @else
@@ -640,7 +654,11 @@ navMobile.querySelectorAll('a').forEach(link => {
 const navUser = document.getElementById('navUser');
 const navUserMenu = document.getElementById('navUserMenu');
 if (navUser && navUserMenu) {
-  navUser.addEventListener('click', e => { e.stopPropagation(); navUserMenu.classList.toggle('open'); });
+  navUser.addEventListener('click', e => {
+    e.stopPropagation();
+    if (navUserMenu.contains(e.target)) return;
+    navUserMenu.classList.toggle('open');
+  });
   document.addEventListener('click', e => { if (!navUser.contains(e.target)) navUserMenu.classList.remove('open'); });
 }
 

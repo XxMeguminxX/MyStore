@@ -149,49 +149,63 @@
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar" id="navbar">
-  <div class="nav-inner">
+<div class="navbar-wrap" id="navbarWrap">
+  <nav class="navbar" id="navbar">
+
     <a href="{{ url('/') }}" class="nav-logo">
-      <div class="nav-logo-icon">
-        <i class="ph-bold ph-lightning"></i>
-      </div>
       <span class="nav-logo-name">E Store ID</span>
     </a>
-    <div class="nav-links">
+
+    <div class="nav-links" id="navLinks">
+      <span class="nav-pill" id="navPill"></span>
       <a href="{{ url('/') }}">Beranda</a>
       <a href="{{ url('/#produk') }}">Produk</a>
       <a href="{{ url('/halaman/cara-beli') }}">Cara Beli</a>
     </div>
+
     <div class="nav-actions">
       <a href="{{ route('cart.index') }}" class="nav-icon-btn" title="Keranjang">
-        <i class="ph-bold ph-shopping-bag"></i>
+        <i class="ph-bold ph-shopping-cart-simple"></i>
       </a>
+
       <div class="nav-user" id="navUser">
         <div class="nav-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-        <span class="nav-user-name">{{ Str::limit(auth()->user()->name, 12) }}</span>
         <i class="ph-bold ph-caret-down nav-user-caret"></i>
+
         <div class="nav-user-menu" id="navUserMenu">
-          <a href="{{ url('/profile') }}">
-            <i class="ph-bold ph-user"></i>
-            Profil
-          </a>
-          <a href="{{ route('transaction.history') }}">
-            <i class="ph-bold ph-clock-counter-clockwise"></i>
-            Histori Transaksi
-          </a>
-          <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="logout-btn">
-              <i class="ph-bold ph-sign-out"></i>
-              Logout
-            </button>
-          </form>
+          <div class="num-header">
+            <div class="num-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+            <div class="num-info">
+              <h4 class="num-name">{{ Str::limit(auth()->user()->name, 20) }}</h4>
+              <p class="num-email">{{ Str::limit(auth()->user()->email, 26) }}</p>
+            </div>
+          </div>
+          <div class="num-links">
+            <a href="{{ url('/profile') }}" class="num-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+              Profil Saya
+            </a>
+            <a href="{{ route('transaction.history') }}" class="num-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              Pesanan Saya
+            </a>
+          </div>
+          <div class="num-logout-wrap">
+            <form method="POST" action="{{ route('logout') }}">
+              @csrf
+              <button type="submit" class="num-logout">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                Log Out
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
+
     <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
-  </div>
-</nav>
+  </nav>
+</div>
 <div class="nav-mobile" id="navMobile">
   <a href="{{ url('/') }}">Beranda</a>
   <a href="{{ url('/#produk') }}">Produk</a>
@@ -379,8 +393,33 @@
 
 <script>
 window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
+  document.getElementById('navbarWrap').classList.toggle('scrolled', window.scrollY > 20);
 }, { passive: true });
+
+// NAV PILL
+(function() {
+  const navLinks = document.getElementById('navLinks');
+  const pill = document.getElementById('navPill');
+  if (!navLinks || !pill) return;
+  function movePillTo(el) {
+    const pR = navLinks.getBoundingClientRect(), eR = el.getBoundingClientRect();
+    pill.style.left   = (eR.left - pR.left) + 'px';
+    pill.style.top    = (eR.top  - pR.top)  + 'px';
+    pill.style.width  = eR.width  + 'px';
+    pill.style.height = eR.height + 'px';
+  }
+  const links = navLinks.querySelectorAll('a');
+  const activeLink = navLinks.querySelector('a.active');
+  if (activeLink) {
+    pill.style.transition = 'none';
+    movePillTo(activeLink);
+    requestAnimationFrame(() => { pill.style.transition = ''; });
+  }
+  links.forEach(link => {
+    link.addEventListener('mouseenter', () => movePillTo(link));
+    link.addEventListener('mouseleave', () => { if (activeLink) movePillTo(activeLink); });
+  });
+})();
 
 const hamburger = document.getElementById('hamburger');
 const navMobile = document.getElementById('navMobile');
@@ -392,7 +431,11 @@ hamburger?.addEventListener('click', () => {
 const navUser = document.getElementById('navUser');
 const navUserMenu = document.getElementById('navUserMenu');
 if (navUser && navUserMenu) {
-  navUser.addEventListener('click', e => { e.stopPropagation(); navUserMenu.classList.toggle('open'); });
+  navUser.addEventListener('click', e => {
+    e.stopPropagation();
+    if (navUserMenu.contains(e.target)) return;
+    navUserMenu.classList.toggle('open');
+  });
   document.addEventListener('click', e => { if (!navUser.contains(e.target)) navUserMenu.classList.remove('open'); });
 }
 </script>
